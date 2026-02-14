@@ -30,6 +30,7 @@ if ($linkConnect->affected_rows) {
     $mail->setFrom("skendri.peza@umsh.edu.al");
     $mail->addAddress($email);
     $mail->Subject = "Password Reset";
+    $mail->SMTPSecure = "tls";
     $mail->Body = <<<END
 
     Click <a href="http://localhost/Hypernova-Ecommerce/resetpassword.php?token=$token">here</a>
