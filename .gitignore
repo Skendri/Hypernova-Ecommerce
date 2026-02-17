@@ -1,0 +1,18 @@
+# Environment variables (contains sensitive credentials)
+.env
+
+# Vendor directory (optional - can be large)
+# vendor/
+
+# Composer files (optional)
+# composer.phar
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
