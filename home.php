@@ -34,9 +34,7 @@ if (isset($_SESSION["user_id"])) {
         <div class="container-fluid">
             <!-- Logo navbar -->
             <a class="navbar-brand" href="#">Navbar</a>
-
             <!-- links navbar -->
-
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
@@ -86,7 +84,7 @@ if (isset($_SESSION["user_id"])) {
 
     <!-- fillimi i kontentit te faqes -->
     <div>
-        <h2 class="p-4 mt-5">Welcome To Dashboard</h2>
+        <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo $_SESSION['email']; ?> </h2>
     </div>
 
     <div class="container text-center">

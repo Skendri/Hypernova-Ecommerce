@@ -51,23 +51,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/295/295128.png">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="../css/login.css">
     <title>Login Page</title>
 </head>
 
-<body class="bg-light">
+<body class="bg-success">
     <div class="container p-5 d-flex flex-column align-items-center">
         <?php if ($message): ?>
             <div class="toast align-items-center text-white 
-            <?php echo $toastClass; ?> border-0" role="alert"
-                aria-live="assertive" aria-atomic="true">
+            <?php echo $toastClass; ?> border-0" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
                         <?php echo $message; ?>
                     </div>
-                    <button type="button" class="btn-close
-                    btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         <?php endif; ?>
@@ -81,10 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     style="font-weight: 700;">Login Into Your Account</h5>
             </div>
             <div class="col-mb-3">
-                <label for="email"><i
-                        class="fa fa-envelope"></i> Email</label>
-                <input type="text" name="email" id="email"
-                    class="form-control" required>
+                <label for="email"> <i class="fa fa-envelope"></i> Email</label>
+                <input type="text" name="email" id="email" class="form-control" required>
             </div>
             <div class="col mb-3 mt-3">
                 <label for="password"><i
