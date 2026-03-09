@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $toastClass = "bg-success";
             // Start the session and redirect to the dashboard or home page
             session_start();
+            $_SESSION["user_id"] = $user["id"];
             $_SESSION['email'] = $email;
             header("Location: home.php");
             exit();

@@ -2,9 +2,9 @@
 
 session_start();
 
-if (isset($_SESSION["user_id"])) {
+$linkConnect = require __DIR__ . "/database.php";
 
-    $linkConnect = require __DIR__ . "/database.php";
+if (isset($_SESSION["user_id"])) {
 
     $sql = "SELECT * FROM userdata
             WHERE id = {$_SESSION["user_id"]}";
