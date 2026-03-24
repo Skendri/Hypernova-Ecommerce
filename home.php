@@ -90,7 +90,7 @@ if (isset($_SESSION["user_id"])) {
     <div class="container text-center">
         <div class="row wrapper row-cols-4">
             <!-- all cards here -->
-            <div class="col">
+            <!-- <div class="col">
                 <div class="p-3">
                     <div class="card" style="width: 18rem;">
                         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTnnSQ7Zmby7ZBYpSVhZve4cCBfySL3BHQZQ&s" class="card-img-top" alt="">
@@ -569,7 +569,7 @@ if (isset($_SESSION["user_id"])) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- end of all cards here -->
         </div>
         <!-- butoni load more dhe spinner -->
@@ -592,11 +592,45 @@ if (isset($_SESSION["user_id"])) {
         document.addEventListener("DOMContentLoaded", function() {
 
             const containerItems = document.querySelector(".wrapper");
-            console.log(containerItems);
-            var items = document.querySelectorAll(".col");
-            console.log(items.length);
-            var LoadMoreButton = document.getElementById("load-more");
-            console.log(LoadMoreButton);
+            // let div = document.querySelectorAll(".col");
+            let LoadMoreButton = document.getElementById("load-more");
+
+
+
+            fetch("https://fakestoreapi.com/products")
+                .then(response => response.json())
+                .then(products => {
+                    console.log(products);
+                    products.forEach((product, id) => {
+                        let div = document.createElement("div");
+                        div.classList.add("col");
+                        console.log(div);
+                        div.innerHTML += `
+                        <div class="col" id="${id}">
+                            <div class="p-3">
+                                <div class="card" style="width: 18rem;">
+                                    <img src="${product.image}" class="card-img-top" alt="">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${product.title}</h5>
+                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                    </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">An item</li>
+                                            <li class="list-group-item">A second item</li>
+                                            <li class="list-group-item">A third item</li>
+                                        </ul>
+                                        <div class="card-body">
+                                            <a href="#" class="card-link">Card link</a>
+                                            <a href="#" class="card-link">Another link</a>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        containerItems.append(div);
+                        console.log(div);
+                    })
+                })
+
 
             // sa items do te shfaqen ne fillim 
             let initialItems = 8;
@@ -604,30 +638,39 @@ if (isset($_SESSION["user_id"])) {
             let loadItems = initialItems;
 
             // sa karta do shfaqen pa u shtypur butoni load more
-            items.forEach((item, index) => {
+            div.forEach((item, index) => {
                 if (index >= initialItems) {
                     item.style.display = "none";
+                    console.log(div)
                 }
             });
 
             // funksioni qe kur shtypet butoni nga useri te shfaqi dhe 8 karta te tjera per cdo klikim
             function showMoreItem() {
                 initialItems += loadItems;
-                items.forEach((item, index) => {
+                div.forEach((item, index) => {
                     if (index < initialItems) {
                         item.style.display = "block";
                     }
                 });
 
 
-                if (loadItems >= items.length) {
+                if (initialItems >= div.length) {
                     LoadMoreButton.style.display = "none";
                 }
-                console.log("button clicked");
             };
 
             LoadMoreButton.addEventListener("click", showMoreItem)
-        });
+                // load more button function
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+
+
+
+
+
+        }); // DOMContentLoaded event listener
     </script>
 
 </body>
