@@ -31,11 +31,11 @@ if (isset($_SESSION["user_id"])) {
 <body>
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
 
-        <div class="container-fluid">
+        <div class="container">
             <!-- Logo navbar -->
             <a class="navbar-brand" href="#">Navbar</a>
             <!-- links navbar -->
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav .d-md-flex">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
@@ -125,6 +125,7 @@ if (isset($_SESSION["user_id"])) {
                 .then(response => response.json())
                 .then(products => {
                     loadItems = products;
+                    console.log(loadItems);
                     // Shfaqim produktet e para
                     renderInitial();
                 })
@@ -134,22 +135,22 @@ if (isset($_SESSION["user_id"])) {
 
             function cardProduct(product) {
                 return `
-                     <div class="col">
+                     <div class="col" id="${product.id}">
                             <div class="p-3">
                                 <div class="card" style="width: 18rem;">
                                     <img src="${product.image}" class="card-img-top" alt="">
                                     <div class="card-body">
                                         <h5 class="card-title">${product.title}</h5>
-                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                        <p class="card-text">${product.description}</p>
                                     </div>
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">An item</li>
-                                            <li class="list-group-item">A second item</li>
-                                            <li class="list-group-item">A third item</li>
+                                            <li class="list-group-item">${product.price + "💎"}</li>
+                                            <li class="list-group-item">${product.rating.rate}</li>
+                                            <li class="list-group-item">${product.category}</li>
                                         </ul>
                                         <div class="card-body">
-                                            <a href="#" class="card-link">Card link</a>
-                                            <a href="#" class="card-link">Another link</a>
+                                            <a href="#" class="card-link">Buy Product</a>
+                                            <a href="#" class="card-link">Promo Code</a>
                                         </div>
                                 </div>
                             </div>

@@ -79,10 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h5 class="p-4" style="font-weight: 700;">Create Your Account</h5>
             </div>
             <div class="mb-2">
-                <label for="username"><i
-                        class="fa fa-user"></i> User Name</label>
-                <input type="text" name="username" id="username"
-                    class="form-control" required>
+                <label for="username"><i class="fa fa-user"></i> User Name</label>
+                <input type="text" name="username" id="username" class="form-control" required>
             </div>
             <div class="mb-2 mt-2">
                 <label for="email"><i
