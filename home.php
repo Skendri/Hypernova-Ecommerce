@@ -103,96 +103,14 @@ if (isset($_SESSION["user_id"])) {
         </div>
     </div>
 
+    <!-- news api are displayed here from javascript file -->
+    <div id="news-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const containerItems = document.querySelector(".wrapper");
-            let LoadMoreButton = document.getElementById("load-more");
-
-            // sa items do te shfaqen ne fillim 
-            let initialItems = 8;
-            // sa items jane gjithsej ne total te futu brenda arrayt
-            let loadItems = [];
-
-
-            fetch("https://fakestoreapi.com/products")
-                .then(response => response.json())
-                .then(products => {
-                    loadItems = products;
-                    console.log(loadItems);
-                    // Shfaqim produktet e para
-                    renderInitial();
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                });
-
-            function cardProduct(product) {
-                return `
-                     <div class="col" id="${product.id}">
-                            <div class="p-3">
-                                <div class="card" style="width: 18rem;">
-                                    <img src="${product.image}" class="card-img-top" alt="">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.title}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                    </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">${product.price + "💎"}</li>
-                                            <li class="list-group-item">${product.rating.rate}</li>
-                                            <li class="list-group-item">${product.category}</li>
-                                        </ul>
-                                        <div class="card-body">
-                                            <a href="#" class="card-link">Buy Product</a>
-                                            <a href="#" class="card-link">Promo Code</a>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>`
-            };
-
-            // 3. RENDER FILLIMI (8 produktet e para)
-            function renderInitial() {
-                const firstItems = loadItems.slice(0, initialItems);
-
-                firstItems.forEach(product => {
-                    containerItems.innerHTML += cardProduct(product);
-                });
-            }
-
-
-            // 4. LOAD MORE (shton vetem te rinjte)
-            function loadMore() {
-                let start = initialItems;
-                let end = initialItems + 8;
-
-                let nextItems = loadItems.slice(start, end);
-
-                nextItems.forEach(product => {
-                    containerItems.innerHTML += cardProduct(product);
-                });
-
-                initialItems = end;
-
-                // fsheh butonin kur mbarojne produktet
-                if (initialItems >= loadItems.length) {
-                    LoadMoreButton.style.display = "none";
-                }
-            }
-
-            // 5. EVENT BUTTON
-            LoadMoreButton.addEventListener("click", loadMore);
-
-
-        }); // DOMContentLoaded event listener
-    </script>
-
+    <script src="./home.js"></script>
 </body>
 
 </html>
