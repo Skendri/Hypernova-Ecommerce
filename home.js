@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // sa items jane gjithsej ne total te futu brenda arrayt
   let loadItems = [];
 
-  fetch("api.php")
+  fetch("./api/api.php")
     .then((response) => response.json())
     .then((products) => {
       loadItems = products.articles;
