@@ -8,11 +8,27 @@ document.addEventListener("DOMContentLoaded", function () {
   // sa items jane gjithsej ne total te futu brenda arrayt
   let loadItems = [];
 
+  // Function to validate article (check for errors like missing image/text/desc)
+  function isValidArticle(product) {
+    return (
+      product.urlToImage &&
+      product.urlToImage.trim() !== "" &&
+      product.title &&
+      product.title.trim() !== "" &&
+      product.description &&
+      product.description.trim() !== ""
+    );
+  }
+
   fetch("./api/api.php")
     .then((response) => response.json())
     .then((products) => {
-      loadItems = products.articles;
-      console.log(loadItems);
+      // Filter out invalid articles (errors)
+      loadItems = products.articles.filter(isValidArticle);
+      console.log(
+        `Filtered ${loadItems.length} valid articles out of ${products.articles.length}`,
+      );
+      // console.log(loadItems);
       // Shfaqim produktet e para
       renderInitial();
     })
