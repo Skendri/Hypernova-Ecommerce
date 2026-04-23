@@ -36,10 +36,10 @@ if (isset($_SESSION["user_id"])) {
             <!-- links navbar -->
             <ul class="navbar-nav .d-md-flex">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
+                    <a class="nav-link" href="./feature.php">Features</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Pricing</a>
@@ -99,12 +99,6 @@ if (isset($_SESSION["user_id"])) {
             <div class="visually-hidden spinner-border me-2 my-3" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-        </div>
-    </div>
-
-    <!-- news api are displayed here from javascript file -->
-    <div class="container text-center">
-        <div id="news-container">
         </div>
     </div>
 

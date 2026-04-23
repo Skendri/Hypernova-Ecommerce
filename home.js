@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then((products) => {
       // Filter out invalid articles (errors)
       loadItems = products.articles.filter(isValidArticle);
+      console.log("Total articles fetched:", products.articles.length);
       console.log(
         `Filtered ${loadItems.length} valid articles out of ${products.articles.length}`,
       );
