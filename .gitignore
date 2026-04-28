@@ -2,7 +2,7 @@
 .env
 
 # Vendor directory (optional - can be large)
-# vendor/
+vendor/
 
 # Composer files (optional)
 # composer.phar

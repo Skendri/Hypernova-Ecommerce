@@ -27,7 +27,7 @@ if ($linkConnect->affected_rows) {
 
     $mail = getMailer();
 
-    $mail->setFrom("skendri.peza@umsh.edu.al");
+    $mail->setFrom($_ENV['SMTP_FROM_EMAIL']);
     $mail->addAddress($email);
     $mail->Subject = "Password Reset";
     $mail->SMTPSecure = "tls";
