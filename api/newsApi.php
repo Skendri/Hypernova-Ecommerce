@@ -13,7 +13,7 @@ $dotenv->load();
 
 $apiKey = $_ENV['API_KEY'];
 
-$url = 'https://newsapi.org/v2/everything?q=apple&from=2026-04-03&to=2026-04-03&sortBy=popularity&apiKey=' . $apiKey;
+$url = 'https://newsapi.org/v2/everything?q=apple&from=2026-05-04&to=2026-05-04&sortBy=popularity&apiKey=' . $apiKey;
 $ch = curl_init($url);
 // $ch = connection handle.
 

@@ -8,22 +8,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    $userId = null;
+    $hashedPassword = null;
+
     // Prepare and execute
-    $stmt = $linkConnect->prepare("SELECT password FROM userdata WHERE email = ?");
+    $stmt = $linkConnect->prepare("SELECT id, password FROM userdata WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($db_password);
+        $stmt->bind_result($userId, $hashedPassword);
         $stmt->fetch();
 
-        if (password_verify($password, $db_password)) {
+        if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
             $message = "Login successful";
             $toastClass = "bg-success";
             // Start the session and redirect to the dashboard or home page
             session_start();
-            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["user_id"] = $userId;
             $_SESSION['email'] = $email;
             header("Location: home.php");
             exit();
