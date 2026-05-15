@@ -30,7 +30,10 @@ include './components/navbar.php';
         <div class="row justify-content-center">
             <div class="col-lg-6">
                 <div class="upload-card">
-                    <h3>Upload New Product</h3>
+                    <h3 class="mb-3">Upload New Product</h3>
+                    <p class="text-muted mb-4" style="max-width: 42ch;">
+                        Add a title, description, and up to 5 images. Your product will appear instantly.
+                    </p>
                     <form id="productForm">
                         <div class="mb-3">
                             <label for="title" class="form-label">Product Title</label>
@@ -39,6 +42,10 @@ include './components/navbar.php';
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" min="0" step="0.01" placeholder="e.g. 19.99" required>
                         </div>
                         <div class="mb-3">
                             <label for="images" class="form-label">Product Images (Max 5, <2MB each)</label>

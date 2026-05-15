@@ -38,7 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="card-body">
                         <h5 class="card-title">${product.title}</h5>
                         <p class="card-text">${product.description}</p>
-                        <small class="text-muted">Posted: ${product.date}</small>
+                        <div class="d-flex align-items-center justify-content-between gap-2">
+                            <small class="text-muted">Posted: ${product.date}</small>
+                        </div>
+                        <div class="mt-1">
+                            <strong class="text-primary">$${Number(product.price).toFixed(2)}</strong>
+                        </div>
                         <button class="btn btn-danger btn-sm mt-2 delete-btn" data-index="${index}">Delete</button>
                     </div>
                 </div>
@@ -62,6 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     const title = document.getElementById("title").value.trim();
     const description = document.getElementById("description").value.trim();
+    const priceValue = document.getElementById("price").value;
+    const price = Number(priceValue);
     const files = document.getElementById("images").files;
 
     if (!title || description.length < 10) {
@@ -92,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
           id: Date.now() + Math.random(),
           title,
           description,
+          price,
           date: new Date().toLocaleString(),
           images,
         };
