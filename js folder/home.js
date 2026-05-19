@@ -1,4 +1,88 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const userProducts = document.getElementById("user-products");
+
+  function createTextElement(tagName, className, text) {
+    const element = document.createElement(tagName);
+    element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  function createUploadedProductCard(product) {
+    const col = document.createElement("div");
+    col.className = "col-lg-3 col-md-6";
+
+    const card = document.createElement("div");
+    card.className = "uploaded-product-card h-100";
+
+    const image = document.createElement("img");
+    image.className = "uploaded-product-img";
+    image.src = product.image || "https://placehold.co/600x400?text=Product";
+    image.alt = product.title || "Product image";
+
+    const body = document.createElement("div");
+    body.className = "uploaded-product-body";
+
+    const meta = document.createElement("div");
+    meta.className = "d-flex justify-content-between align-items-center gap-2 mb-3";
+
+    meta.appendChild(
+      createTextElement("span", "uploaded-category-badge", product.category || "Product"),
+    );
+    meta.appendChild(
+      createTextElement("span", "uploaded-price-badge", `$${product.price || "0.00"}`),
+    );
+
+    body.appendChild(meta);
+    body.appendChild(createTextElement("h5", "uploaded-product-title", product.title || "Untitled"));
+    body.appendChild(
+      createTextElement("p", "uploaded-product-description", product.description || ""),
+    );
+
+    if (product.created_at) {
+      body.appendChild(createTextElement("small", "text-muted", `Posted ${product.created_at}`));
+    }
+
+    card.appendChild(image);
+    card.appendChild(body);
+    col.appendChild(card);
+
+    return col;
+  }
+
+  async function loadUploadedProducts() {
+    if (!userProducts) return;
+
+    try {
+      const response = await fetch("./api/fetch_products.php");
+      const products = await response.json();
+
+      userProducts.innerHTML = "";
+
+      if (!Array.isArray(products) || products.length === 0) {
+        userProducts.innerHTML = `
+          <div class="col-12">
+            <div class="uploaded-empty-state">No uploaded products yet.</div>
+          </div>
+        `;
+        return;
+      }
+
+      products.forEach((product) => {
+        userProducts.appendChild(createUploadedProductCard(product));
+      });
+    } catch (error) {
+      console.error("Error loading uploaded products:", error);
+      userProducts.innerHTML = `
+        <div class="col-12">
+          <div class="uploaded-empty-state">Could not load uploaded products.</div>
+        </div>
+      `;
+    }
+  }
+
+  loadUploadedProducts();
+
   // API per e-eccommerce products
   const containerItems = document.querySelector(".wrapper");
   let LoadMoreButton = document.getElementById("load-more");

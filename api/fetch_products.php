@@ -1,6 +1,6 @@
 <?php
 
-include './database.php';
+include __DIR__ . '/../database.php';
 
 $sql = "SELECT * FROM products ORDER BY id DESC";
 

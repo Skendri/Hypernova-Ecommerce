@@ -35,6 +35,11 @@ if (isset($_SESSION["user_id"])) {
         <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo $_SESSION['email']; ?> </h2>
     </div>
 
+    <div class="container my-5">
+        <h3 class="mb-4">Products from sellers</h3>
+        <div id="user-products" class="row g-4"></div>
+    </div>
+
     <div class="container text-center">
         <div class="row wrapper row-cols-4">
             <!-- all cards here -->
