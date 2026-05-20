@@ -71,8 +71,9 @@ if (!isset($_SESSION["user_id"])) {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Product Image</label>
-                            <input type="file" class="form-control" name="image" id="imageInput" accept="image/*" required>
+                            <label class="form-label">Product Images</label>
+                            <input type="file" class="form-control" name="images[]" id="imageInput" accept="image/*" multiple required>
+                            <div class="form-text">Choose up to 5 images.</div>
                         </div>
 
                         <div id="previewContainer" class="preview-container mb-4"></div>

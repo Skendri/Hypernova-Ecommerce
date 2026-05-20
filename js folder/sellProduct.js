@@ -7,22 +7,45 @@ const previewContainer = document.getElementById("previewContainer");
 imageInput.addEventListener("change", function () {
   previewContainer.innerHTML = "";
 
-  const file = this.files[0];
+  const files = Array.from(this.files);
 
-  if (!file) return;
+  if (files.length > 5) {
+    alert("You can upload a maximum of 5 images.");
+    this.value = "";
+    return;
+  }
 
-  const reader = new FileReader();
+  files.forEach((file) => {
+    const reader = new FileReader();
 
-  reader.onload = function (e) {
-    const img = document.createElement("img");
+    reader.onload = function (e) {
+      const img = document.createElement("img");
 
-    img.src = e.target.result;
+      img.src = e.target.result;
+      img.alt = file.name;
 
-    previewContainer.appendChild(img);
-  };
+      previewContainer.appendChild(img);
+    };
 
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+  });
 });
+
+function getProductImages(imageValue) {
+  if (!imageValue) return ["https://placehold.co/600x400?text=Product"];
+
+  try {
+    const parsedImages = JSON.parse(imageValue);
+
+    if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+      return parsedImages;
+    }
+  } catch (error) {
+    return [imageValue];
+  }
+
+  return [imageValue];
+}
 
 // LOAD PRODUCTS
 async function loadProducts() {
@@ -44,13 +67,31 @@ async function loadProducts() {
   }
 
   products.forEach((product) => {
+    const productImages = getProductImages(product.image);
+    const mainImage = productImages[0];
+    const thumbnails = productImages
+      .slice(1, 5)
+      .map(
+        (image) => `
+          <img src="${image}" class="product-thumb" alt="${product.title}">
+        `,
+      )
+      .join("");
+
     grid.innerHTML += `
 
             <div class="col-lg-3 col-md-6">
 
+                <a class="product-detail-link" href="./productView.php?id=${product.id}" aria-label="View ${product.title}">
                 <div class="product-card h-100">
 
-                    <img src="${product.image}" class="product-img">
+                    <img src="${mainImage}" class="product-img" alt="${product.title}">
+
+                    ${
+                      thumbnails
+                        ? `<div class="product-thumbs">${thumbnails}</div>`
+                        : ""
+                    }
 
                     <div class="product-body d-flex flex-column justify-content-between h-100">
 
@@ -83,6 +124,7 @@ async function loadProducts() {
                     </div>
 
                 </div>
+                </a>
 
             </div>
         `;
@@ -92,6 +134,11 @@ async function loadProducts() {
 // FORM SUBMIT
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
+
+  if (imageInput.files.length < 1 || imageInput.files.length > 5) {
+    alert("Please choose between 1 and 5 images.");
+    return;
+  }
 
   const formData = new FormData(form);
 
@@ -103,6 +150,10 @@ form.addEventListener("submit", async function (e) {
   const result = await response.text();
 
   alert(result);
+
+  if (!response.ok) {
+    return;
+  }
 
   form.reset();
 

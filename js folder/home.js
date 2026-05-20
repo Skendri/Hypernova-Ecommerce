@@ -8,6 +8,22 @@ document.addEventListener("DOMContentLoaded", function () {
     return element;
   }
 
+  function getProductImage(imageValue) {
+    if (!imageValue) return "https://placehold.co/600x400?text=Product";
+
+    try {
+      const parsedImages = JSON.parse(imageValue);
+
+      if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+        return parsedImages[0];
+      }
+    } catch (error) {
+      return imageValue;
+    }
+
+    return imageValue;
+  }
+
   function createUploadedProductCard(product) {
     const col = document.createElement("div");
     col.className = "col-lg-3 col-md-6";
@@ -17,35 +33,67 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const image = document.createElement("img");
     image.className = "uploaded-product-img";
-    image.src = product.image || "https://placehold.co/600x400?text=Product";
+    image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
 
     const body = document.createElement("div");
     body.className = "uploaded-product-body";
 
     const meta = document.createElement("div");
-    meta.className = "d-flex justify-content-between align-items-center gap-2 mb-3";
+    meta.className =
+      "d-flex justify-content-between align-items-center gap-2 mb-3";
 
     meta.appendChild(
-      createTextElement("span", "uploaded-category-badge", product.category || "Product"),
+      createTextElement(
+        "span",
+        "uploaded-category-badge",
+        product.category || "Product",
+      ),
     );
     meta.appendChild(
-      createTextElement("span", "uploaded-price-badge", `$${product.price || "0.00"}`),
+      createTextElement(
+        "span",
+        "uploaded-price-badge",
+        `$${product.price || "0.00"}`,
+      ),
     );
 
     body.appendChild(meta);
-    body.appendChild(createTextElement("h5", "uploaded-product-title", product.title || "Untitled"));
     body.appendChild(
-      createTextElement("p", "uploaded-product-description", product.description || ""),
+      createTextElement(
+        "h5",
+        "uploaded-product-title",
+        product.title || "Untitled",
+      ),
+    );
+    body.appendChild(
+      createTextElement(
+        "p",
+        "uploaded-product-description",
+        product.description || "",
+      ),
     );
 
     if (product.created_at) {
-      body.appendChild(createTextElement("small", "text-muted", `Posted ${product.created_at}`));
+      body.appendChild(
+        createTextElement(
+          "small",
+          "text-muted",
+          `Posted ${product.created_at}`,
+        ),
+      );
     }
 
     card.appendChild(image);
     card.appendChild(body);
-    col.appendChild(card);
+
+    const link = document.createElement("a");
+    link.className = "uploaded-product-link";
+    link.href = `./productView.php?id=${product.id}`;
+    link.setAttribute("aria-label", `View ${product.title || "product"}`);
+    link.appendChild(card);
+
+    col.appendChild(link);
 
     return col;
   }
@@ -125,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function cardProduct(product) {
     return `
                      <div class="col" id="${product.source.id}">
-                            <div class="p-3">
+                            <a class="p-3" href="${product.url}" target="_blank">
                                 <div class="card" style="width: 18rem;">
                                     <img src="${product.urlToImage}" class="card-img-top" alt="">
                                     <div class="card-body">
@@ -142,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                             <a href="#" class="card-link">${product.source.name}</a>
                                         </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>`;
   }
 

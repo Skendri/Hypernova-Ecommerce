@@ -28,6 +28,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="./sellProduct.php">sell products</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./productView.php">Product View</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Link
