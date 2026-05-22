@@ -90,7 +90,7 @@ if (!isset($_SESSION["user_id"])) {
         </div>
 
 
-        <h2 class="section-title mb-4">Latest Products</h2>
+        <h2 class="section-title mb-4">Your Products</h2>
 
         <div class="row g-4" id="productsGrid"></div>
 

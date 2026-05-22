@@ -3,6 +3,12 @@ session_start();
 
 include './database.php';
 
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo "Please log in before publishing a product.";
+    exit();
+}
+
 $user_id = $_SESSION['user_id'];
 
 $title = $_POST['title'];

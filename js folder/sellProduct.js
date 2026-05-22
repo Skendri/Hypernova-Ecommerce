@@ -49,7 +49,7 @@ function getProductImages(imageValue) {
 
 // LOAD PRODUCTS
 async function loadProducts() {
-  const response = await fetch("./api/fetch_products.php");
+  const response = await fetch("./api/fetch_products.php?scope=mine");
 
   const products = await response.json();
 
