@@ -462,6 +462,164 @@ body {
   transform: translateY(0);
 }
 
+.is-skeleton .gallery-stage,
+.is-skeleton .thumbnail-skeleton,
+.is-skeleton .product-badge,
+.is-skeleton .product-info h1,
+.is-skeleton .rating-row span,
+.is-skeleton .rating-row a,
+.is-skeleton .price-label,
+.is-skeleton .price-panel strong,
+.is-skeleton .old-price,
+.is-skeleton .discount-chip,
+.is-skeleton .product-description,
+.is-skeleton .availability-card h2,
+.is-skeleton .availability-card p,
+.is-skeleton .availability-card small,
+.is-skeleton .pincode-form,
+.is-skeleton .option-grid h2,
+.is-skeleton .size-options button,
+.is-skeleton .color-choice,
+.is-skeleton .quantity-row > span,
+.is-skeleton .quantity-control,
+.is-skeleton .action-row button,
+.is-skeleton .details-band h2,
+.is-skeleton .details-band p,
+.is-skeleton .details-band li {
+  color: transparent;
+  border-color: transparent;
+  background: linear-gradient(100deg, #eef2f6 0%, #f8fafc 45%, #e3e9f0 70%);
+  background-size: 220% 100%;
+  box-shadow: none;
+  text-decoration-color: transparent;
+  animation: skeletonPulse 1.35s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.is-skeleton .gallery-stage img,
+.is-skeleton .gallery-control,
+.is-skeleton .soft-divider {
+  opacity: 0;
+}
+
+.is-skeleton .gallery-stage:hover img,
+.is-skeleton .action-row button:hover,
+.is-skeleton .size-options button:hover,
+.is-skeleton .color-choice:hover,
+.is-skeleton .thumbnail-button:hover {
+  transform: none;
+}
+
+.is-skeleton .product-info h1 {
+  width: min(520px, 100%);
+  min-height: clamp(4rem, 8vw, 7rem);
+  border-radius: 18px;
+}
+
+.is-skeleton .rating-row span,
+.is-skeleton .rating-row a,
+.is-skeleton .price-label,
+.is-skeleton .availability-card h2,
+.is-skeleton .availability-card p,
+.is-skeleton .availability-card small,
+.is-skeleton .option-grid h2,
+.is-skeleton .quantity-row > span,
+.is-skeleton .details-band h2,
+.is-skeleton .details-band p,
+.is-skeleton .details-band li {
+  display: inline-block;
+  min-height: 1em;
+  border-radius: 999px;
+}
+
+.is-skeleton .rating-row span,
+.is-skeleton .rating-row a {
+  width: 90px;
+}
+
+.is-skeleton .price-label {
+  width: 120px;
+}
+
+.is-skeleton .price-panel strong {
+  display: inline-block;
+  width: 180px;
+  min-height: clamp(2.25rem, 4vw, 3rem);
+  border-radius: 16px;
+}
+
+.is-skeleton .old-price,
+.is-skeleton .discount-chip {
+  display: inline-flex;
+  width: 86px;
+  min-height: 32px;
+  border-radius: 999px;
+}
+
+.is-skeleton .product-description,
+.is-skeleton .details-band p {
+  width: 100%;
+  min-height: 86px;
+  border-radius: 18px;
+}
+
+.is-skeleton .availability-card h2 {
+  width: 150px;
+}
+
+.is-skeleton .availability-card p {
+  width: min(220px, 100%);
+}
+
+.is-skeleton .availability-card small {
+  width: min(260px, 100%);
+}
+
+.is-skeleton .pincode-form {
+  min-height: 46px;
+}
+
+.is-skeleton .pincode-form input,
+.is-skeleton .pincode-form button {
+  opacity: 0;
+}
+
+.is-skeleton .option-grid h2 {
+  width: 110px;
+}
+
+.is-skeleton .size-options button {
+  transform: none;
+}
+
+.is-skeleton .quantity-row > span {
+  width: 100px;
+}
+
+.is-skeleton .quantity-control {
+  width: 124px;
+  min-height: 40px;
+}
+
+.is-skeleton .quantity-control * {
+  opacity: 0;
+}
+
+.is-skeleton .action-row button {
+  min-height: 58px;
+}
+
+.thumbnail-skeleton {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+}
+
+.is-skeleton .details-band li {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .reveal {
   animation: riseIn 700ms ease both;
 }
@@ -482,6 +640,15 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 180% 0;
+  }
+  100% {
+    background-position: -80% 0;
   }
 }
 

@@ -1,27 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const fallbackProduct = {
-    id: "preview",
-    title: "Premium Wireless Headphones",
-    category: "Electronics",
-    price: "180.00",
-    description:
-      "Clean sound, soft cushions, and all-day battery life made for work, travel, and everyday listening.",
-    image: JSON.stringify([
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=1000&q=80",
-    ]),
-  };
-
   const state = {
     images: [],
     activeImage: 0,
     quantity: 1,
-    product: fallbackProduct,
+    product: null,
   };
 
   const elements = {
+    page: document.querySelector(".product-page"),
     mainImage: document.getElementById("mainProductImage"),
     thumbnailStrip: document.getElementById("thumbnailStrip"),
     category: document.getElementById("productCategory"),
@@ -42,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function getProductImages(imageValue) {
-    if (!imageValue) return JSON.parse(fallbackProduct.image);
+    if (!imageValue) return ["https://placehold.co/900x900?text=Product"];
 
     try {
       const parsedImages = JSON.parse(imageValue);
@@ -55,6 +41,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return [imageValue];
+  }
+
+  function setControlsDisabled(isDisabled) {
+    [
+      elements.previous,
+      elements.next,
+      elements.decreaseQuantity,
+      elements.increaseQuantity,
+      elements.addToCart,
+      elements.buyNow,
+    ].forEach((button) => {
+      if (button) button.disabled = isDisabled;
+    });
+
+    if (elements.pincodeForm) {
+      elements.pincodeForm
+        .querySelectorAll("input, button")
+        .forEach((field) => {
+          field.disabled = isDisabled;
+        });
+    }
+  }
+
+  function renderSkeleton() {
+    elements.page.classList.add("is-skeleton");
+    setControlsDisabled(true);
+
+    state.product = null;
+    state.images = [];
+    state.activeImage = 0;
+
+    elements.category.textContent = "Loading";
+    elements.title.textContent = "Product title loading";
+    elements.price.textContent = "$000.00";
+    elements.oldPrice.textContent = "$000.00";
+    elements.description.textContent =
+      "Product description loading while the item details are found.";
+    elements.longDescription.textContent =
+      "More product information will appear here when a matching item exists.";
+    elements.deliveryMessage.textContent = "Checking product availability.";
+    elements.mainImage.removeAttribute("src");
+    elements.mainImage.alt = "";
+
+    elements.thumbnailStrip.innerHTML = "";
+
+    for (let index = 0; index < 5; index++) {
+      const thumbnail = document.createElement("div");
+      thumbnail.className = "thumbnail-skeleton";
+      elements.thumbnailStrip.appendChild(thumbnail);
+    }
   }
 
   function money(value) {
@@ -103,7 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderProduct(product) {
-    const price = Number(product.price) || 180;
+    elements.page.classList.remove("is-skeleton");
+    setControlsDisabled(false);
+
+    const price = Number(product.price) || 0;
     const oldPrice = price * 1.38;
 
     state.product = product;
@@ -114,11 +153,10 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.title.textContent = product.title || "Untitled Product";
     elements.price.textContent = money(price);
     elements.oldPrice.textContent = money(oldPrice);
-    elements.description.textContent =
-      product.description || fallbackProduct.description;
+    elements.description.textContent = product.description || "";
     elements.longDescription.textContent =
       product.description ||
-      "Built for daily use with premium materials, smooth controls, and a checkout-ready shopping flow.";
+      "This seller has not added a longer description yet.";
 
     elements.mainImage.src = state.images[0];
     elements.mainImage.alt = product.title || "Product image";
@@ -146,10 +184,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function loadProduct() {
+    renderSkeleton();
+
     const productId = new URLSearchParams(window.location.search).get("id");
 
     if (!productId) {
-      renderProduct(fallbackProduct);
       return;
     }
 
@@ -158,15 +197,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const products = await response.json();
       const product = products.find((item) => String(item.id) === String(productId));
 
-      renderProduct(product || fallbackProduct);
-
-      if (!product) {
-        showToast("Product not found, showing preview item.");
+      if (product) {
+        renderProduct(product);
       }
     } catch (error) {
       console.error("Could not load product:", error);
-      renderProduct(fallbackProduct);
-      showToast("Could not load this product right now.");
     }
   }
 
