@@ -113,6 +113,12 @@ async function loadProducts() {
                             <p class="product-description">
                                 ${product.description}
                             </p>
+
+                            ${
+                              product.phone
+                                ? `<small class="d-block text-muted mb-2">Phone: ${product.phone}</small>`
+                                : ""
+                            }
                         </div>
 
                         <div>

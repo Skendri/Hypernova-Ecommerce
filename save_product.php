@@ -15,6 +15,7 @@ $title = $_POST['title'];
 $description = $_POST['description'];
 $price = $_POST['price'];
 $category = $_POST['category'];
+$phone = $_POST['phone'];
 
 $uploadedImages = [];
 $maxImages = 5;
@@ -72,18 +73,19 @@ $imagesJson = json_encode($uploadedImages);
 
 $stmt = $linkConnect->prepare(
     "INSERT INTO products
-    (user_id, title, description, price, category, image)
-    VALUES (?, ?, ?, ?, ?, ?)"
+    (user_id, title, description, price, category, image, phone)
+    VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 
 $stmt->bind_param(
-    "issdss",
+    "issdsss",
     $user_id,
     $title,
     $description,
     $price,
     $category,
-    $imagesJson
+    $imagesJson,
+    $phone
 );
 
 $stmt->execute();

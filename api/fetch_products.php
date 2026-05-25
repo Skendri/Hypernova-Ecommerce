@@ -19,13 +19,22 @@ if ($scope === 'mine') {
     $userId = (int) $_SESSION['user_id'];
 
     $stmt = $linkConnect->prepare(
-        "SELECT * FROM products WHERE user_id = ? ORDER BY id DESC"
+        "SELECT products.*, userdata.username AS owner_name
+        FROM products
+        LEFT JOIN userdata ON products.user_id = userdata.id
+        WHERE products.user_id = ?
+        ORDER BY products.id DESC"
     );
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
 } else {
-    $result = $linkConnect->query("SELECT * FROM products ORDER BY id DESC");
+    $result = $linkConnect->query(
+        "SELECT products.*, userdata.username AS owner_name
+        FROM products
+        LEFT JOIN userdata ON products.user_id = userdata.id
+        ORDER BY products.id DESC"
+    );
 }
 
 while ($row = $result->fetch_assoc()) {

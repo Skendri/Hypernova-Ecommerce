@@ -74,6 +74,24 @@ document.addEventListener("DOMContentLoaded", function () {
       ),
     );
 
+    body.appendChild(
+      createTextElement(
+        "small",
+        "d-block text-muted mb-2",
+        `Seller: ${product.owner_name || "Unknown user"}`,
+      ),
+    );
+
+    if (product.phone) {
+      body.appendChild(
+        createTextElement(
+          "small",
+          "d-block text-muted mb-2",
+          `Phone: ${product.phone}`,
+        ),
+      );
+    }
+
     if (product.created_at) {
       body.appendChild(
         createTextElement(
