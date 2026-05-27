@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="./css folder/Feature.css">
+    <link rel="stylesheet" href="../assets/css/feature.css">
     <title>Document</title>
 </head>
 
 <body>
 
-    <?php include './components/navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
     <!-- news api are displayed here from javascript file -->
     <div class="container text-center">
         <div id="news-container"></div>
@@ -21,7 +21,7 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
-    <script src="./js folder/feature.js"></script>
+    <script src="../assets/js/feature.js"></script>
 </body>
 
 </html>

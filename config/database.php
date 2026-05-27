@@ -1,7 +1,6 @@
 <?php
 
-
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -22,3 +21,5 @@ if ($linkConnect->connect_error) {
     echo "nuk u lidhe me databazen";
 }
 // echo "ti je lidh me databazen";
+
+return $linkConnect;

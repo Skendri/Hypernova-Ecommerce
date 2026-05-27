@@ -8,6 +8,16 @@ document.addEventListener("DOMContentLoaded", function () {
     return element;
   }
 
+  function normalizeImagePath(imagePath) {
+    if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+      return imagePath;
+    }
+
+    return imagePath
+      .replace(/^uploads\//, "../assets/uploads/")
+      .replace(/^assets\/uploads\//, "../assets/uploads/");
+  }
+
   function getProductImage(imageValue) {
     if (!imageValue) return "https://placehold.co/600x400?text=Product";
 
@@ -15,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const parsedImages = JSON.parse(imageValue);
 
       if (Array.isArray(parsedImages) && parsedImages.length > 0) {
-        return parsedImages[0];
+        return normalizeImagePath(parsedImages[0]);
       }
     } catch (error) {
-      return imageValue;
+      return normalizeImagePath(imageValue);
     }
 
-    return imageValue;
+    return normalizeImagePath(imageValue);
   }
 
   function createUploadedProductCard(product) {
@@ -107,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const link = document.createElement("a");
     link.className = "uploaded-product-link";
-    link.href = `./productView.php?id=${product.id}`;
+    link.href = `productView.php?id=${product.id}`;
     link.setAttribute("aria-label", `View ${product.title || "product"}`);
     link.appendChild(card);
 
@@ -120,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!userProducts) return;
 
     try {
-      const response = await fetch("./api/fetch_products.php");
+      const response = await fetch("../api/fetch_products.php");
       const products = await response.json();
 
       userProducts.innerHTML = "";
@@ -170,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  fetch("./api/api.php")
+  fetch("../api/api.php")
     .then((response) => response.json())
     .then((products) => {
       // Filter out invalid articles (errors)

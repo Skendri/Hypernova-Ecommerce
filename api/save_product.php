@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include './database.php';
+include __DIR__ . '/../config/database.php';
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
@@ -34,8 +34,8 @@ if ($imageCount < 1 || $imageCount > $maxImages) {
     exit();
 }
 
-if (!is_dir('uploads')) {
-    mkdir('uploads', 0777, true);
+if (!is_dir(__DIR__ . '/../assets/uploads')) {
+    mkdir(__DIR__ . '/../assets/uploads', 0777, true);
 }
 
 for ($i = 0; $i < $imageCount; $i++) {
@@ -57,7 +57,7 @@ for ($i = 0; $i < $imageCount; $i++) {
     }
 
     $imageName = time() . '_' . $i . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
-    $folder = 'uploads/' . $imageName;
+    $folder = __DIR__ . '/../assets/uploads/' . $imageName;
 
     if (!move_uploaded_file($tmpName, $folder)) {
         http_response_code(500);
@@ -65,7 +65,7 @@ for ($i = 0; $i < $imageCount; $i++) {
         exit();
     }
 
-    $uploadedImages[] = $folder;
+    $uploadedImages[] = '../assets/uploads/' . $imageName;
 }
 
 $imagesJson = json_encode($uploadedImages);

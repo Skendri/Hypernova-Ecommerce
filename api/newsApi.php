@@ -1,14 +1,14 @@
 <?php
 
 // Set the specific origin allowed to access this resource
-header("Access-Control-Allow-Origin: http://localhost/Hypernova-Ecommerce/feature.php");
+header("Access-Control-Allow-Origin: http://localhost/Hypernova-Ecommerce/pages/feature.php");
 
 // Tell caches that the response depends on the Origin header
 header("Vary: Origin");
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../config');
 $dotenv->load();
 
 $apiKey = $_ENV['API_KEY'];

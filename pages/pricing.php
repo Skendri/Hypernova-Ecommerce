@@ -1,10 +1,9 @@
 <?php
 session_start();
 if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
-include './components/navbar.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,10 +13,12 @@ include './components/navbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing - Sell Your Product</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="./css folder/pircing.css">
+    <link rel="stylesheet" href="../assets/css/pricing.css">
 </head>
 
 <body>
+    <?php include '../components/navbar.php'; ?>
+
     <div class="hero-section">
         <div class="container">
             <h1 class="hero-title">Sell Your Product</h1>
@@ -65,7 +66,7 @@ include './components/navbar.php';
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="./js folder/pircing.js"></script>
+    <script src="../assets/js/pricing.js"></script>
 </body>
 
 </html>

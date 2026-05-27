@@ -52,7 +52,7 @@ function loadMoreArticles() {
   startIndex += 10;
 }
 
-fetch("./api/newsApi.php")
+fetch("../api/newsApi.php")
   .then((response) => response.json())
   .then((data) => {
     console.log(data);

@@ -27,6 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     buyNow: document.getElementById("buyNow"),
   };
 
+  function normalizeImagePath(imagePath) {
+    if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+      return imagePath;
+    }
+
+    return imagePath
+      .replace(/^uploads\//, "../assets/uploads/")
+      .replace(/^assets\/uploads\//, "../assets/uploads/");
+  }
+
   function getProductImages(imageValue) {
     if (!imageValue) return ["https://placehold.co/900x900?text=Product"];
 
@@ -34,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const parsedImages = JSON.parse(imageValue);
 
       if (Array.isArray(parsedImages) && parsedImages.length > 0) {
-        return parsedImages;
+        return parsedImages.map(normalizeImagePath);
       }
     } catch (error) {
-      return [imageValue];
+      return [normalizeImagePath(imageValue)];
     }
 
-    return [imageValue];
+    return [normalizeImagePath(imageValue)];
   }
 
   function setControlsDisabled(isDisabled) {
@@ -193,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch("./api/fetch_products.php");
+      const response = await fetch("../api/fetch_products.php");
       const products = await response.json();
       const product = products.find((item) => String(item.id) === String(productId));
 

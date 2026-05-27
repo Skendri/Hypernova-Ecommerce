@@ -9,12 +9,12 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css folder/productView.css">
+    <link rel="stylesheet" href="../assets/css/productView.css">
     <title>Product Details | Hypernova</title>
 </head>
 
 <body>
-    <?php include './components/navbar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
 
     <main class="product-page">
         <section class="product-shell" aria-live="polite">
@@ -128,7 +128,7 @@ session_start();
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./js folder/productView.js"></script>
+    <script src="../assets/js/productView.js"></script>
 </body>
 
 </html>

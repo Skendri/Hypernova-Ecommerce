@@ -4,8 +4,8 @@
 # Vendor directory (optional - can be large)
 vendor/
 
-# images directory in database
-uploads/
+# uploaded product images
+assets/uploads/
 
 # Composer files (optional)
 # composer.phar

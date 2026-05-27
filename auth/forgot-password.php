@@ -1,5 +1,5 @@
 <?php
-include './database.php';
+include __DIR__ . '/../config/database.php';
 
 $message = "";
 $toastClass = "";
@@ -61,9 +61,9 @@ $toastClass = "";
             </div>
             <div class="col mb-2 mt-4">
                 <p class="text-center" style="font-weight: 600;
-                color: navy;"><a href="./register.php"
+                color: navy;"><a href="register.php"
                         style="text-decoration: none;">
-                        Create Account</a> OR <a href="./login.php"
+                        Create Account</a> OR <a href="login.php"
                         style="text-decoration: none;">Login</a></p>
             </div>
         </form>

@@ -3,6 +3,16 @@ const grid = document.getElementById("productsGrid");
 const imageInput = document.getElementById("imageInput");
 const previewContainer = document.getElementById("previewContainer");
 
+function normalizeImagePath(imagePath) {
+  if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+    return imagePath;
+  }
+
+  return imagePath
+    .replace(/^uploads\//, "../assets/uploads/")
+    .replace(/^assets\/uploads\//, "../assets/uploads/");
+}
+
 // IMAGE PREVIEW
 imageInput.addEventListener("change", function () {
   previewContainer.innerHTML = "";
@@ -38,18 +48,18 @@ function getProductImages(imageValue) {
     const parsedImages = JSON.parse(imageValue);
 
     if (Array.isArray(parsedImages) && parsedImages.length > 0) {
-      return parsedImages;
+      return parsedImages.map(normalizeImagePath);
     }
   } catch (error) {
-    return [imageValue];
+    return [normalizeImagePath(imageValue)];
   }
 
-  return [imageValue];
+  return [normalizeImagePath(imageValue)];
 }
 
 // LOAD PRODUCTS
 async function loadProducts() {
-  const response = await fetch("./api/fetch_products.php?scope=mine");
+  const response = await fetch("../api/fetch_products.php?scope=mine");
 
   const products = await response.json();
 
@@ -82,7 +92,7 @@ async function loadProducts() {
 
             <div class="col-lg-3 col-md-6">
 
-                <a class="product-detail-link" href="./productView.php?id=${product.id}" aria-label="View ${product.title}">
+                <a class="product-detail-link" href="productView.php?id=${product.id}" aria-label="View ${product.title}">
                 <div class="product-card h-100">
 
                     <img src="${mainImage}" class="product-img" alt="${product.title}">
@@ -148,7 +158,7 @@ form.addEventListener("submit", async function (e) {
 
   const formData = new FormData(form);
 
-  const response = await fetch("save_product.php", {
+  const response = await fetch("../api/save_product.php", {
     method: "POST",
     body: formData,
   });

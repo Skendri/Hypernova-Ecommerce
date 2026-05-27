@@ -1,6 +1,6 @@
 <?php
 
-include './database.php';
+include __DIR__ . '/../config/database.php';
 
 $email = $_POST["email"];
 
@@ -10,7 +10,7 @@ $token_hash = hash("sha256", $token);
 
 $expiry = date("Y-m-d H:i:s", time() + 60 * 30);
 
-require __DIR__ . "/mailer.php";
+require __DIR__ . "/../mailer.php";
 
 $sql = "UPDATE userdata
         SET reset_token_hash = ?,
@@ -33,7 +33,7 @@ if ($linkConnect->affected_rows) {
     $mail->SMTPSecure = "tls";
     $mail->Body = <<<END
 
-    Click <a href="http://localhost/Hypernova-Ecommerce/resetpassword.php?token=$token">here</a>
+    Click <a href="http://localhost/Hypernova-Ecommerce/auth/resetpassword.php?token=$token">here</a>
     to reset your password.
 
     END;
