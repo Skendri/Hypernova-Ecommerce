@@ -1,0 +1,61 @@
+<?php
+session_start();
+
+include __DIR__ . '/../config/database.php';
+
+header('Content-Type: application/json');
+
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Please log in to view your dashboard.']);
+    exit();
+}
+
+$userId = (int) $_SESSION['user_id'];
+
+$stmt = $linkConnect->prepare(
+    "SELECT id, title, description, price, category, image, phone, created_at
+    FROM products
+    WHERE user_id = ?
+    ORDER BY id DESC"
+);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$products = [];
+$totalValue = 0;
+$categoryTotals = [];
+$monthlyTotals = [];
+$latestDate = null;
+
+while ($row = $result->fetch_assoc()) {
+    $price = (float) $row['price'];
+    $category = $row['category'] ?: 'Uncategorized';
+    $createdAt = $row['created_at'] ?? null;
+    $monthKey = $createdAt ? date('M Y', strtotime($createdAt)) : 'No date';
+
+    $totalValue += $price;
+    $categoryTotals[$category] = ($categoryTotals[$category] ?? 0) + 1;
+    $monthlyTotals[$monthKey] = ($monthlyTotals[$monthKey] ?? 0) + 1;
+
+    if ($createdAt && (!$latestDate || strtotime($createdAt) > strtotime($latestDate))) {
+        $latestDate = $createdAt;
+    }
+
+    $products[] = $row;
+}
+
+$averagePrice = count($products) ? $totalValue / count($products) : 0;
+
+echo json_encode([
+    'summary' => [
+        'total_products' => count($products),
+        'total_value' => round($totalValue, 2),
+        'average_price' => round($averagePrice, 2),
+        'latest_listing' => $latestDate,
+    ],
+    'categories' => $categoryTotals,
+    'monthly' => $monthlyTotals,
+    'products' => $products,
+]);
