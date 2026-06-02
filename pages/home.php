@@ -32,7 +32,7 @@ if (isset($_SESSION["user_id"])) {
 
     <!-- fillimi i kontentit te faqes -->
     <div>
-        <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo $_SESSION['email']; ?> </h2>
+        <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo  htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?> </h2>
     </div>
 
     <div class="container my-5">

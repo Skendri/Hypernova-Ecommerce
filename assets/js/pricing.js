@@ -1,117 +1,211 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("productForm");
-  const grid = document.getElementById("productsGrid");
-  let products = JSON.parse(sessionStorage.getItem("products") || "[]");
+const blogForm = document.getElementById("blogForm");
+const postsGrid = document.getElementById("postsGrid");
+const coverInput = document.getElementById("coverImage");
+const coverPreview = document.getElementById("coverPreview");
+const formMessage = document.getElementById("formMessage");
+const publishButton = document.getElementById("publishButton");
+const statusInput = document.getElementById("status");
+const refreshPosts = document.getElementById("refreshPosts");
+const titleInput = document.getElementById("title");
+const excerptInput = document.getElementById("excerpt");
+const titleCount = document.getElementById("titleCount");
+const excerptCount = document.getElementById("excerptCount");
+const postCount = document.getElementById("postCount");
 
-  // Render products
-  function renderProducts() {
-    grid.innerHTML = "";
-    products.forEach((product, index) => {
-      const col = document.createElement("div");
-      col.className = "col";
-      col.innerHTML = `
-                <div class="product-card h-100">
-                    <div id="productCarousel${index}" class="carousel slide h-100" data-bs-ride="carousel">
-                        <div class="carousel-inner h-100">
-                            ${product.images
-                              .map(
-                                (img, i) => `
-                                <div class="carousel-item ${i === 0 ? "active" : ""}">
-                                    <img src="${img}" class="d-block w-100 product-img" alt="Product image">
-                                </div>
-                            `,
-                              )
-                              .join("")}
-                        </div>
-                        ${
-                          product.images.length > 1
-                            ? `
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel${index}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel${index}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>`
-                            : ""
-                        }
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">${product.title}</h5>
-                        <p class="card-text">${product.description}</p>
-                        <div class="d-flex align-items-center justify-content-between gap-2">
-                            <small class="text-muted">Posted: ${product.date}</small>
-                        </div>
-                        <div class="mt-1">
-                            <strong class="text-primary">$${Number(product.price).toFixed(2)}</strong>
-                        </div>
-                        <button class="btn btn-danger btn-sm mt-2 delete-btn" data-index="${index}">Delete</button>
-                    </div>
-                </div>
-            `;
-      grid.appendChild(col);
-    });
+const fallbackImage = "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
 
-    // Add delete listeners
-    document.querySelectorAll(".delete-btn").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        const index = parseInt(this.dataset.index);
-        products.splice(index, 1);
-        sessionStorage.setItem("products", JSON.stringify(products));
-        renderProducts();
-      });
-    });
+function setMessage(message, type) {
+  formMessage.textContent = message;
+  formMessage.className = `form-message is-${type}`;
+}
+
+function clearMessage() {
+  formMessage.textContent = "";
+  formMessage.className = "form-message";
+}
+
+function updateCounters() {
+  titleCount.textContent = titleInput.value.length;
+  excerptCount.textContent = excerptInput.value.length;
+}
+
+function normalizeImagePath(imagePath) {
+  if (!imagePath) return fallbackImage;
+  if (imagePath.startsWith("http") || imagePath.startsWith("data:")) return imagePath;
+
+  return imagePath
+    .replace(/^uploads\//, "../assets/uploads/")
+    .replace(/^assets\/uploads\//, "../assets/uploads/");
+}
+
+function formatDate(dateValue) {
+  const date = new Date(dateValue.replace(" ", "T"));
+
+  if (Number.isNaN(date.getTime())) {
+    return dateValue;
   }
 
-  // Form submit
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const title = document.getElementById("title").value.trim();
-    const description = document.getElementById("description").value.trim();
-    const priceValue = document.getElementById("price").value;
-    const price = Number(priceValue);
-    const files = document.getElementById("images").files;
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
-    if (!title || description.length < 10) {
-      alert("Title required, description min 10 chars");
+function createPostCard(post) {
+  const article = document.createElement("article");
+  article.className = "post-card";
+
+  const image = document.createElement("img");
+  image.src = normalizeImagePath(post.cover_image);
+  image.alt = post.title || "Blog post cover";
+
+  const body = document.createElement("div");
+  body.className = "post-card-body";
+
+  const meta = document.createElement("div");
+  meta.className = "post-meta";
+
+  const status = document.createElement("span");
+  status.className = `status-badge ${post.status}`;
+  status.textContent = post.status;
+
+  const date = document.createElement("span");
+  date.className = "post-date";
+  date.textContent = formatDate(post.created_at);
+
+  const title = document.createElement("h3");
+  title.textContent = post.title;
+
+  const excerpt = document.createElement("p");
+  excerpt.textContent = post.excerpt;
+
+  const author = document.createElement("div");
+  author.className = "post-author";
+  author.textContent = `By ${post.author_name}`;
+
+  meta.append(status, date);
+  body.append(meta, title, excerpt, author);
+  article.append(image, body);
+
+  return article;
+}
+
+async function loadPosts() {
+  postsGrid.innerHTML = '<div class="empty-state">Loading posts...</div>';
+
+  try {
+    const response = await fetch("../api/fetch_blog_posts.php?scope=mine");
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Could not load blog posts.");
+    }
+
+    postCount.textContent = data.length;
+    postsGrid.innerHTML = "";
+
+    if (data.length === 0) {
+      postsGrid.innerHTML = `
+        <div class="empty-state">
+          <h3>No posts yet</h3>
+          <p>Write your first blog post and it will appear here.</p>
+        </div>
+      `;
       return;
     }
-    if (files.length === 0 || files.length > 5) {
-      alert("1-5 images required");
-      return;
-    }
 
-    const imagePromises = Array.from(files).map((file) => {
-      return new Promise((resolve, reject) => {
-        if (file.size > 2 * 1024 * 1024) {
-          reject("Image too large");
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+    data.forEach((post) => {
+      postsGrid.appendChild(createPostCard(post));
+    });
+  } catch (error) {
+    postsGrid.innerHTML = `<div class="empty-state">${error.message}</div>`;
+  }
+}
+
+coverInput.addEventListener("change", function () {
+  clearMessage();
+  coverPreview.innerHTML = "";
+  coverPreview.hidden = true;
+
+  const file = this.files[0];
+
+  if (!file) return;
+
+  if (file.size > 3 * 1024 * 1024) {
+    setMessage("Cover image must be 3MB or smaller.", "error");
+    this.value = "";
+    return;
+  }
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+  if (!allowedTypes.includes(file.type)) {
+    setMessage("Only JPG, PNG, GIF, and WEBP cover images are allowed.", "error");
+    this.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    const image = document.createElement("img");
+    image.src = event.target.result;
+    image.alt = file.name;
+    coverPreview.appendChild(image);
+    coverPreview.hidden = false;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+statusInput.addEventListener("change", function () {
+  publishButton.textContent = this.value === "draft" ? "Save Draft" : "Publish Post";
+});
+
+titleInput.addEventListener("input", updateCounters);
+excerptInput.addEventListener("input", updateCounters);
+refreshPosts.addEventListener("click", loadPosts);
+
+blogForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  clearMessage();
+
+  const content = document.getElementById("content").value.trim();
+
+  if (content.length < 50) {
+    setMessage("Post content must be at least 50 characters.", "error");
+    return;
+  }
+
+  publishButton.disabled = true;
+  publishButton.textContent = statusInput.value === "draft" ? "Saving..." : "Publishing...";
+
+  try {
+    const response = await fetch("../api/save_blog_post.php", {
+      method: "POST",
+      body: new FormData(blogForm),
     });
 
-    Promise.all(imagePromises)
-      .then((images) => {
-        const product = {
-          id: Date.now() + Math.random(),
-          title,
-          description,
-          price,
-          date: new Date().toLocaleString(),
-          images,
-        };
-        products.push(product);
-        sessionStorage.setItem("products", JSON.stringify(products));
-        form.reset();
-        renderProducts();
-        alert("Product listed successfully!");
-      })
-      .catch((err) => alert("Error: " + err));
-  });
+    const data = await response.json();
 
-  // Initial render
-  renderProducts();
+    if (!response.ok) {
+      throw new Error(data.message || "Could not save this blog post.");
+    }
+
+    setMessage(data.message, "success");
+    blogForm.reset();
+    coverPreview.innerHTML = "";
+    coverPreview.hidden = true;
+    updateCounters();
+    await loadPosts();
+  } catch (error) {
+    setMessage(error.message, "error");
+  } finally {
+    publishButton.disabled = false;
+    publishButton.textContent = statusInput.value === "draft" ? "Save Draft" : "Publish Post";
+  }
 });
+
+updateCounters();
+loadPosts();
