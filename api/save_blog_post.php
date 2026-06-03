@@ -5,10 +5,15 @@ header('Content-Type: application/json');
 
 include __DIR__ . '/../config/database.php';
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['message' => 'Please log in before publishing a blog post.']);
+function sendJsonResponse(int $statusCode, string $message, array $extra = []): void
+{
+    http_response_code($statusCode);
+    echo json_encode(array_merge(['message' => $message], $extra));
     exit();
+}
+
+if (!isset($_SESSION['user_id'])) {
+    sendJsonResponse(401, 'Please log in before publishing a blog post.');
 }
 
 $createTableSql = "
@@ -27,7 +32,9 @@ $createTableSql = "
     )
 ";
 
-$linkConnect->query($createTableSql);
+if (!$linkConnect->query($createTableSql)) {
+    sendJsonResponse(500, 'Could not create blog_posts table: ' . $linkConnect->error);
+}
 
 $userId = (int) $_SESSION['user_id'];
 $title = trim($_POST['title'] ?? '');
@@ -38,21 +45,15 @@ $allowedStatuses = ['draft', 'published'];
 $coverImagePath = null;
 
 if ($title === '' || strlen($title) > 160) {
-    http_response_code(400);
-    echo json_encode(['message' => 'Title is required and must be 160 characters or fewer.']);
-    exit();
+    sendJsonResponse(400, 'Title is required and must be 160 characters or fewer.');
 }
 
 if ($excerpt === '' || strlen($excerpt) > 255) {
-    http_response_code(400);
-    echo json_encode(['message' => 'Excerpt is required and must be 255 characters or fewer.']);
-    exit();
+    sendJsonResponse(400, 'Excerpt is required and must be 255 characters or fewer.');
 }
 
 if (strlen($content) < 50) {
-    http_response_code(400);
-    echo json_encode(['message' => 'Post content must be at least 50 characters.']);
-    exit();
+    sendJsonResponse(400, 'Post content must be at least 50 characters.');
 }
 
 if (!in_array($status, $allowedStatuses, true)) {
@@ -61,15 +62,11 @@ if (!in_array($status, $allowedStatuses, true)) {
 
 if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] !== UPLOAD_ERR_NO_FILE) {
     if ($_FILES['cover_image']['error'] !== UPLOAD_ERR_OK) {
-        http_response_code(400);
-        echo json_encode(['message' => 'The cover image could not be uploaded.']);
-        exit();
+        sendJsonResponse(400, 'The cover image could not be uploaded.');
     }
 
     if ($_FILES['cover_image']['size'] > 3 * 1024 * 1024) {
-        http_response_code(400);
-        echo json_encode(['message' => 'Cover image must be 3MB or smaller.']);
-        exit();
+        sendJsonResponse(400, 'Cover image must be 3MB or smaller.');
     }
 
     $fileInfo = pathinfo($_FILES['cover_image']['name']);
@@ -77,24 +74,22 @@ if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] !== UPLOAD_
     $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
     if (!in_array($extension, $allowedExtensions, true)) {
-        http_response_code(400);
-        echo json_encode(['message' => 'Only JPG, PNG, GIF, and WEBP cover images are allowed.']);
-        exit();
+        sendJsonResponse(400, 'Only JPG, PNG, GIF, and WEBP cover images are allowed.');
     }
 
     $uploadDir = __DIR__ . '/../assets/uploads/blog';
 
     if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+        if (!mkdir($uploadDir, 0777, true)) {
+            sendJsonResponse(500, 'Could not create the blog uploads folder.');
+        }
     }
 
     $imageName = time() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
     $imageTarget = $uploadDir . '/' . $imageName;
 
     if (!move_uploaded_file($_FILES['cover_image']['tmp_name'], $imageTarget)) {
-        http_response_code(500);
-        echo json_encode(['message' => 'Could not save the cover image.']);
-        exit();
+        sendJsonResponse(500, 'Could not save the cover image.');
     }
 
     $coverImagePath = '../assets/uploads/blog/' . $imageName;
@@ -105,8 +100,15 @@ $stmt = $linkConnect->prepare(
      VALUES (?, ?, ?, ?, ?, ?)"
 );
 
+if (!$stmt) {
+    sendJsonResponse(500, 'Could not prepare blog post insert: ' . $linkConnect->error);
+}
+
 $stmt->bind_param('isssss', $userId, $title, $excerpt, $content, $coverImagePath, $status);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    sendJsonResponse(500, 'Could not save blog post: ' . $stmt->error);
+}
 
 echo json_encode([
     'message' => $status === 'draft' ? 'Draft saved successfully.' : 'Blog post published successfully.',

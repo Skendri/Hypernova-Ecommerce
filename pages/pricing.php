@@ -116,7 +116,7 @@ if (!isset($_SESSION["user_id"])) {
         </section>
     </main>
 
-    <script src="../assets/js/pricing.js"></script>
+    <script src="../assets/js/pricing.js?v=blog-posts-2"></script>
 </body>
 
 </html>

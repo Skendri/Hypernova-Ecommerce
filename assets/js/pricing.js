@@ -95,8 +95,10 @@ async function loadPosts() {
   postsGrid.innerHTML = '<div class="empty-state">Loading posts...</div>';
 
   try {
-    const response = await fetch("../api/fetch_blog_posts.php?scope=mine");
-    const data = await response.json();
+    const response = await fetch("../api/fetch_blog_posts.php?scope=mine", {
+      credentials: "same-origin",
+    });
+    const data = await readApiResponse(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Could not load blog posts.");
@@ -184,10 +186,11 @@ blogForm.addEventListener("submit", async function (event) {
   try {
     const response = await fetch("../api/save_blog_post.php", {
       method: "POST",
+      credentials: "same-origin",
       body: new FormData(blogForm),
     });
 
-    const data = await response.json();
+    const data = await readApiResponse(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Could not save this blog post.");
@@ -209,3 +212,15 @@ blogForm.addEventListener("submit", async function (event) {
 
 updateCounters();
 loadPosts();
+
+async function readApiResponse(response) {
+  const responseText = await response.text();
+
+  try {
+    return JSON.parse(responseText);
+  } catch (error) {
+    return {
+      message: responseText.trim() || "The server returned an unreadable response.",
+    };
+  }
+}

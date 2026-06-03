@@ -35,6 +35,8 @@ if (isset($_SESSION["user_id"])) {
         <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo  htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?> </h2>
     </div>
 
+    <div id="news-post"></div>
+
     <div class="container my-5">
         <h3 class="mb-4">Products from sellers</h3>
         <div id="user-products" class="row g-4"></div>
@@ -60,7 +62,7 @@ if (isset($_SESSION["user_id"])) {
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
-    <script src="../assets/js/home.js"></script>
+    <script src="../assets/js/home.js?v=blog-posts-2"></script>
 </body>
 
 </html>

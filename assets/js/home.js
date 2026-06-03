@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const userProducts = document.getElementById("user-products");
+  const newsPost = document.getElementById("news-post");
 
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
@@ -9,7 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function normalizeImagePath(imagePath) {
-    if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+    if (
+      !imagePath ||
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("data:")
+    ) {
       return imagePath;
     }
 
@@ -17,6 +22,126 @@ document.addEventListener("DOMContentLoaded", function () {
       .replace(/^uploads\//, "../assets/uploads/")
       .replace(/^assets\/uploads\//, "../assets/uploads/");
   }
+
+  // the logic to display news that are created from users in pricing.php to displayed in home.php
+
+  function getBlogImage(imagePath) {
+    return (
+      normalizeImagePath(imagePath) ||
+      "https://placehold.co/900x520?text=Blog+Post"
+    );
+  }
+
+  function formatBlogDate(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue.replace(" ", "T"));
+
+    if (Number.isNaN(date.getTime())) {
+      return dateValue;
+    }
+
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function createBlogPostCard(post) {
+    const card = document.createElement("article");
+    card.className = "home-blog-card";
+
+    const image = document.createElement("img");
+    image.className = "home-blog-img";
+    image.src = getBlogImage(post.cover_image);
+    image.alt = post.title || "Blog post cover";
+
+    const body = document.createElement("div");
+    body.className = "home-blog-body";
+
+    const meta = document.createElement("div");
+    meta.className = "home-blog-meta";
+    meta.appendChild(
+      createTextElement(
+        "span",
+        "home-blog-author",
+        post.author_name || "Unknown author",
+      ),
+    );
+
+    if (post.created_at) {
+      meta.appendChild(
+        createTextElement(
+          "span",
+          "home-blog-date",
+          formatBlogDate(post.created_at),
+        ),
+      );
+    }
+
+    body.appendChild(meta);
+    body.appendChild(
+      createTextElement("h4", "home-blog-title", post.title || "Untitled post"),
+    );
+    body.appendChild(
+      createTextElement("p", "home-blog-excerpt", post.excerpt || ""),
+    );
+
+    card.appendChild(image);
+    card.appendChild(body);
+
+    return card;
+  }
+
+  async function loadBlogPosts() {
+    if (!newsPost) return;
+
+    newsPost.innerHTML = `
+      <section class="container my-5">
+        <div class="home-blog-heading">
+          <div>
+            <p class="home-blog-eyebrow">Latest posts</p>
+            <h3>News from sellers</h3>
+          </div>
+          <a class="btn btn-outline-primary" href="pricing.php">Create post</a>
+        </div>
+        <div class="home-blog-grid" id="home-blog-grid">
+          <div class="home-blog-empty">Loading posts...</div>
+        </div>
+      </section>
+    `;
+
+    const blogGrid = document.getElementById("home-blog-grid");
+
+    try {
+      const response = await fetch("../api/fetch_blog_posts.php?scope=published", {
+        credentials: "same-origin",
+      });
+      const posts = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(posts.message || "Could not load blog posts.");
+      }
+
+      blogGrid.innerHTML = "";
+
+      if (!Array.isArray(posts) || posts.length === 0) {
+        blogGrid.innerHTML =
+          '<div class="home-blog-empty">No published blog posts yet.</div>';
+        return;
+      }
+
+      posts.slice(0, 6).forEach((post) => {
+        blogGrid.appendChild(createBlogPostCard(post));
+      });
+    } catch (error) {
+      console.error("Error loading blog posts:", error);
+      blogGrid.innerHTML =
+        `<div class="home-blog-empty">${error.message}</div>`;
+    }
+  }
+  // the END of logic to display news that are created from users in pricing.php to displayed in home.php
 
   function getProductImage(imageValue) {
     if (!imageValue) return "https://placehold.co/600x400?text=Product";
@@ -157,7 +282,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // function product to sell
   loadUploadedProducts();
+  // function for news created
+  loadBlogPosts();
+
+  async function readApiResponse(response) {
+    const responseText = await response.text();
+
+    try {
+      return JSON.parse(responseText);
+    } catch (error) {
+      return {
+        message:
+          responseText.trim() || "The server returned an unreadable response.",
+      };
+    }
+  }
 
   // API per e-eccommerce products
   const containerItems = document.querySelector(".wrapper");

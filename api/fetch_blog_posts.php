@@ -5,6 +5,13 @@ header('Content-Type: application/json');
 
 include __DIR__ . '/../config/database.php';
 
+function sendJsonResponse(int $statusCode, string $message): void
+{
+    http_response_code($statusCode);
+    echo json_encode(['message' => $message]);
+    exit();
+}
+
 $createTableSql = "
     CREATE TABLE IF NOT EXISTS blog_posts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,16 +28,16 @@ $createTableSql = "
     )
 ";
 
-$linkConnect->query($createTableSql);
+if (!$linkConnect->query($createTableSql)) {
+    sendJsonResponse(500, 'Could not create blog_posts table: ' . $linkConnect->error);
+}
 
 $scope = $_GET['scope'] ?? 'published';
 $posts = [];
 
 if ($scope === 'mine') {
     if (!isset($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['message' => 'Please log in to view your posts.']);
-        exit();
+        sendJsonResponse(401, 'Please log in to view your posts.');
     }
 
     $stmt = $linkConnect->prepare(
@@ -54,8 +61,16 @@ if ($scope === 'mine') {
     );
 }
 
-$stmt->execute();
+if (!$stmt) {
+    sendJsonResponse(500, 'Could not prepare blog posts query: ' . $linkConnect->error);
+}
+
+$stmt->execute() || sendJsonResponse(500, 'Could not load blog posts: ' . $stmt->error);
 $result = $stmt->get_result();
+
+if (!$result) {
+    sendJsonResponse(500, 'Could not read blog posts result: ' . $stmt->error);
+}
 
 while ($row = $result->fetch_assoc()) {
     $posts[] = $row;
