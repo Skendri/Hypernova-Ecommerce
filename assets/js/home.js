@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const userProducts = document.getElementById("user-products");
   const newsPost = document.getElementById("news-post");
+  const apiAnotherPage = document.getElementById("api-anotherPage");
 
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
@@ -115,9 +116,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const blogGrid = document.getElementById("home-blog-grid");
 
     try {
-      const response = await fetch("../api/fetch_blog_posts.php?scope=published", {
-        credentials: "same-origin",
-      });
+      const response = await fetch(
+        "../api/fetch_blog_posts.php?scope=published",
+        {
+          credentials: "same-origin",
+        },
+      );
       const posts = await readApiResponse(response);
 
       if (!response.ok) {
@@ -137,8 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     } catch (error) {
       console.error("Error loading blog posts:", error);
-      blogGrid.innerHTML =
-        `<div class="home-blog-empty">${error.message}</div>`;
+      blogGrid.innerHTML = `<div class="home-blog-empty">${error.message}</div>`;
     }
   }
   // the END of logic to display news that are created from users in pricing.php to displayed in home.php
@@ -286,6 +289,128 @@ document.addEventListener("DOMContentLoaded", function () {
   loadUploadedProducts();
   // function for news created
   loadBlogPosts();
+  // function for world news api preview
+  loadWorldNewsPreview();
+
+  function isValidWorldNewsArticle(article) {
+    return (
+      article.urlToImage &&
+      article.urlToImage.trim() !== "" &&
+      article.title &&
+      article.title.trim() !== "" &&
+      article.description &&
+      article.description.trim() !== "" &&
+      article.url &&
+      article.url.trim() !== ""
+    );
+  }
+
+  function formatWorldNewsDate(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return dateValue;
+    }
+
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function createWorldNewsPreviewCard(article) {
+    const card = document.createElement("article");
+    card.className = "home-api-card";
+
+    const link = document.createElement("a");
+    link.className = "home-api-link";
+    link.href = article.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    const image = document.createElement("img");
+    image.className = "home-api-img";
+    image.src = article.urlToImage;
+    image.alt = article.title || "World news image";
+
+    const body = document.createElement("div");
+    body.className = "home-api-body";
+
+    const source = article.source?.name || "World news";
+    body.appendChild(createTextElement("span", "home-api-source", source));
+    body.appendChild(
+      createTextElement("h4", "home-api-title", article.title || "Untitled"),
+    );
+    body.appendChild(
+      createTextElement("p", "home-api-description", article.description || ""),
+    );
+
+    if (article.publishedAt) {
+      body.appendChild(
+        createTextElement(
+          "small",
+          "home-api-date",
+          formatWorldNewsDate(article.publishedAt),
+        ),
+      );
+    }
+
+    link.appendChild(image);
+    link.appendChild(body);
+    card.appendChild(link);
+
+    return card;
+  }
+
+  async function loadWorldNewsPreview() {
+    if (!apiAnotherPage) return;
+
+    apiAnotherPage.innerHTML = `
+      <div class="home-api-heading">
+        <div>
+          <p class="home-api-eyebrow">World news</p>
+          <h3>Latest API stories</h3>
+        </div>
+        <a class="btn btn-primary" href="worldNews.php">See all news</a>
+      </div>
+      <div class="home-api-grid" id="home-api-grid">
+        <div class="home-api-empty">Loading world news...</div>
+      </div>
+    `;
+
+    const apiGrid = document.getElementById("home-api-grid");
+
+    try {
+      const response = await fetch("../api/api.php");
+      const data = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not load world news.");
+      }
+
+      const articles = Array.isArray(data.articles)
+        ? data.articles.filter(isValidWorldNewsArticle)
+        : [];
+
+      apiGrid.innerHTML = "";
+
+      if (articles.length === 0) {
+        apiGrid.innerHTML =
+          '<div class="home-api-empty">No world news articles available.</div>';
+        return;
+      }
+
+      articles.slice(0, 4).forEach((article) => {
+        apiGrid.appendChild(createWorldNewsPreviewCard(article));
+      });
+    } catch (error) {
+      console.error("Error loading world news preview:", error);
+      apiGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
+    }
+  }
 
   async function readApiResponse(response) {
     const responseText = await response.text();
@@ -299,99 +424,4 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     }
   }
-
-  // API per e-eccommerce products
-  const containerItems = document.querySelector(".wrapper");
-  let LoadMoreButton = document.getElementById("load-more");
-
-  // sa items do te shfaqen ne fillim
-  let initialItems = 8;
-  // sa items jane gjithsej ne total te futu brenda arrayt
-  let loadItems = [];
-
-  // Function to validate article (check for errors like missing image/text/desc)
-  function isValidArticle(product) {
-    return (
-      product.urlToImage &&
-      product.urlToImage.trim() !== "" &&
-      product.title &&
-      product.title.trim() !== "" &&
-      product.description &&
-      product.description.trim() !== ""
-    );
-  }
-
-  fetch("../api/api.php")
-    .then((response) => response.json())
-    .then((products) => {
-      // Filter out invalid articles (errors)
-      console.log("Fetched products:", products.articles);
-      loadItems = products.articles.filter(isValidArticle);
-      console.log("Total articles fetched:", products.articles.length);
-      console.log(
-        `Filtered ${loadItems.length} valid articles out of ${products.articles.length}`,
-      );
-      // console.log(loadItems);
-      // Shfaqim produktet e para
-      renderInitial();
-    })
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-    });
-
-  function cardProduct(product) {
-    return `
-                     <div class="col" id="${product.source.id}">
-                            <a class="p-3" href="${product.url}" target="_blank">
-                                <div class="card" style="width: 18rem;">
-                                    <img src="${product.urlToImage}" class="card-img-top" alt="">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.title}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                    </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">${product.author}</li>
-                                            <li class="list-group-item">${product.publishedAt}</li>
-                                            <li class="list-group-item">Example</li>
-                                        </ul>
-                                        <div class="card-body">
-                                            <a href="#" class="card-link">${product.content}</a>
-                                            <a href="#" class="card-link">${product.source.name}</a>
-                                        </div>
-                                </div>
-                            </a>
-                        </div>`;
-  }
-
-  // 3. RENDER FILLIMI (8 produktet e para)
-  function renderInitial() {
-    const firstItems = loadItems.slice(0, initialItems);
-
-    firstItems.forEach((product) => {
-      containerItems.innerHTML += cardProduct(product);
-    });
-  }
-  // API per e-eccommerce products
-
-  // 4. LOAD MORE (shton vetem te rinjte)
-  function loadMore() {
-    let start = initialItems;
-    let end = initialItems + 8;
-
-    let nextItems = loadItems.slice(start, end);
-
-    nextItems.forEach((product) => {
-      containerItems.innerHTML += cardProduct(product);
-    });
-
-    initialItems = end;
-
-    // fsheh butonin kur mbarojne produktet
-    if (initialItems >= loadItems.length) {
-      LoadMoreButton.style.display = "none";
-    }
-  }
-
-  // 5. EVENT BUTTON
-  LoadMoreButton.addEventListener("click", loadMore);
 }); // DOMContentLoaded event listener

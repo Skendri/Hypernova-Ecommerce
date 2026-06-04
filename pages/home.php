@@ -42,20 +42,8 @@ if (isset($_SESSION["user_id"])) {
         <div id="user-products" class="row g-4"></div>
     </div>
 
-    <div class="container text-center">
-        <div class="row wrapper row-cols-4">
-            <!-- all cards here -->
-
-            <!-- all cards here -->
-        </div>
-        <!-- butoni load more dhe spinner -->
-        <button type="button" id="load-more" class="btn btn-outline-primary btn-lg">Load more...</button>
-        <div class="text-center">
-
-            <div class="visually-hidden spinner-border me-2 my-3" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+    <div class="container my-5">
+        <div id="api-anotherPage"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

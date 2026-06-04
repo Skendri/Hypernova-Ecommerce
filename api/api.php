@@ -1,7 +1,7 @@
 <?php
 
 // Set the specific origin allowed to access this resource
-header("Access-Control-Allow-Origin: http://localhost/Hypernova-Ecommerce/pages/home.php");
+header("Access-Control-Allow-Origin: http://localhost/Hypernova-Ecommerce/pages/worldNews.php");
 
 // Tell caches that the response depends on the Origin header
 header("Vary: Origin");

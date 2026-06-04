@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/worldNews.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <?php include '../components/navbar.php'; ?>
+
+    <div class="container text-center">
+        <div class="row wrapper row-cols-4">
+            <!-- all cards here -->
+
+            <!-- all cards here -->
+        </div>
+        <!-- butoni load more dhe spinner -->
+        <button type="button" id="load-more" class="btn btn-outline-primary btn-lg">Load more...</button>
+        <div class="text-center">
+
+            <div class="visually-hidden spinner-border me-2 my-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous">
+    </script>
+    <script src="../assets/js/worldNews.js"></script>
+
+</body>
+
+</html>
