@@ -46,6 +46,10 @@ if (isset($_SESSION["user_id"])) {
         <div id="api-anotherPage"></div>
     </div>
 
+    <div class="container my-5">
+        <div id="apple-api"></div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">

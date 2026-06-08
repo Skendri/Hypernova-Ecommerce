@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const userProducts = document.getElementById("user-products");
   const newsPost = document.getElementById("news-post");
   const apiAnotherPage = document.getElementById("api-anotherPage");
+  const appleApi = document.getElementById("apple-api");
 
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
@@ -287,11 +288,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // function product to sell
   loadUploadedProducts();
-  // function for news created
+  // function for blog created
   loadBlogPosts();
   // function for world news api preview
   loadWorldNewsPreview();
+  // function for apple news api preview
+  loadAppleNewsPreview();
 
+  // reklamimi i 4 lajmeve te para
   function isValidWorldNewsArticle(article) {
     return (
       article.urlToImage &&
@@ -411,6 +415,112 @@ document.addEventListener("DOMContentLoaded", function () {
       apiGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
     }
   }
+
+  // reklamimi i 4 lajmeve te para per Apple Api
+  function isValidAppleNewsArticle(article) {
+    return (
+      article.urlToImage &&
+      article.urlToImage.trim() !== "" &&
+      article.title &&
+      article.title.trim() !== "" &&
+      article.description &&
+      article.description.trim() !== "" &&
+      article.url &&
+      article.url.trim() !== ""
+    );
+  }
+
+  function createAppleNewsPreviewCard(article) {
+    const card = document.createElement("article");
+    card.className = "home-api-card";
+
+    const link = document.createElement("a");
+    link.className = "home-api-link";
+    link.href = article.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    const image = document.createElement("img");
+    image.className = "home-api-img";
+    image.src = article.urlToImage;
+    image.alt = article.title || "Apple news image";
+
+    const body = document.createElement("div");
+    body.className = "home-api-body";
+
+    const source = article.source?.name || "Apple news";
+    body.appendChild(createTextElement("span", "home-api-source", source));
+    body.appendChild(
+      createTextElement("h4", "home-api-title", article.title || "Untitled"),
+    );
+    body.appendChild(
+      createTextElement("p", "home-api-description", article.description || ""),
+    );
+
+    if (article.publishedAt) {
+      body.appendChild(
+        createTextElement(
+          "small",
+          "home-api-date",
+          formatWorldNewsDate(article.publishedAt),
+        ),
+      );
+    }
+
+    link.appendChild(image);
+    link.appendChild(body);
+    card.appendChild(link);
+
+    return card;
+  }
+
+  async function loadAppleNewsPreview() {
+    if (!appleApi) return;
+
+    appleApi.innerHTML = `
+      <div class="home-api-heading">
+        <div>
+          <p class="home-api-eyebrow">Apple news</p>
+          <h3>Latest Apple stories</h3>
+        </div>
+        <a class="btn btn-primary" href="feature.php">See all news</a>
+      </div>
+      <div class="home-api-grid" id="home-apple-api-grid">
+        <div class="home-api-empty">Loading Apple news...</div>
+      </div>
+    `;
+
+    const appleGrid = document.getElementById("home-apple-api-grid");
+
+    try {
+      const response = await fetch("../api/newsApi.php");
+      const data = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not load Apple news.");
+      }
+
+      const articles = Array.isArray(data.articles)
+        ? data.articles.filter(isValidAppleNewsArticle)
+        : [];
+
+      appleGrid.innerHTML = "";
+
+      if (articles.length === 0) {
+        appleGrid.innerHTML =
+          '<div class="home-api-empty">No Apple news articles available.</div>';
+        return;
+      }
+
+      articles.slice(0, 4).forEach((article) => {
+        appleGrid.appendChild(createAppleNewsPreviewCard(article));
+      });
+    } catch (error) {
+      console.error("Error loading Apple news preview:", error);
+      appleGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
+    }
+  }
+  // fundi logjikes reklamimi i 4 lajmeve te para per APPLE api
 
   async function readApiResponse(response) {
     const responseText = await response.text();
