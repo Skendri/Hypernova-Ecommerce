@@ -38,8 +38,18 @@ if (isset($_SESSION["user_id"])) {
     <div id="news-post"></div>
 
     <div class="container my-5">
-        <h3 class="mb-4">Products from sellers</h3>
+        <div class="home-products-heading">
+            <div>
+                <p class="home-products-eyebrow">Marketplace</p>
+                <h3>Products from sellers</h3>
+            </div>
+            <a class="btn btn-primary" href="allProducts.php">See all products</a>
+        </div>
         <div id="user-products" class="row g-4"></div>
+        <div class="home-products-heading">
+            <div></div>
+            <a class="btn btn-primary" href="./sellProduct.php">go to create products</a>
+        </div>
     </div>
 
     <div class="container my-5">

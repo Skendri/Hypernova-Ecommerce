@@ -1,0 +1,138 @@
+.all-blog-page {
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.all-blog-hero {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 56px 0 36px;
+}
+
+.all-blog-eyebrow {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.all-blog-heading {
+  align-items: flex-end;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.all-blog-heading h1 {
+  color: #111827;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 12px;
+}
+
+.all-blog-heading p {
+  color: #4b5563;
+  font-size: 1.05rem;
+  margin: 0;
+  max-width: 680px;
+}
+
+.all-blog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.all-blog-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.all-blog-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.all-blog-img {
+  background: #f3f4f6;
+  height: 210px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.all-blog-body {
+  padding: 18px;
+}
+
+.all-blog-meta {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.all-blog-author,
+.all-blog-date {
+  color: #64748b;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.all-blog-title {
+  color: #111827;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 0 0 10px;
+}
+
+.all-blog-excerpt {
+  color: #334155;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.all-blog-content {
+  color: #4b5563;
+  margin: 0;
+}
+
+.all-blog-empty {
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  grid-column: 1 / -1;
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 991px) {
+  .all-blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .all-blog-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .all-blog-actions,
+  .all-blog-actions .btn {
+    width: 100%;
+  }
+
+  .all-blog-grid {
+    grid-template-columns: 1fr;
+  }
+}

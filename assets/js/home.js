@@ -106,10 +106,18 @@ document.addEventListener("DOMContentLoaded", function () {
             <p class="home-blog-eyebrow">Latest posts</p>
             <h3>News from sellers</h3>
           </div>
-          <a class="btn btn-outline-primary" href="pricing.php">Create post</a>
+          <div class="home-blog-actions">
+            <a class="btn btn-primary" href="allBlogPost.php">See all posts</a>
+          </div>
         </div>
         <div class="home-blog-grid" id="home-blog-grid">
           <div class="home-blog-empty">Loading posts...</div>
+        </div>
+        <div class="home-blog-heading">
+          <div></div>
+          <div class="home-blog-actions">
+            <a class="btn btn-outline-primary" href="pricing.php">Create post</a>
+          </div>
         </div>
       </section>
     `;
@@ -273,7 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      products.forEach((product) => {
+      products.slice(0, 4).forEach((product) => {
         userProducts.appendChild(createUploadedProductCard(product));
       });
     } catch (error) {

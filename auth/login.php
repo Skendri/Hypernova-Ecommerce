@@ -58,7 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login Page</title>
 </head>
 
-<body class="bg-success">
+<body class="bg-success d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <p style="width: 68%;">A hypernova is an exceptionally powerful, luminous stellar explosion, releasing 10 to 100 times more energy than a standard supernova.
+        Typically resulting from the catastrophic core collapse of massive stars (>30 solar masses),
+        they often leave behind rotating black holes and emit intense gamma-ray bursts.
+    </p>
     <div class="container p-5 d-flex flex-column align-items-center">
         <?php if ($message): ?>
             <div class="toast align-items-center text-white 
