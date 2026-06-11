@@ -101,13 +101,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     newsPost.innerHTML = `
       <section class="container my-5">
+      <div class="bg-success position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
         <div class="home-blog-heading">
-          <div>
+          <div class="my-2">
             <p class="home-blog-eyebrow">Latest posts</p>
             <h3>News from sellers</h3>
           </div>
           <div class="home-blog-actions">
-            <a class="btn btn-primary" href="allBlogPost.php">See all posts</a>
+            <a class="btn btn-success" href="allBlogPost.php">See all posts</a>
           </div>
         </div>
         <div class="home-blog-grid" id="home-blog-grid">
@@ -116,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="home-blog-heading">
           <div></div>
           <div class="home-blog-actions">
-            <a class="btn btn-outline-primary" href="pricing.php">Create post</a>
+            <a class="btn btn-outline-success" href="pricing.php">Create post</a>
           </div>
         </div>
       </section>
@@ -382,11 +383,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     apiAnotherPage.innerHTML = `
       <div class="home-api-heading">
-        <div>
+        <div class="my-2">
           <p class="home-api-eyebrow">World news</p>
           <h3>Latest API stories</h3>
         </div>
-        <a class="btn btn-primary" href="worldNews.php">See all news</a>
+        <a class="btn" style="background-color: #b45309; border-color: #b45309; color: #fff;" href="worldNews.php">See all news</a>
       </div>
       <div class="home-api-grid" id="home-api-grid">
         <div class="home-api-empty">Loading world news...</div>
@@ -457,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function () {
     body.className = "home-api-body";
 
     const source = article.source?.name || "Apple news";
-    body.appendChild(createTextElement("span", "home-api-source", source));
+    body.appendChild(createTextElement("span", "apple-api-source", source));
     body.appendChild(
       createTextElement("h4", "home-api-title", article.title || "Untitled"),
     );
@@ -469,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body.appendChild(
         createTextElement(
           "small",
-          "home-api-date",
+          "apple-api-date",
           formatWorldNewsDate(article.publishedAt),
         ),
       );
@@ -487,11 +488,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     appleApi.innerHTML = `
       <div class="home-api-heading">
-        <div>
-          <p class="home-api-eyebrow">Apple news</p>
+        <div class="my-2">
+          <p class="apple-api-eyebrow">Apple news</p>
           <h3>Latest Apple stories</h3>
         </div>
-        <a class="btn btn-primary" href="feature.php">See all news</a>
+        <a class="btn btn-warning" href="feature.php">See all news</a>
       </div>
       <div class="home-api-grid" id="home-apple-api-grid">
         <div class="home-api-empty">Loading Apple news...</div>

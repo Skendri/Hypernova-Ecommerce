@@ -4,6 +4,7 @@ include __DIR__ . '/../config/database.php';
 $message = "";
 $toastClass = "";
 
+// Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -47,6 +48,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
+
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+
+    .content {
+        z-index: 2;
+    }
+
+    .form-custom {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .black-ops-one-regular {
+        font-family: "Black Ops One", system-ui;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    .overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -58,12 +93,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login Page</title>
 </head>
 
-<body class="bg-success d-flex align-items-center justify-content-center" style="height: 100vh;">
-    <p style="width: 68%;">A hypernova is an exceptionally powerful, luminous stellar explosion, releasing 10 to 100 times more energy than a standard supernova.
-        Typically resulting from the catastrophic core collapse of massive stars (>30 solar masses),
-        they often leave behind rotating black holes and emit intense gamma-ray bursts.
-    </p>
-    <div class="container p-5 d-flex flex-column align-items-center">
+<body class="custom-class d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 overlay"></div>
+    <video autoplay muted loop playsinline class=" bg-video">
+        <source src="../background-video.mp4" type="video/mp4">
+    </video>
+    <div class="container content d-flex flex-column justify-content-center align-items-center">
         <?php if ($message): ?>
             <div class="toast align-items-center text-white 
             <?php echo $toastClass; ?> border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -75,28 +110,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
         <?php endif; ?>
-        <form action="" method="post" class="form-control mt-5 p-4"
-            style="height:auto; width:380px; box-shadow: rgba(60, 64, 67, 0.3) 
-            0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+        <form action="" method="post" class="form-control form-custom mt-5 p-4"
+            style="height: 600px; width:400px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);">
             <div class="row">
                 <i class="fa fa-user-circle-o fa-3x mt-1 mb-2"
                     style="text-align: center; color: green;"></i>
-                <h5 class="text-center p-4"
+                <h5 class="text-center p-4 text-white"
                     style="font-weight: 700;">Login Into Your Account</h5>
             </div>
-            <div class="col-mb-3">
-                <label for="email"> <i class="fa fa-envelope"></i> Email</label>
-                <input type="text" name="email" id="email" class="form-control" required>
+            <div class="col-mb-3 py-2">
+                <label for="email" class="py-2 fa-1x">
+                    <i class="fa fa-envelope"></i>
+                    Email
+                </label>
+                <input type="text" name="email" id="email" class="form-control py-2" required>
             </div>
             <div class="col mb-3 mt-3">
-                <label for="password"><i
-                        class="fa fa-lock"></i> Password</label>
+                <label for="password" class="py-2 fa-1x">
+                    <i class="fa fa-lock"></i>
+                    Password
+                </label>
                 <input type="password" name="password" id="password"
                     class="form-control" required>
             </div>
-            <div class="col mb-3 mt-3">
-                <button type="submit"
-                    class="btn btn-success bg-success" style="font-weight: 600;">Login</button>
+            <div class="flex row px-5 mb-5 mt-5">
+                <button type="submit" class="btn btn-success bg-success" style="font-weight: 600;">Login</button>
             </div>
             <div class="col mb-2 mt-4">
                 <p class="text-center"
@@ -105,6 +143,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         style="text-decoration: none;">Forgot Password</a></p>
             </div>
         </form>
+    </div>
+    <div class="w-75 content form-custom h-100 mx-5" style="box-shadow:rgba(60, 64, 67, 0.5) 0px 4px 8px 0px,rgba(60, 64, 67, 0.3) 0px 8px 20px 4px;">
+        <div class=" py-4 h-100 d-flex flex-column justify-content-between align-items-center ">
+            <h1 class="text-success black-ops-one-regular fs-2">Welcom to HYPERNOVA Platform</h1>
+            <p class="text-white black-ops-one-regular" style="width: 90%;"> <b>A hypernova</b> është një shpërthim yjor jashtëzakonisht i fuqishëm dhe i shndritshëm,
+                që çliron 10 deri në 100 herë më shumë energji sesa një supernova standarde.
+                Zakonisht rezulton nga shembja katastrofike e bërthamës së yjeve masivë >30 masa diellore,
+                ato shpesh lënë pas vrima të zeza rrotulluese dhe lëshojnë shpërthime intensive rrezesh gama.
+            </p>
+        </div>
     </div>
     <script>
         var toastElList = [].slice.call(document.querySelectorAll('.toast'))
@@ -115,6 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
         toastList.forEach(toast => toast.show());
     </script>
+
 </body>
 
 </html>

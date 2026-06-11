@@ -38,8 +38,9 @@ if (isset($_SESSION["user_id"])) {
     <div id="news-post"></div>
 
     <div class="container my-5">
+        <div class="bg-primary position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
         <div class="home-products-heading">
-            <div>
+            <div class="my-2">
                 <p class="home-products-eyebrow">Marketplace</p>
                 <h3>Products from sellers</h3>
             </div>
@@ -48,15 +49,17 @@ if (isset($_SESSION["user_id"])) {
         <div id="user-products" class="row g-4"></div>
         <div class="home-products-heading">
             <div></div>
-            <a class="btn btn-primary" href="./sellProduct.php">go to create products</a>
+            <a class="btn btn-outline-primary" href="./sellProduct.php">create product</a>
         </div>
     </div>
 
     <div class="container my-5">
+        <div class="position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px; background-color: #b45309;"></div>
         <div id="api-anotherPage"></div>
     </div>
 
     <div class="container my-5">
+        <div class="bg-warning position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
         <div id="apple-api"></div>
     </div>
 

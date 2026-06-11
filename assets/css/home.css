@@ -3,6 +3,11 @@
     overflow: hidden;
 } */
 
+/* body {
+  background: gray;
+  opacity: 0.3;
+} */
+
 .uploaded-product-card {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -158,7 +163,7 @@
 
 .home-blog-author,
 .home-blog-date {
-  color: #64748b;
+  color: rgb(25 135 84);
   font-size: 0.84rem;
   font-weight: 700;
 }
@@ -338,3 +343,24 @@
        display: grid; */
   /* grid-template-columns: repeat(8, 1fr); */
 /* } */
+
+.apple-api-eyebrow {
+  color: #ffc107;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.apple-api-source {
+  color: #ffc107;
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.apple-api-date {
+  color: #ffc107;
+  font-weight: 700;
+}
