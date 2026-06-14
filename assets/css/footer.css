@@ -1,0 +1,89 @@
+.fundi {
+  background-color: #e3e3e3;
+}
+
+.fundi-menu {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+}
+
+.fundi-rreshti {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fundi-rreshti h3 {
+  color: rgb(28, 28, 28);
+  font-weight: 600;
+}
+
+.fundi-rreshti a {
+  color: rgb(54, 54, 54);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.fundi-rreshti a:hover {
+  text-decoration: underline;
+}
+
+.dergojme img {
+  width: 100px;
+  height: 70px;
+}
+
+.pagesa img {
+  width: 100px;
+  height: 70px;
+}
+
+.aplikacioni-GlobeShops img {
+  width: 100px;
+  height: 70px;
+}
+
+.dergesa-paga-flex {
+  display: flex;
+  gap: 15%;
+  padding: 30px 0;
+}
+
+.revista {
+  padding: 20px 0;
+}
+
+.revista-guida {
+  display: flex;
+  flex-direction: column;
+}
+
+.pagesa {
+  display: flex;
+  gap: 30px;
+}
+
+.fundiDy-flex {
+  display: flex;
+  gap: 15px;
+}
+
+.fundiDy-flex a {
+  padding: 5px 0 15px 0;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.fundiDy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 2rem 11%;
+  background-color: #3a3a3a;
+}
+
+.fundiDy p {
+  color: rgb(192, 192, 192);
+  font-size: 0.8rem;
+  font-weight: 300;
+}
