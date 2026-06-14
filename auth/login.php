@@ -1,47 +1,63 @@
 <?php
-include __DIR__ . '/../config/database.php';
+// require_once: best for config files, database files, function files, class files, and bootstrap files.
+require_once __DIR__ . '/../config/database.php';
+session_start();
 
 $message = "";
 $toastClass = "";
+// all this logic code here is about to check if user is register before and if write correct data
 
-// Check if the form was submitted
+// This if block ensures the code only runs when the user submits the login form.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
+    // get users email and password from form on the login page
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
+    // These will later store values from MySQL.
     $userId = null;
     $hashedPassword = null;
 
-    // Prepare and execute
-    $stmt = $linkConnect->prepare("SELECT id, password FROM userdata WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Invalid email format";
+        $toastClass = "bg-danger";
+    } else {
+        // Prepare and execute
+        $stmt = $linkConnect->prepare("SELECT id, password FROM userdata WHERE email = ?");
+        if (!$stmt) {
+            die("Database error");
+        }
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
 
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($userId, $hashedPassword);
-        $stmt->fetch();
+        // Check if email exists
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($userId, $hashedPassword);
+            // fetch the row and store the values in $userId and $hashedPassword
+            $stmt->fetch();
 
-        if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
-            $message = "Login successful";
-            $toastClass = "bg-success";
-            // Start the session and redirect to the dashboard or home page
-            session_start();
-            $_SESSION["user_id"] = $userId;
-            $_SESSION['email'] = $email;
-            header("Location: ../pages/home.php");
-            exit();
+            if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
+                $message = "Login successful";
+                $toastClass = "bg-success";
+                // This helps prevent Session Fixation attacks.
+                session_regenerate_id(true);
+                $_SESSION["user_id"] = $userId;
+                $_SESSION['email'] = $email;
+                // redirect to the dashboard or home page
+                header("Location: ../pages/home.php");
+                exit();
+            } else {
+                $message = "Invalid email or password";
+                $toastClass = "bg-danger";
+            }
         } else {
-            $message = "Incorrect password";
+            $message = "Invalid email or password";
             $toastClass = "bg-danger";
         }
-    } else {
-        $message = "Email not found";
-        $toastClass = "bg-warning";
-    }
 
-    $stmt->close();
-    $linkConnect->close();
+        $stmt->close();
+        $linkConnect->close();
+    }
 }
 ?>
 
@@ -110,6 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
         <?php endif; ?>
+        <!-- this form have REQUEST_METHOD = POST -->
         <form action="" method="post" class="form-control form-custom mt-5 p-4"
             style="height: 600px; width:400px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);">
             <div class="row">

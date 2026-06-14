@@ -10,8 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if email already exists
-    $checkEmailStmt = $linkConnect->prepare("SELECT email FROM userdata WHERE email = ?");
+    // Check if email already exists without return email as a value, just check if it exists in the database
+    $checkEmailStmt =  $linkConnect->prepare("SELECT 1 FROM userdata WHERE email = ? LIMIT 1");
     $checkEmailStmt->bind_param("s", $email);
     $checkEmailStmt->execute();
     $checkEmailStmt->store_result();

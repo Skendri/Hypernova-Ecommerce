@@ -1,17 +1,30 @@
 <?php
 
-session_start();
-
 require __DIR__ . "/../config/database.php";
+session_start();
 
 if (isset($_SESSION["user_id"])) {
 
-    $sql = "SELECT * FROM userdata
-            WHERE id = {$_SESSION["user_id"]}";
+    $stmt = $linkConnect->prepare(
+        "SELECT * FROM userdata WHERE id = ?"
+    );
 
-    $result = $linkConnect->query($sql);
+    $stmt->bind_param("i", $_SESSION["user_id"]);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
 
     $user = $result->fetch_assoc();
+
+    if (!$user) {
+        // removes all session variables before destroying the session
+        session_unset();
+        session_destroy();
+        header("Location: ../login.php");
+        exit();
+    }
+
+    $stmt->close();
 }
 
 ?>
