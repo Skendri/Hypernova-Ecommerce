@@ -309,6 +309,19 @@ body {
     background: #fff;
 }
 
+#coverPreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#coverPreview img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 @media (max-width: 991px) {
     .blog-form {
         position: static;

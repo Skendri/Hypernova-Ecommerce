@@ -12,7 +12,8 @@ const titleCount = document.getElementById("titleCount");
 const excerptCount = document.getElementById("excerptCount");
 const postCount = document.getElementById("postCount");
 
-const fallbackImage = "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
+const fallbackImage =
+  "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
 
 function setMessage(message, type) {
   formMessage.textContent = message;
@@ -31,7 +32,8 @@ function updateCounters() {
 
 function normalizeImagePath(imagePath) {
   if (!imagePath) return fallbackImage;
-  if (imagePath.startsWith("http") || imagePath.startsWith("data:")) return imagePath;
+  if (imagePath.startsWith("http") || imagePath.startsWith("data:"))
+    return imagePath;
 
   return imagePath
     .replace(/^uploads\//, "../assets/uploads/")
@@ -130,39 +132,42 @@ coverInput.addEventListener("change", function () {
   coverPreview.innerHTML = "";
   coverPreview.hidden = true;
 
-  const file = this.files[0];
+  const files = this.files;
 
-  if (!file) return;
-
-  if (file.size > 3 * 1024 * 1024) {
-    setMessage("Cover image must be 3MB or smaller.", "error");
-    this.value = "";
-    return;
-  }
+  if (!files.length) return;
 
   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
-  if (!allowedTypes.includes(file.type)) {
-    setMessage("Only JPG, PNG, GIF, and WEBP cover images are allowed.", "error");
-    this.value = "";
-    return;
+  for (const file of files) {
+    if (file.size > 3 * 1024 * 1024) {
+      setMessage(`${file.name} must be 3MB or smaller.`, "error");
+      continue;
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      setMessage(`${file.name} is not a supported image type.`, "error");
+      continue;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      const image = document.createElement("img");
+      image.src = event.target.result;
+      image.alt = file.name;
+      image.style.width = "150px";
+
+      coverPreview.appendChild(image);
+      coverPreview.hidden = false;
+    };
+
+    reader.readAsDataURL(file);
   }
-
-  const reader = new FileReader();
-
-  reader.onload = function (event) {
-    const image = document.createElement("img");
-    image.src = event.target.result;
-    image.alt = file.name;
-    coverPreview.appendChild(image);
-    coverPreview.hidden = false;
-  };
-
-  reader.readAsDataURL(file);
 });
 
 statusInput.addEventListener("change", function () {
-  publishButton.textContent = this.value === "draft" ? "Save Draft" : "Publish Post";
+  publishButton.textContent =
+    this.value === "draft" ? "Save Draft" : "Publish Post";
 });
 
 titleInput.addEventListener("input", updateCounters);
@@ -181,7 +186,8 @@ blogForm.addEventListener("submit", async function (event) {
   }
 
   publishButton.disabled = true;
-  publishButton.textContent = statusInput.value === "draft" ? "Saving..." : "Publishing...";
+  publishButton.textContent =
+    statusInput.value === "draft" ? "Saving..." : "Publishing...";
 
   try {
     const response = await fetch("../api/save_blog_post.php", {
@@ -206,7 +212,8 @@ blogForm.addEventListener("submit", async function (event) {
     setMessage(error.message, "error");
   } finally {
     publishButton.disabled = false;
-    publishButton.textContent = statusInput.value === "draft" ? "Save Draft" : "Publish Post";
+    publishButton.textContent =
+      statusInput.value === "draft" ? "Save Draft" : "Publish Post";
   }
 });
 
@@ -220,7 +227,8 @@ async function readApiResponse(response) {
     return JSON.parse(responseText);
   } catch (error) {
     return {
-      message: responseText.trim() || "The server returned an unreadable response.",
+      message:
+        responseText.trim() || "The server returned an unreadable response.",
     };
   }
 }

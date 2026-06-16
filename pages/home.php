@@ -35,7 +35,12 @@ if (isset($_SESSION["user_id"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <title>Dashboard</title>
@@ -44,16 +49,10 @@ if (isset($_SESSION["user_id"])) {
 <body>
     <?php include '../components/navbar.php'; ?>
 
-    <!-- fillimi i kontentit te faqes -->
-    <div>
-        <h2 class="p-4 mt-5">Welcome To Dashboard <?php echo  htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?> </h2>
-    </div>
-
-    <div id="news-post"></div>
-
+    <!-- product for selling -->
     <div class="container my-5">
-        <div class="bg-primary position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
-        <div class="home-products-heading">
+        <div class="bg-primary position-absolute top-1 rounded animate__animated animate__delay-1s animate__backInLeft" style="width: 68%; height: 1%; left: 304px;"></div>
+        <div class="home-products-heading animate__animated animate__delay-1s animate__backInLeft">
             <div class="my-2">
                 <p class="home-products-eyebrow">Marketplace</p>
                 <h3>Products from sellers</h3>
@@ -67,11 +66,16 @@ if (isset($_SESSION["user_id"])) {
         </div>
     </div>
 
+    <!-- blog posts -->
+    <div id="news-post"></div>
+
+    <!-- news around the world -->
     <div class="container my-5">
         <div class="position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px; background-color: #b45309;"></div>
         <div id="api-anotherPage"></div>
     </div>
 
+    <!-- news from Apple -->
     <div class="container my-5">
         <div class="bg-warning position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
         <div id="apple-api"></div>

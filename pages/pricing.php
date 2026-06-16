@@ -79,7 +79,7 @@ if (!isset($_SESSION["user_id"])) {
 
                         <div class="mb-3">
                             <label class="form-label" for="coverImage">Cover image</label>
-                            <input type="file" class="form-control" id="coverImage" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
+                            <input type="file" class="form-control" id="coverImage" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
                             <div class="form-text">JPG, PNG, GIF, or WEBP. Maximum 3MB.</div>
                         </div>
 

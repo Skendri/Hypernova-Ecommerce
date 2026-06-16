@@ -10,8 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
     element.textContent = text;
     return element;
   }
+  // kjo eshte ne qoftese user harron te vendose foto kur krijon nje listing vendosen dy default nje random foto
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
 
   function normalizeImagePath(imagePath) {
+    if (!imagePath) return fallbackImage;
     if (
       !imagePath ||
       imagePath.startsWith("http") ||
@@ -25,136 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .replace(/^assets\/uploads\//, "../assets/uploads/");
   }
 
-  // the logic to display news that are created from users in pricing.php to displayed in home.php
-
-  function getBlogImage(imagePath) {
-    return (
-      normalizeImagePath(imagePath) ||
-      "https://placehold.co/900x520?text=Blog+Post"
-    );
-  }
-
-  function formatBlogDate(dateValue) {
-    if (!dateValue) return "";
-
-    const date = new Date(dateValue.replace(" ", "T"));
-
-    if (Number.isNaN(date.getTime())) {
-      return dateValue;
-    }
-
-    return date.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  function createBlogPostCard(post) {
-    const card = document.createElement("article");
-    card.className = "home-blog-card";
-
-    const image = document.createElement("img");
-    image.className = "home-blog-img";
-    image.src = getBlogImage(post.cover_image);
-    image.alt = post.title || "Blog post cover";
-
-    const body = document.createElement("div");
-    body.className = "home-blog-body";
-
-    const meta = document.createElement("div");
-    meta.className = "home-blog-meta";
-    meta.appendChild(
-      createTextElement(
-        "span",
-        "home-blog-author",
-        post.author_name || "Unknown author",
-      ),
-    );
-
-    if (post.created_at) {
-      meta.appendChild(
-        createTextElement(
-          "span",
-          "home-blog-date",
-          formatBlogDate(post.created_at),
-        ),
-      );
-    }
-
-    body.appendChild(meta);
-    body.appendChild(
-      createTextElement("h4", "home-blog-title", post.title || "Untitled post"),
-    );
-    body.appendChild(
-      createTextElement("p", "home-blog-excerpt", post.excerpt || ""),
-    );
-
-    card.appendChild(image);
-    card.appendChild(body);
-
-    return card;
-  }
-
-  async function loadBlogPosts() {
-    if (!newsPost) return;
-
-    newsPost.innerHTML = `
-      <section class="container my-5">
-      <div class="bg-success position-absolute top-1 rounded" style="width: 68%; height: 1%; left: 304px;"></div>
-        <div class="home-blog-heading">
-          <div class="my-2">
-            <p class="home-blog-eyebrow">Latest posts</p>
-            <h3>News from sellers</h3>
-          </div>
-          <div class="home-blog-actions">
-            <a class="btn btn-success" href="allBlogPost.php">See all posts</a>
-          </div>
-        </div>
-        <div class="home-blog-grid" id="home-blog-grid">
-          <div class="home-blog-empty">Loading posts...</div>
-        </div>
-        <div class="home-blog-heading">
-          <div></div>
-          <div class="home-blog-actions">
-            <a class="btn btn-outline-success" href="pricing.php">Create post</a>
-          </div>
-        </div>
-      </section>
-    `;
-
-    const blogGrid = document.getElementById("home-blog-grid");
-
-    try {
-      const response = await fetch(
-        "../api/fetch_blog_posts.php?scope=published",
-        {
-          credentials: "same-origin",
-        },
-      );
-      const posts = await readApiResponse(response);
-
-      if (!response.ok) {
-        throw new Error(posts.message || "Could not load blog posts.");
-      }
-
-      blogGrid.innerHTML = "";
-
-      if (!Array.isArray(posts) || posts.length === 0) {
-        blogGrid.innerHTML =
-          '<div class="home-blog-empty">No published blog posts yet.</div>';
-        return;
-      }
-
-      posts.slice(0, 6).forEach((post) => {
-        blogGrid.appendChild(createBlogPostCard(post));
-      });
-    } catch (error) {
-      console.error("Error loading blog posts:", error);
-      blogGrid.innerHTML = `<div class="home-blog-empty">${error.message}</div>`;
-    }
-  }
-  // the END of logic to display news that are created from users in pricing.php to displayed in home.php
+  // Product created from users to sell in home page
 
   function getProductImage(imageValue) {
     if (!imageValue) return "https://placehold.co/600x400?text=Product";
@@ -174,7 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function createUploadedProductCard(product) {
     const col = document.createElement("div");
-    col.className = "col-lg-3 col-md-6";
+    col.className =
+      "col-lg-3 col-md-6 animate__animated animate__delay-1s animate__fadeInDown";
 
     const card = document.createElement("div");
     card.className = "uploaded-product-card h-100";
@@ -295,6 +171,140 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // END of Product created from users to sell in home page
+
+  // the logic to display news that are created from users in pricing.php to displayed in home.php
+
+  function getBlogImage(imagePath) {
+    return (
+      normalizeImagePath(imagePath) ||
+      "https://placehold.co/900x520?text=Blog+Post"
+    );
+  }
+
+  function formatBlogDate(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue.replace(" ", "T"));
+
+    if (Number.isNaN(date.getTime())) {
+      return dateValue;
+    }
+
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function createBlogPostCard(post) {
+    const card = document.createElement("article");
+    card.className =
+      "home-blog-card animate__animated animate__delay-1s animate__fadeInDown";
+
+    const image = document.createElement("img");
+    image.className = "home-blog-img";
+    image.src = getBlogImage(post.cover_image);
+    image.alt = post.title || "Blog post cover";
+
+    const body = document.createElement("div");
+    body.className = "home-blog-body";
+
+    const meta = document.createElement("div");
+    meta.className = "home-blog-meta";
+    meta.appendChild(
+      createTextElement(
+        "span",
+        "home-blog-author",
+        post.author_name || "Unknown author",
+      ),
+    );
+
+    if (post.created_at) {
+      meta.appendChild(
+        createTextElement(
+          "span",
+          "home-blog-date",
+          formatBlogDate(post.created_at),
+        ),
+      );
+    }
+
+    body.appendChild(meta);
+    body.appendChild(
+      createTextElement("h4", "home-blog-title", post.title || "Untitled post"),
+    );
+    body.appendChild(
+      createTextElement("p", "home-blog-excerpt", post.excerpt || ""),
+    );
+
+    card.appendChild(image);
+    card.appendChild(body);
+
+    return card;
+  }
+
+  async function loadBlogPosts() {
+    if (!newsPost) return;
+
+    newsPost.innerHTML = `
+      <section class="container my-5">
+      <div class="bg-success position-absolute top-1 rounded animate__animated animate__delay-1s animate__backInLeft" style="width: 68%; height: 1%; left: 304px;"></div>
+        <div class="home-blog-heading animate__animated animate__delay-1s animate__backInLeft">
+          <div class="my-2">
+            <p class="home-blog-eyebrow">Latest posts</p>
+            <h3>News from Albania</h3>
+          </div>
+          <div class="home-blog-actions">
+            <a class="btn btn-success" href="allBlogPost.php">See all posts</a>
+          </div>
+        </div>
+        <div class="home-blog-grid" id="home-blog-grid">
+          <div class="home-blog-empty">Loading posts...</div>
+        </div>
+        <div class="home-blog-heading">
+          <div></div>
+          <div class="home-blog-actions">
+            <a class="btn btn-outline-success" href="pricing.php">Create post</a>
+          </div>
+        </div>
+      </section>
+    `;
+
+    const blogGrid = document.getElementById("home-blog-grid");
+
+    try {
+      const response = await fetch(
+        "../api/fetch_blog_posts.php?scope=published",
+        {
+          credentials: "same-origin",
+        },
+      );
+      const posts = await readApiResponse(response);
+
+      if (!response.ok) {
+        throw new Error(posts.message || "Could not load blog posts.");
+      }
+
+      blogGrid.innerHTML = "";
+
+      if (!Array.isArray(posts) || posts.length === 0) {
+        blogGrid.innerHTML =
+          '<div class="home-blog-empty">No published blog posts yet.</div>';
+        return;
+      }
+
+      posts.slice(0, 6).forEach((post) => {
+        blogGrid.appendChild(createBlogPostCard(post));
+      });
+    } catch (error) {
+      console.error("Error loading blog posts:", error);
+      blogGrid.innerHTML = `<div class="home-blog-empty">${error.message}</div>`;
+    }
+  }
+  // the END of logic to display news that are created from users in pricing.php to displayed in home.php
+
   // function product to sell
   loadUploadedProducts();
   // function for blog created
@@ -304,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // function for apple news api preview
   loadAppleNewsPreview();
 
-  // reklamimi i 4 lajmeve te para
+  // reklamimi i 4 lajmeve te para nga bota
   function isValidWorldNewsArticle(article) {
     return (
       article.urlToImage &&
@@ -385,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="home-api-heading">
         <div class="my-2">
           <p class="home-api-eyebrow">World news</p>
-          <h3>Latest API stories</h3>
+          <h3>News from World</h3>
         </div>
         <a class="btn" style="background-color: #b45309; border-color: #b45309; color: #fff;" href="worldNews.php">See all news</a>
       </div>
@@ -424,6 +434,8 @@ document.addEventListener("DOMContentLoaded", function () {
       apiGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
     }
   }
+
+  // fundi i reklamimit te 4 lajmeve te para nga bota
 
   // reklamimi i 4 lajmeve te para per Apple Api
   function isValidAppleNewsArticle(article) {
@@ -490,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="home-api-heading">
         <div class="my-2">
           <p class="apple-api-eyebrow">Apple news</p>
-          <h3>Latest Apple stories</h3>
+          <h3>Latest news from Apple</h3>
         </div>
         <a class="btn btn-warning" href="feature.php">See all news</a>
       </div>
