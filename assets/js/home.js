@@ -504,7 +504,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <p class="apple-api-eyebrow">Apple news</p>
           <h3>Latest news from Apple</h3>
         </div>
-        <a class="btn btn-warning" href="feature.php">See all news</a>
+        <a class="btn btn-warning" href="../pages/feature.php">See all news</a>
       </div>
       <div class="home-api-grid" id="home-apple-api-grid">
         <div class="home-api-empty">Loading Apple news...</div>

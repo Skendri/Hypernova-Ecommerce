@@ -1,5 +1,5 @@
 <?php
-// require_once: best for config files, database files, function files, class files, and bootstrap files.
+
 require_once __DIR__ . '/../config/database.php';
 session_start();
 
