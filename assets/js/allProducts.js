@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const productsGrid = document.getElementById("all-products");
+  const filtersForm = document.getElementById("productFilters");
+  const clearFiltersButton = document.getElementById("clearFilters");
 
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
@@ -120,19 +122,49 @@ document.addEventListener("DOMContentLoaded", function () {
     return col;
   }
 
+  function getFilterParams() {
+    const params = new URLSearchParams();
+
+    if (!filtersForm) return params;
+
+    const formData = new FormData(filtersForm);
+
+    formData.forEach((value, key) => {
+      const cleanValue = String(value).trim();
+
+      if (cleanValue !== "") {
+        params.append(key, cleanValue);
+      }
+    });
+
+    return params;
+  }
+
+  function hasActiveFilters() {
+    return getFilterParams().toString() !== "";
+  }
+
   async function loadAllProducts() {
     if (!productsGrid) return;
 
     try {
-      const response = await fetch("../api/fetch_products.php");
+      const params = getFilterParams();
+      const requestUrl = params.toString()
+        ? `../api/fetch_products.php?${params.toString()}`
+        : "../api/fetch_products.php";
+      const response = await fetch(requestUrl);
       const products = await response.json();
 
       productsGrid.innerHTML = "";
 
       if (!Array.isArray(products) || products.length === 0) {
+        const emptyMessage = hasActiveFilters()
+          ? "No products match your filters."
+          : "No uploaded products yet.";
+
         productsGrid.innerHTML = `
           <div class="col-12">
-            <div class="all-products-empty">No uploaded products yet.</div>
+            <div class="all-products-empty">${emptyMessage}</div>
           </div>
         `;
         return;
@@ -149,6 +181,20 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `;
     }
+  }
+
+  if (filtersForm) {
+    filtersForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      loadAllProducts();
+    });
+  }
+
+  if (clearFiltersButton && filtersForm) {
+    clearFiltersButton.addEventListener("click", function () {
+      filtersForm.reset();
+      loadAllProducts();
+    });
   }
 
   loadAllProducts();
