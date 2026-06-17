@@ -33,6 +33,43 @@ session_start();
         </section>
 
         <section class="container py-5">
+            <form class="all-products-filter mb-4" id="productFilters">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label" for="productSearch">Search products</label>
+                        <input type="search" class="form-control" id="productSearch" name="q"
+                            placeholder="Search title or description">
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label" for="productCategory">Category</label>
+                        <select class="form-select" id="productCategory" name="category">
+                            <option value="">All categories</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Gaming">Gaming</option>
+                            <option value="Home">Home</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label class="form-label" for="minPrice">Min price</label>
+                        <input type="number" class="form-control" id="minPrice" name="min_price" min="0" step="0.01"
+                            placeholder="0">
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label class="form-label" for="maxPrice">Max price</label>
+                        <input type="number" class="form-control" id="maxPrice" name="max_price" min="0" step="0.01"
+                            placeholder="500">
+                    </div>
+                    <div class="col-lg-1 col-md-12 d-grid">
+                        <button class="btn btn-primary" type="submit">Filter</button>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-link px-0" id="clearFilters" type="button">Clear filters</button>
+                </div>
+            </form>
+
             <div id="all-products" class="row g-4" aria-live="polite">
                 <div class="col-12">
                     <div class="all-products-empty">Loading products...</div>

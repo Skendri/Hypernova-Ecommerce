@@ -46,6 +46,20 @@
   text-decoration: none;
 }
 
+.all-products-filter {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  padding: 20px;
+}
+
+.all-products-filter .form-label {
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
 .all-product-card {
   background: #fff;
   border: 1px solid #e5e7eb;
