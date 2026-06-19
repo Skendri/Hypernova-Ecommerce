@@ -23,11 +23,15 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#2C6CBC", en
   overflow: hidden;
 }
 
-.uploaded-product-link {
+.uploaded-product-media-link,
+.uploaded-product-title-link {
   color: inherit;
   display: block;
-  height: 100%;
   text-decoration: none;
+}
+
+.uploaded-product-title-link:hover .uploaded-product-title {
+  color: #0d6efd;
 }
 
 .uploaded-product-img {
@@ -50,6 +54,18 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#2C6CBC", en
 .uploaded-product-description {
   color: #4b5563;
   min-height: 72px;
+}
+
+.uploaded-product-description h2,
+.uploaded-product-description h3,
+.uploaded-product-description h4,
+.uploaded-product-description p {
+  margin: 0 0 8px;
+}
+
+.uploaded-product-description a {
+  color: #0d6efd;
+  font-weight: 700;
 }
 
 .uploaded-category-badge,

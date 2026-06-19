@@ -246,6 +246,29 @@ body {
   margin: 0 0 22px;
 }
 
+.product-description h2,
+.product-description h3,
+.product-description h4,
+#productLongDescription h2,
+#productLongDescription h3,
+#productLongDescription h4 {
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.35;
+  margin: 0 0 10px;
+}
+
+.product-description p,
+#productLongDescription p {
+  margin: 0 0 10px;
+}
+
+.product-description a,
+#productLongDescription a {
+  color: var(--accent);
+  font-weight: 800;
+}
+
 .availability-card {
   display: grid;
   grid-template-columns: 1fr auto;

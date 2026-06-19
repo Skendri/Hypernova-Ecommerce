@@ -10,6 +10,62 @@ document.addEventListener("DOMContentLoaded", function () {
     return element;
   }
 
+  function sanitizeProductDescription(html) {
+    const template = document.createElement("template");
+    const allowedTags = new Set([
+      "A",
+      "B",
+      "BR",
+      "EM",
+      "H2",
+      "H3",
+      "H4",
+      "I",
+      "LI",
+      "OL",
+      "P",
+      "STRONG",
+      "UL",
+    ]);
+
+    template.innerHTML = html || "";
+
+    template.content.querySelectorAll("*").forEach((element) => {
+      if (!allowedTags.has(element.tagName)) {
+        element.replaceWith(...element.childNodes);
+        return;
+      }
+
+      [...element.attributes].forEach((attribute) => {
+        if (element.tagName !== "A" || attribute.name !== "href") {
+          element.removeAttribute(attribute.name);
+        }
+      });
+
+      if (element.tagName === "A") {
+        const href = element.getAttribute("href") || "";
+        const isSafeLink = /^(https?:|mailto:|tel:)/i.test(href);
+
+        if (!isSafeLink) {
+          element.replaceWith(...element.childNodes);
+          return;
+        }
+
+        element.target = "_blank";
+        element.rel = "noopener noreferrer";
+      }
+    });
+
+    return template.innerHTML.trim();
+  }
+
+  function createRichTextElement(tagName, className, html) {
+    const element = document.createElement(tagName);
+    element.className = className;
+    element.innerHTML = sanitizeProductDescription(html);
+    return element;
+  }
+
   function normalizeImagePath(imagePath) {
     if (
       !imagePath ||
@@ -44,18 +100,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const col = document.createElement("div");
     col.className = "col-xl-3 col-lg-4 col-md-6";
 
-    const link = document.createElement("a");
-    link.className = "all-product-link";
-    link.href = `productView.php?id=${product.id}`;
-    link.setAttribute("aria-label", `View ${product.title || "product"}`);
+    const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
     const card = document.createElement("article");
     card.className = "all-product-card h-100";
+
+    const imageLink = document.createElement("a");
+    imageLink.className = "all-product-link";
+    imageLink.href = productUrl;
+    imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
 
     const image = document.createElement("img");
     image.className = "all-product-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
+    imageLink.appendChild(image);
 
     const body = document.createElement("div");
     body.className = "all-product-body";
@@ -80,12 +139,17 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     body.appendChild(meta);
-    body.appendChild(
+    const titleLink = document.createElement("a");
+    titleLink.className = "all-product-title-link";
+    titleLink.href = productUrl;
+    titleLink.appendChild(
       createTextElement("h2", "all-product-title", product.title || "Untitled"),
     );
+
+    body.appendChild(titleLink);
     body.appendChild(
-      createTextElement(
-        "p",
+      createRichTextElement(
+        "div",
         "all-product-description",
         product.description || "",
       ),
@@ -114,10 +178,9 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
 
-    card.appendChild(image);
+    card.appendChild(imageLink);
     card.appendChild(body);
-    link.appendChild(card);
-    col.appendChild(link);
+    col.appendChild(card);
 
     return col;
   }

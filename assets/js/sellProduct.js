@@ -2,6 +2,16 @@ const form = document.getElementById("productForm");
 const grid = document.getElementById("productsGrid");
 const imageInput = document.getElementById("imageInput");
 const previewContainer = document.getElementById("previewContainer");
+const descriptionTextarea = document.getElementById("editor");
+let descriptionEditor = null;
+
+if (window.ClassicEditor && descriptionTextarea) {
+  ClassicEditor.create(descriptionTextarea)
+    .then((editor) => {
+      descriptionEditor = editor;
+    })
+    .catch((error) => console.error(error));
+}
 
 function normalizeImagePath(imagePath) {
   if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
@@ -57,6 +67,86 @@ function getProductImages(imageValue) {
   return [normalizeImagePath(imageValue)];
 }
 
+function getDescriptionHtml() {
+  if (descriptionEditor) {
+    return descriptionEditor.getData();
+  }
+
+  return descriptionTextarea ? descriptionTextarea.value : "";
+}
+
+function getDescriptionText(html) {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  return container.textContent.trim();
+}
+
+function sanitizeProductDescription(html) {
+  const template = document.createElement("template");
+  const allowedTags = new Set([
+    "A",
+    "B",
+    "BR",
+    "EM",
+    "H2",
+    "H3",
+    "H4",
+    "I",
+    "LI",
+    "OL",
+    "P",
+    "STRONG",
+    "UL",
+  ]);
+
+  template.innerHTML = html || "";
+
+  template.content.querySelectorAll("*").forEach((element) => {
+    if (!allowedTags.has(element.tagName)) {
+      element.replaceWith(...element.childNodes);
+      return;
+    }
+
+    [...element.attributes].forEach((attribute) => {
+      if (element.tagName !== "A" || attribute.name !== "href") {
+        element.removeAttribute(attribute.name);
+      }
+    });
+
+    if (element.tagName === "A") {
+      const href = element.getAttribute("href") || "";
+      const isSafeLink = /^(https?:|mailto:|tel:)/i.test(href);
+
+      if (!isSafeLink) {
+        element.replaceWith(...element.childNodes);
+        return;
+      }
+
+      element.target = "_blank";
+      element.rel = "noopener noreferrer";
+    }
+  });
+
+  return template.innerHTML.trim();
+}
+
+function escapeHtml(value) {
+  const container = document.createElement("div");
+  container.textContent = value || "";
+  return container.innerHTML;
+}
+
+function getProductUrl(product) {
+  return `productView.php?id=${encodeURIComponent(product.id)}`;
+}
+
+function createDescriptionPreview(description) {
+  const preview = document.createElement("div");
+  preview.className = "product-description";
+  preview.innerHTML = sanitizeProductDescription(description);
+  return preview.outerHTML;
+}
+
 // LOAD PRODUCTS
 async function loadProducts() {
   const response = await fetch("../api/fetch_products.php?scope=mine");
@@ -79,11 +169,16 @@ async function loadProducts() {
   products.forEach((product) => {
     const productImages = getProductImages(product.image);
     const mainImage = productImages[0];
+    const productUrl = getProductUrl(product);
+    const productTitle = escapeHtml(product.title || "Untitled Product");
+    const productCategory = escapeHtml(product.category || "Product");
+    const productPhone = escapeHtml(product.phone || "");
+    const productCreatedAt = escapeHtml(product.created_at || "");
     const thumbnails = productImages
       .slice(1, 5)
       .map(
         (image) => `
-          <img src="${image}" class="product-thumb" alt="${product.title}">
+          <img src="${escapeHtml(image)}" class="product-thumb" alt="${productTitle}">
         `,
       )
       .join("");
@@ -92,10 +187,11 @@ async function loadProducts() {
 
             <div class="col-lg-3 col-md-6">
 
-                <a class="product-detail-link" href="productView.php?id=${product.id}" aria-label="View ${product.title}">
                 <div class="product-card h-100">
 
-                    <img src="${mainImage}" class="product-img" alt="${product.title}">
+                    <a class="product-detail-link" href="${productUrl}" aria-label="View ${productTitle}">
+                        <img src="${escapeHtml(mainImage)}" class="product-img" alt="${productTitle}">
+                    </a>
 
                     ${
                       thumbnails
@@ -108,39 +204,38 @@ async function loadProducts() {
                         <div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="category-badge">
-                                    ${product.category}
+                                    ${productCategory}
                                 </span>
 
                                 <span class="price-badge">
-                                    $${product.price}
+                                    $${escapeHtml(product.price || "0.00")}
                                 </span>
                             </div>
 
-                            <h5 class="product-title">
-                                ${product.title}
-                            </h5>
+                            <a class="product-title-link" href="${productUrl}">
+                                <h5 class="product-title">
+                                    ${productTitle}
+                                </h5>
+                            </a>
 
-                            <p class="product-description">
-                                ${product.description}
-                            </p>
+                            ${createDescriptionPreview(product.description || "")}
 
                             ${
                               product.phone
-                                ? `<small class="d-block text-muted mb-2">Phone: ${product.phone}</small>`
+                                ? `<small class="d-block text-muted mb-2">Phone: ${productPhone}</small>`
                                 : ""
                             }
                         </div>
 
                         <div>
                             <small class="text-muted">
-                                Posted ${product.created_at}
+                                Posted ${productCreatedAt}
                             </small>
                         </div>
 
                     </div>
 
                 </div>
-                </a>
 
             </div>
         `;
@@ -156,7 +251,19 @@ form.addEventListener("submit", async function (e) {
     return;
   }
 
+  const descriptionHtml = getDescriptionHtml();
+
+  if (!getDescriptionText(descriptionHtml)) {
+    alert("Please enter a product description.");
+    return;
+  }
+
+  if (descriptionEditor) {
+    descriptionEditor.updateSourceElement();
+  }
+
   const formData = new FormData(form);
+  formData.set("description", descriptionHtml);
 
   const response = await fetch("../api/save_product.php", {
     method: "POST",
@@ -172,6 +279,9 @@ form.addEventListener("submit", async function (e) {
   }
 
   form.reset();
+  if (descriptionEditor) {
+    descriptionEditor.setData("");
+  }
 
   previewContainer.innerHTML = "";
 

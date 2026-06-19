@@ -55,9 +55,9 @@ session_start();
                     </div>
                 </div>
 
-                <p class="product-description" id="productDescription">
+                <div class="product-description" id="productDescription">
                     Clean sound, soft cushions, and all-day battery life made for work, travel, and everyday listening.
-                </p>
+                </div>
 
                 <div class="availability-card">
                     <div>
@@ -112,9 +112,9 @@ session_start();
         <section class="details-band reveal delay-2">
             <article>
                 <h2>Product Details</h2>
-                <p id="productLongDescription">
+                <div id="productLongDescription">
                     Built for daily use with premium materials, smooth controls, and a checkout-ready shopping flow.
-                </p>
+                </div>
             </article>
             <article>
                 <h2>Why shoppers like it</h2>

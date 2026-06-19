@@ -10,6 +10,62 @@ document.addEventListener("DOMContentLoaded", function () {
     element.textContent = text;
     return element;
   }
+
+  function sanitizeProductDescription(html) {
+    const template = document.createElement("template");
+    const allowedTags = new Set([
+      "A",
+      "B",
+      "BR",
+      "EM",
+      "H2",
+      "H3",
+      "H4",
+      "I",
+      "LI",
+      "OL",
+      "P",
+      "STRONG",
+      "UL",
+    ]);
+
+    template.innerHTML = html || "";
+
+    template.content.querySelectorAll("*").forEach((element) => {
+      if (!allowedTags.has(element.tagName)) {
+        element.replaceWith(...element.childNodes);
+        return;
+      }
+
+      [...element.attributes].forEach((attribute) => {
+        if (element.tagName !== "A" || attribute.name !== "href") {
+          element.removeAttribute(attribute.name);
+        }
+      });
+
+      if (element.tagName === "A") {
+        const href = element.getAttribute("href") || "";
+        const isSafeLink = /^(https?:|mailto:|tel:)/i.test(href);
+
+        if (!isSafeLink) {
+          element.replaceWith(...element.childNodes);
+          return;
+        }
+
+        element.target = "_blank";
+        element.rel = "noopener noreferrer";
+      }
+    });
+
+    return template.innerHTML.trim();
+  }
+
+  function createRichTextElement(tagName, className, html) {
+    const element = document.createElement(tagName);
+    element.className = className;
+    element.innerHTML = sanitizeProductDescription(html);
+    return element;
+  }
   // kjo eshte ne qoftese user harron te vendose foto kur krijon nje listing vendosen dy default nje random foto
   const fallbackImage =
     "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
@@ -55,10 +111,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const card = document.createElement("div");
     card.className = "uploaded-product-card h-100";
 
+    const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
+
+    const imageLink = document.createElement("a");
+    imageLink.className = "uploaded-product-media-link";
+    imageLink.href = productUrl;
+    imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
+
     const image = document.createElement("img");
     image.className = "uploaded-product-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
+    imageLink.appendChild(image);
 
     const body = document.createElement("div");
     body.className = "uploaded-product-body";
@@ -83,16 +147,17 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     body.appendChild(meta);
-    body.appendChild(
-      createTextElement(
-        "h5",
-        "uploaded-product-title",
-        product.title || "Untitled",
-      ),
+    const titleLink = document.createElement("a");
+    titleLink.className = "uploaded-product-title-link";
+    titleLink.href = productUrl;
+    titleLink.appendChild(
+      createTextElement("h5", "uploaded-product-title", product.title || "Untitled"),
     );
+
+    body.appendChild(titleLink);
     body.appendChild(
-      createTextElement(
-        "p",
+      createRichTextElement(
+        "div",
         "uploaded-product-description",
         product.description || "",
       ),
@@ -126,16 +191,10 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
 
-    card.appendChild(image);
+    card.appendChild(imageLink);
     card.appendChild(body);
 
-    const link = document.createElement("a");
-    link.className = "uploaded-product-link";
-    link.href = `productView.php?id=${product.id}`;
-    link.setAttribute("aria-label", `View ${product.title || "product"}`);
-    link.appendChild(card);
-
-    col.appendChild(link);
+    col.appendChild(card);
 
     return col;
   }
