@@ -73,7 +73,7 @@ if (!isset($_SESSION["user_id"])) {
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" name="description" rows="5" required></textarea>
+                            <textarea class="form-control" id="editor" name="description" rows="5"></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -102,6 +102,7 @@ if (!isset($_SESSION["user_id"])) {
 
     </div>
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
     <script src="../assets/js/sellProduct.js"></script>
 
 </body>

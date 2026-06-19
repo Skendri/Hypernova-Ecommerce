@@ -42,7 +42,11 @@
 .all-product-link {
   color: inherit;
   display: block;
-  height: 100%;
+  text-decoration: none;
+}
+
+.all-product-title-link {
+  color: inherit;
   text-decoration: none;
 }
 
@@ -69,9 +73,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.all-product-link:hover .all-product-card {
+.all-product-card:hover {
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
   transform: translateY(-3px);
+}
+
+.all-product-title-link:hover .all-product-title {
+  color: #0d6efd;
 }
 
 .all-product-img {
@@ -116,6 +124,18 @@
 .all-product-description {
   color: #4b5563;
   min-height: 72px;
+}
+
+.all-product-description h2,
+.all-product-description h3,
+.all-product-description h4,
+.all-product-description p {
+  margin: 0 0 8px;
+}
+
+.all-product-description a {
+  color: #0d6efd;
+  font-weight: 700;
 }
 
 .all-products-empty {

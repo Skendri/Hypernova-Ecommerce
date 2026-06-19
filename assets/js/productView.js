@@ -53,6 +53,60 @@ document.addEventListener("DOMContentLoaded", () => {
     return [normalizeImagePath(imageValue)];
   }
 
+  function sanitizeProductDescription(html) {
+    const template = document.createElement("template");
+    const allowedTags = new Set([
+      "A",
+      "B",
+      "BR",
+      "EM",
+      "H2",
+      "H3",
+      "H4",
+      "I",
+      "LI",
+      "OL",
+      "P",
+      "STRONG",
+      "UL",
+    ]);
+
+    template.innerHTML = html || "";
+
+    template.content.querySelectorAll("*").forEach((element) => {
+      if (!allowedTags.has(element.tagName)) {
+        element.replaceWith(...element.childNodes);
+        return;
+      }
+
+      [...element.attributes].forEach((attribute) => {
+        if (element.tagName !== "A" || attribute.name !== "href") {
+          element.removeAttribute(attribute.name);
+        }
+      });
+
+      if (element.tagName === "A") {
+        const href = element.getAttribute("href") || "";
+        const isSafeLink = /^(https?:|mailto:|tel:)/i.test(href);
+
+        if (!isSafeLink) {
+          element.replaceWith(...element.childNodes);
+          return;
+        }
+
+        element.target = "_blank";
+        element.rel = "noopener noreferrer";
+      }
+    });
+
+    return template.innerHTML.trim();
+  }
+
+  function setRichDescription(element, html, fallback) {
+    const cleanHtml = sanitizeProductDescription(html);
+    element.innerHTML = cleanHtml || fallback;
+  }
+
   function setControlsDisabled(isDisabled) {
     [
       elements.previous,
@@ -163,10 +217,12 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.title.textContent = product.title || "Untitled Product";
     elements.price.textContent = money(price);
     elements.oldPrice.textContent = money(oldPrice);
-    elements.description.textContent = product.description || "";
-    elements.longDescription.textContent =
-      product.description ||
-      "This seller has not added a longer description yet.";
+    setRichDescription(elements.description, product.description, "");
+    setRichDescription(
+      elements.longDescription,
+      product.description,
+      "This seller has not added a longer description yet.",
+    );
 
     elements.mainImage.src = state.images[0];
     elements.mainImage.alt = product.title || "Product image";
