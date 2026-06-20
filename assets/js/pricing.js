@@ -11,6 +11,8 @@ const excerptInput = document.getElementById("excerpt");
 const titleCount = document.getElementById("titleCount");
 const excerptCount = document.getElementById("excerptCount");
 const postCount = document.getElementById("postCount");
+const contentInput = document.getElementById("content");
+let contentEditor = null;
 
 const fallbackImage =
   "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80";
@@ -28,6 +30,13 @@ function clearMessage() {
 function updateCounters() {
   titleCount.textContent = titleInput.value.length;
   excerptCount.textContent = excerptInput.value.length;
+}
+
+function getPlainTextFromHtml(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html || "";
+
+  return (template.content.textContent || "").replace(/\s+/g, " ").trim();
 }
 
 function normalizeImagePath(imagePath) {
@@ -178,9 +187,13 @@ blogForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   clearMessage();
 
-  const content = document.getElementById("content").value.trim();
+  if (contentEditor) {
+    contentEditor.updateSourceElement();
+  }
 
-  if (content.length < 50) {
+  const content = contentInput.value.trim();
+
+  if (getPlainTextFromHtml(content).length < 50) {
     setMessage("Post content must be at least 50 characters.", "error");
     return;
   }
@@ -204,6 +217,9 @@ blogForm.addEventListener("submit", async function (event) {
 
     setMessage(data.message, "success");
     blogForm.reset();
+    if (contentEditor) {
+      contentEditor.setData("");
+    }
     coverPreview.innerHTML = "";
     coverPreview.hidden = true;
     updateCounters();
@@ -219,6 +235,29 @@ blogForm.addEventListener("submit", async function (event) {
 
 updateCounters();
 loadPosts();
+
+if (window.ClassicEditor && contentInput) {
+  ClassicEditor.create(contentInput, {
+    toolbar: [
+      "heading",
+      "|",
+      "bold",
+      "italic",
+      "link",
+      "bulletedList",
+      "numberedList",
+      "|",
+      "undo",
+      "redo",
+    ],
+  })
+    .then((editor) => {
+      contentEditor = editor;
+    })
+    .catch((error) => {
+      console.error("Could not load CKEditor:", error);
+    });
+}
 
 async function readApiResponse(response) {
   const responseText = await response.text();

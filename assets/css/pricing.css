@@ -138,6 +138,20 @@ body {
     resize: vertical;
 }
 
+.ck-editor__editable {
+    min-height: 220px;
+}
+
+.ck.ck-editor__main > .ck-editor__editable {
+    border-color: #cbd5e1;
+    border-radius: 0 0 8px 8px;
+}
+
+.ck.ck-editor__editable.ck-focused {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 0.2rem rgba(8, 127, 122, 0.14);
+}
+
 .field-counter {
     margin-top: 4px;
     color: var(--muted);

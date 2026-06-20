@@ -74,13 +74,13 @@ if (!isset($_SESSION["user_id"])) {
 
                         <div class="mb-3">
                             <label class="form-label" for="content">Post content</label>
-                            <textarea class="form-control post-content" id="content" name="content" rows="9" required></textarea>
+                            <textarea class="form-control post-content" id="content" name="content" rows="9"></textarea>
                             <div class="form-text">Minimum 50 characters.</div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="coverImage">Cover image</label>
-                            <input type="file" class="form-control" id="coverImage" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+                            <input type="file" class="form-control" id="coverImage" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
                             <div class="form-text">JPG, PNG, GIF, or WEBP. Maximum 3MB.</div>
                         </div>
 
@@ -117,7 +117,8 @@ if (!isset($_SESSION["user_id"])) {
         </section>
     </main>
 
-    <script src="../assets/js/pricing.js?v=blog-posts-2"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <script src="../assets/js/pricing.js?v=blog-posts-3"></script>
 </body>
 
 </html>

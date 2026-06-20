@@ -9,6 +9,64 @@ document.addEventListener("DOMContentLoaded", function () {
     return element;
   }
 
+  function sanitizeBlogContent(html) {
+    const template = document.createElement("template");
+    const allowedTags = new Set([
+      "A",
+      "B",
+      "BLOCKQUOTE",
+      "BR",
+      "CODE",
+      "EM",
+      "H2",
+      "H3",
+      "H4",
+      "I",
+      "LI",
+      "OL",
+      "P",
+      "STRONG",
+      "UL",
+    ]);
+
+    template.innerHTML = html || "";
+
+    template.content.querySelectorAll("*").forEach((element) => {
+      if (!allowedTags.has(element.tagName)) {
+        element.replaceWith(...element.childNodes);
+        return;
+      }
+
+      [...element.attributes].forEach((attribute) => {
+        if (element.tagName !== "A" || attribute.name !== "href") {
+          element.removeAttribute(attribute.name);
+        }
+      });
+
+      if (element.tagName === "A") {
+        const href = element.getAttribute("href") || "";
+        const isSafeLink = /^(https?:|mailto:|tel:)/i.test(href);
+
+        if (!isSafeLink) {
+          element.replaceWith(...element.childNodes);
+          return;
+        }
+
+        element.target = "_blank";
+        element.rel = "noopener noreferrer";
+      }
+    });
+
+    return template.innerHTML.trim();
+  }
+
+  function createRichTextElement(tagName, className, html) {
+    const element = document.createElement(tagName);
+    element.className = className;
+    element.innerHTML = sanitizeBlogContent(html);
+    return element;
+  }
+
   function normalizeImagePath(imagePath) {
     if (!imagePath) return fallbackImage;
 
@@ -35,13 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
       month: "short",
       day: "numeric",
     });
-  }
-
-  function shortenText(text, maxLength) {
-    if (!text) return "";
-    if (text.length <= maxLength) return text;
-
-    return `${text.slice(0, maxLength).trim()}...`;
   }
 
   function createBlogCard(post) {
@@ -82,11 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (post.content) {
       body.appendChild(
-        createTextElement(
-          "p",
-          "all-blog-content",
-          shortenText(post.content, 220),
-        ),
+        createRichTextElement("div", "all-blog-content", post.content),
       );
     }
 

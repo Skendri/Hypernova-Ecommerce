@@ -46,7 +46,7 @@ session_start();
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
-    <script src="../assets/js/allBlogPost.js"></script>
+    <script src="../assets/js/allBlogPost.js?v=rich-posts-1"></script>
 </body>
 
 </html>

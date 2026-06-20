@@ -105,6 +105,37 @@
   margin: 0;
 }
 
+.all-blog-content > :last-child {
+  margin-bottom: 0;
+}
+
+.all-blog-content h2,
+.all-blog-content h3,
+.all-blog-content h4 {
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 14px 0 8px;
+}
+
+.all-blog-content p,
+.all-blog-content ul,
+.all-blog-content ol,
+.all-blog-content blockquote {
+  margin: 0 0 10px;
+}
+
+.all-blog-content ul,
+.all-blog-content ol {
+  padding-left: 20px;
+}
+
+.all-blog-content a {
+  color: #0f766e;
+  font-weight: 700;
+}
+
 .all-blog-empty {
   background: #fff;
   border: 1px dashed #cbd5e1;
