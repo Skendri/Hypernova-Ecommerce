@@ -4,6 +4,7 @@ session_start();
 header('Content-Type: application/json');
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/blog_post_schema.php';
 
 function sendJsonResponse(int $statusCode, string $message, array $extra = []): void
 {
@@ -16,24 +17,10 @@ if (!isset($_SESSION['user_id'])) {
     sendJsonResponse(401, 'Please log in before publishing a blog post.');
 }
 
-$createTableSql = "
-    CREATE TABLE IF NOT EXISTS blog_posts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        title VARCHAR(160) NOT NULL,
-        excerpt VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL,
-        cover_image VARCHAR(255) DEFAULT NULL,
-        status ENUM('draft', 'published') NOT NULL DEFAULT 'published',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_blog_posts_user_id (user_id),
-        INDEX idx_blog_posts_status_created_at (status, created_at)
-    )
-";
-
-if (!$linkConnect->query($createTableSql)) {
-    sendJsonResponse(500, 'Could not create blog_posts table: ' . $linkConnect->error);
+try {
+    ensureBlogPostsTable($linkConnect);
+} catch (RuntimeException $error) {
+    sendJsonResponse(500, $error->getMessage());
 }
 
 $userId = (int) $_SESSION['user_id'];

@@ -199,6 +199,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function createBlogPostCard(post) {
+    const link = document.createElement("a");
+    link.className = "home-blog-link";
+    link.href = `fullPost-page.php?id=${encodeURIComponent(post.id)}`;
+    link.setAttribute("aria-label", `Read ${post.title || "blog post"}`);
+
     const card = document.createElement("article");
     card.className =
       "home-blog-card animate__animated animate__delay-1s animate__fadeInDown";
@@ -242,7 +247,9 @@ document.addEventListener("DOMContentLoaded", function () {
     card.appendChild(image);
     card.appendChild(body);
 
-    return card;
+    link.appendChild(card);
+
+    return link;
   }
 
   async function loadBlogPosts() {

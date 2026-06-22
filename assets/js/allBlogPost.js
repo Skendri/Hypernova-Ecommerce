@@ -45,6 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function createBlogCard(post) {
+    const link = document.createElement("a");
+    link.className = "all-blog-link";
+    link.href = `fullPost-page.php?id=${encodeURIComponent(post.id)}`;
+    link.setAttribute("aria-label", `Read ${post.title || "blog post"}`);
+
     const article = document.createElement("article");
     article.className = "all-blog-card";
 
@@ -72,6 +77,14 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
 
+    meta.appendChild(
+      createTextElement(
+        "span",
+        "all-blog-views",
+        `${Number(post.view_count || 0)} views`,
+      ),
+    );
+
     body.appendChild(meta);
     body.appendChild(
       createTextElement("h2", "all-blog-title", post.title || "Untitled post"),
@@ -93,7 +106,31 @@ document.addEventListener("DOMContentLoaded", function () {
     article.appendChild(image);
     article.appendChild(body);
 
-    return article;
+    link.appendChild(article);
+
+    return link;
+  }
+
+  function createPostSection(title, posts, emptyMessage) {
+    const section = document.createElement("section");
+    section.className = "all-blog-section";
+
+    section.appendChild(createTextElement("h2", "all-blog-section-title", title));
+
+    const grid = document.createElement("div");
+    grid.className = "all-blog-grid";
+
+    if (posts.length === 0) {
+      grid.innerHTML = `<div class="all-blog-empty">${emptyMessage}</div>`;
+    } else {
+      posts.forEach((post) => {
+        grid.appendChild(createBlogCard(post));
+      });
+    }
+
+    section.appendChild(grid);
+
+    return section;
   }
 
   async function readApiResponse(response) {
@@ -133,9 +170,35 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      posts.forEach((post) => {
-        postsGrid.appendChild(createBlogCard(post));
-      });
+      const latestPosts = posts.slice(0, 3);
+      const latestPostIds = new Set(latestPosts.map((post) => String(post.id)));
+      const mostViewedPosts = [...posts]
+        .filter((post) => !latestPostIds.has(String(post.id)))
+        .sort((firstPost, secondPost) => {
+          const viewDifference =
+            Number(secondPost.view_count || 0) - Number(firstPost.view_count || 0);
+
+          if (viewDifference !== 0) {
+            return viewDifference;
+          }
+
+          return (
+            new Date((secondPost.created_at || "").replace(" ", "T")).getTime() -
+            new Date((firstPost.created_at || "").replace(" ", "T")).getTime()
+          );
+        })
+        .slice(0, 3);
+
+      postsGrid.appendChild(
+        createPostSection("Latest posts", latestPosts, "No latest posts yet."),
+      );
+      postsGrid.appendChild(
+        createPostSection(
+          "Most viewed posts",
+          mostViewedPosts,
+          "No more posts have been viewed yet.",
+        ),
+      );
     } catch (error) {
       console.error("Error loading all blog posts:", error);
       postsGrid.innerHTML = `<div class="all-blog-empty">${error.message}</div>`;
