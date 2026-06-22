@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     content TEXT NOT NULL,
     cover_image VARCHAR(255) DEFAULT NULL,
     status ENUM('draft', 'published') NOT NULL DEFAULT 'published',
+    view_count INT UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_blog_posts_user_id (user_id),

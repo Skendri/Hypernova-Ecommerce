@@ -36,7 +36,7 @@ session_start();
         </section>
 
         <section class="container py-5">
-            <div id="all-blog-posts" class="all-blog-grid" aria-live="polite">
+            <div id="all-blog-posts" class="all-blog-list" aria-live="polite">
                 <div class="all-blog-empty">Loading blog posts...</div>
             </div>
         </section>

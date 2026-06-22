@@ -4,6 +4,7 @@ session_start();
 header('Content-Type: application/json');
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/blog_post_schema.php';
 
 function sendJsonResponse(int $statusCode, string $message): void
 {
@@ -12,24 +13,10 @@ function sendJsonResponse(int $statusCode, string $message): void
     exit();
 }
 
-$createTableSql = "
-    CREATE TABLE IF NOT EXISTS blog_posts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        title VARCHAR(160) NOT NULL,
-        excerpt VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL,
-        cover_image VARCHAR(255) DEFAULT NULL,
-        status ENUM('draft', 'published') NOT NULL DEFAULT 'published',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_blog_posts_user_id (user_id),
-        INDEX idx_blog_posts_status_created_at (status, created_at)
-    )
-";
-
-if (!$linkConnect->query($createTableSql)) {
-    sendJsonResponse(500, 'Could not create blog_posts table: ' . $linkConnect->error);
+try {
+    ensureBlogPostsTable($linkConnect);
+} catch (RuntimeException $error) {
+    sendJsonResponse(500, $error->getMessage());
 }
 
 $scope = $_GET['scope'] ?? 'published';
@@ -41,7 +28,7 @@ if ($scope === 'mine') {
     }
 
     $stmt = $linkConnect->prepare(
-        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.created_at,
+        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
                 COALESCE(u.username, 'Unknown author') AS author_name
          FROM blog_posts bp
          LEFT JOIN userdata u ON u.id = bp.user_id
@@ -52,7 +39,7 @@ if ($scope === 'mine') {
     $stmt->bind_param('i', $_SESSION['user_id']);
 } else {
     $stmt = $linkConnect->prepare(
-        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.created_at,
+        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
                 COALESCE(u.username, 'Unknown author') AS author_name
          FROM blog_posts bp
          LEFT JOIN userdata u ON u.id = bp.user_id
