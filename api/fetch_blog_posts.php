@@ -20,6 +20,9 @@ try {
 }
 
 $scope = $_GET['scope'] ?? 'published';
+$limit = isset($_GET['limit']) && ctype_digit((string) $_GET['limit'])
+    ? min((int) $_GET['limit'], 100)
+    : 0;
 $posts = [];
 
 if ($scope === 'mine') {
@@ -27,29 +30,33 @@ if ($scope === 'mine') {
         sendJsonResponse(401, 'Please log in to view your posts.');
     }
 
-    $stmt = $linkConnect->prepare(
-        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
+    $sql = "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
                 COALESCE(u.username, 'Unknown author') AS author_name
          FROM blog_posts bp
          LEFT JOIN userdata u ON u.id = bp.user_id
          WHERE bp.user_id = ?
-         ORDER BY bp.created_at DESC"
-    );
-
-    $stmt->bind_param('i', $_SESSION['user_id']);
+         ORDER BY bp.created_at DESC";
 } else {
-    $stmt = $linkConnect->prepare(
-        "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
+    $sql = "SELECT bp.id, bp.title, bp.excerpt, bp.content, bp.cover_image, bp.status, bp.view_count, bp.created_at,
                 COALESCE(u.username, 'Unknown author') AS author_name
          FROM blog_posts bp
          LEFT JOIN userdata u ON u.id = bp.user_id
          WHERE bp.status = 'published'
-         ORDER BY bp.created_at DESC"
-    );
+         ORDER BY bp.created_at DESC";
 }
+
+if ($limit > 0) {
+    $sql .= ' LIMIT ' . $limit;
+}
+
+$stmt = $linkConnect->prepare($sql);
 
 if (!$stmt) {
     sendJsonResponse(500, 'Could not prepare blog posts query: ' . $linkConnect->error);
+}
+
+if ($scope === 'mine') {
+    $stmt->bind_param('i', $_SESSION['user_id']);
 }
 
 $stmt->execute() || sendJsonResponse(500, 'Could not load blog posts: ' . $stmt->error);
