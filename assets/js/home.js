@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!userProducts) return;
 
     try {
-      const response = await fetch("../api/fetch_products.php");
+      const response = await fetch("../api/fetch_products.php?limit=4");
       const products = await response.json();
 
       userProducts.innerHTML = "";
@@ -342,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       const response = await fetch(
-        "../api/fetch_blog_posts.php?scope=published",
+        "../api/fetch_blog_posts.php?scope=published&limit=4",
         {
           credentials: "same-origin",
         },
@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      posts.slice(0, 6).forEach((post) => {
+      posts.slice(0, 4).forEach((post) => {
         blogGrid.appendChild(createBlogPostCard(post));
       });
     } catch (error) {

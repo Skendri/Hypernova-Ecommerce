@@ -12,6 +12,9 @@ $category = trim($_GET['category'] ?? '');
 $minPrice = trim($_GET['min_price'] ?? '');
 $maxPrice = trim($_GET['max_price'] ?? '');
 $search = trim($_GET['q'] ?? '');
+$limit = isset($_GET['limit']) && ctype_digit((string) $_GET['limit'])
+    ? min((int) $_GET['limit'], 100)
+    : 0;
 $conditions = [];
 $params = [];
 $types = '';
@@ -64,6 +67,10 @@ if (!empty($conditions)) {
 }
 
 $sql .= ' ORDER BY products.id DESC';
+
+if ($limit > 0) {
+    $sql .= ' LIMIT ' . $limit;
+}
 
 $stmt = $linkConnect->prepare($sql);
 
