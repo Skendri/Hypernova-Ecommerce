@@ -2,93 +2,57 @@
 session_start();
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/../includes/api_helpers.php';
+include __DIR__ . '/../includes/product_helpers.php';
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo "Please log in before publishing a product.";
-    exit();
+try {
+    ensure_products_schema($linkConnect);
+} catch (RuntimeException $error) {
+    send_json(500, [
+        'success' => false,
+        'message' => $error->getMessage(),
+    ]);
 }
 
-$user_id = $_SESSION['user_id'];
-
-$title = $_POST['title'];
-$description = $_POST['description'];
-$price = $_POST['price'];
-$category = $_POST['category'];
-$phone = $_POST['phone'];
-
-$uploadedImages = [];
-$maxImages = 5;
-
-if (!isset($_FILES['images']) || !is_array($_FILES['images']['name'])) {
-    http_response_code(400);
-    echo "Please upload at least one product image.";
-    exit();
-}
-
-$imageCount = count(array_filter($_FILES['images']['name']));
-
-if ($imageCount < 1 || $imageCount > $maxImages) {
-    http_response_code(400);
-    echo "Please upload between 1 and 5 images.";
-    exit();
-}
-
-if (!is_dir(__DIR__ . '/../assets/uploads')) {
-    mkdir(__DIR__ . '/../assets/uploads', 0777, true);
-}
-
-for ($i = 0; $i < $imageCount; $i++) {
-    if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) {
-        http_response_code(400);
-        echo "One of the images could not be uploaded.";
-        exit();
-    }
-
-    $tmpName = $_FILES['images']['tmp_name'][$i];
-    $fileInfo = pathinfo($_FILES['images']['name'][$i]);
-    $extension = strtolower($fileInfo['extension'] ?? '');
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-
-    if (!in_array($extension, $allowedExtensions, true)) {
-        http_response_code(400);
-        echo "Only JPG, PNG, GIF, and WEBP images are allowed.";
-        exit();
-    }
-
-    $imageName = time() . '_' . $i . '_' . bin2hex(random_bytes(4)) . '.' . $extension;
-    $folder = __DIR__ . '/../assets/uploads/' . $imageName;
-
-    if (!move_uploaded_file($tmpName, $folder)) {
-        http_response_code(500);
-        echo "Could not save one of the images.";
-        exit();
-    }
-
-    $uploadedImages[] = '../assets/uploads/' . $imageName;
-}
-
+$user_id = require_user_id();
+$product = validate_product_input(true);
+$uploadedImages = save_uploaded_product_images();
 $imagesJson = json_encode($uploadedImages);
-
 
 $stmt = $linkConnect->prepare(
     "INSERT INTO products
-    (user_id, title, description, price, category, image, phone)
-    VALUES (?, ?, ?, ?, ?, ?, ?)"
+    (user_id, title, description, price, category, image, phone, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 );
+
+if (!$stmt) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not prepare product insert.',
+    ]);
+}
 
 $stmt->bind_param(
-    "issdsss",
+    "issdssss",
     $user_id,
-    $title,
-    $description,
-    $price,
-    $category,
+    $product['title'],
+    $product['description'],
+    $product['price'],
+    $product['category'],
     $imagesJson,
-    $phone
+    $product['phone'],
+    $product['status']
 );
 
-$stmt->execute();
+if (!$stmt->execute()) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not publish product.',
+    ]);
+}
 
-
-echo "Product published successfully";
+send_json(201, [
+    'success' => true,
+    'message' => 'Product saved successfully.',
+    'product_id' => $stmt->insert_id,
+]);

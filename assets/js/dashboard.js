@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (state.products.length) {
         elements.productRows.innerHTML = `
           <tr>
-            <td colspan="5" class="text-center text-muted py-4">No products match your search.</td>
+            <td colspan="6" class="text-center text-muted py-4">No products match your search.</td>
           </tr>
         `;
       }
@@ -178,11 +178,13 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </td>
           <td>${escapeHtml(product.category || "Uncategorized")}</td>
+          <td>${escapeHtml(product.status || "active")}</td>
           <td><strong>${money(product.price)}</strong></td>
           <td>${formatDate(product.created_at)}</td>
           <td class="text-end">
             <div class="action-buttons">
               <a class="btn btn-sm btn-outline-primary" href="productView.php?id=${product.id}">View</a>
+              <a class="btn btn-sm btn-outline-secondary" href="editProduct.php?id=${product.id}">Edit</a>
               <button class="btn btn-sm btn-outline-danger" type="button" data-delete-id="${product.id}">Delete</button>
             </div>
           </td>
@@ -206,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const result = await response.json();
 
     if (!response.ok) {
-      alert(result.error || "Could not delete product.");
+      alert(result.message || result.error || "Could not delete product.");
       return;
     }
 
@@ -246,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error(error);
     elements.productRows.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center text-muted py-4">Could not load dashboard data.</td>
+        <td colspan="6" class="text-center text-muted py-4">Could not load dashboard data.</td>
       </tr>
     `;
   });

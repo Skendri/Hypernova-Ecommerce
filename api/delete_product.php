@@ -2,22 +2,28 @@
 session_start();
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/../includes/api_helpers.php';
+include __DIR__ . '/../includes/product_helpers.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Please log in before deleting a product.']);
-    exit();
+try {
+    ensure_products_schema($linkConnect);
+} catch (RuntimeException $error) {
+    send_json(500, [
+        'success' => false,
+        'message' => $error->getMessage(),
+    ]);
 }
 
 $productId = (int) ($_POST['id'] ?? 0);
-$userId = (int) $_SESSION['user_id'];
+$userId = require_user_id();
 
 if ($productId < 1) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Missing product id.']);
-    exit();
+    send_json(400, [
+        'success' => false,
+        'message' => 'Missing product id.',
+    ]);
 }
 
 $stmt = $linkConnect->prepare(
@@ -28,9 +34,13 @@ $stmt->bind_param("ii", $productId, $userId);
 $stmt->execute();
 
 if ($stmt->affected_rows < 1) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Product was not found.']);
-    exit();
+    send_json(404, [
+        'success' => false,
+        'message' => 'Product was not found.',
+    ]);
 }
 
-echo json_encode(['message' => 'Product deleted successfully.']);
+send_json(200, [
+    'success' => true,
+    'message' => 'Product deleted successfully.',
+]);
