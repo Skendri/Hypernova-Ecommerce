@@ -207,6 +207,25 @@ document.addEventListener("DOMContentLoaded", function () {
     return getFilterParams().toString() !== "";
   }
 
+  async function readApiResponse(response) {
+    const responseText = await response.text();
+
+    try {
+      return JSON.parse(responseText);
+    } catch (error) {
+      return {
+        success: false,
+        message: responseText.trim() || "The server returned an unreadable response.",
+      };
+    }
+  }
+
+  function getProductsFromResponse(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.data)) return payload.data;
+    return [];
+  }
+
   async function loadAllProducts() {
     if (!productsGrid) return;
 
@@ -216,7 +235,12 @@ document.addEventListener("DOMContentLoaded", function () {
         ? `../api/fetch_products.php?${params.toString()}`
         : "../api/fetch_products.php";
       const response = await fetch(requestUrl);
-      const products = await response.json();
+      const payload = await readApiResponse(response);
+      const products = getProductsFromResponse(payload);
+
+      if (!response.ok) {
+        throw new Error(payload.message || "Could not load products.");
+      }
 
       productsGrid.innerHTML = "";
 

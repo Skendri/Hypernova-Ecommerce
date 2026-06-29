@@ -67,7 +67,27 @@ if (isset($_SESSION["user_id"])) {
     </div>
 
     <!-- blog posts -->
-    <div id="news-post"></div>
+    <section class="container my-5" id="news-post">
+        <div class="bg-success position-absolute top-1 rounded animate__animated animate__delay-1s animate__backInLeft" style="width: 68%; height: 1%; left: 304px;"></div>
+        <div class="home-blog-heading animate__animated animate__delay-1s animate__backInLeft">
+            <div class="my-2">
+                <p class="home-blog-eyebrow">Latest posts</p>
+                <h3>News from Albania</h3>
+            </div>
+            <div class="home-blog-actions">
+                <a class="btn btn-success" href="allBlogPost.php">See all posts</a>
+            </div>
+        </div>
+        <div class="home-blog-grid" id="home-blog-grid">
+            <div class="home-blog-empty">Loading posts...</div>
+        </div>
+        <div class="home-blog-heading">
+            <div></div>
+            <div class="home-blog-actions">
+                <a class="btn btn-outline-success" href="pricing.php">Create post</a>
+            </div>
+        </div>
+    </section>
 
     <!-- news around the world -->
     <div class="container my-5">
@@ -87,7 +107,7 @@ if (isset($_SESSION["user_id"])) {
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous">
     </script>
-    <script src="../assets/js/home.js?v=blog-posts-2"></script>
+    <script src="../assets/js/home.js?v=marketplace-status-1"></script>
 </body>
 
 </html>

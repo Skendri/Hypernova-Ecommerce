@@ -6,8 +6,6 @@ include __DIR__ . '/../config/database.php';
 include __DIR__ . '/../includes/api_helpers.php';
 include __DIR__ . '/../includes/product_helpers.php';
 
-header('Content-Type: application/json');
-
 try {
     ensure_products_schema($linkConnect);
 } catch (RuntimeException $error) {
@@ -129,4 +127,7 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 
-echo json_encode($products);
+send_json(200, [
+    'success' => true,
+    'data' => $products,
+]);

@@ -147,12 +147,42 @@ function createDescriptionPreview(description) {
   return preview.outerHTML;
 }
 
+async function readApiResponse(response) {
+  const responseText = await response.text();
+
+  try {
+    return JSON.parse(responseText);
+  } catch (error) {
+    return {
+      success: false,
+      message: responseText.trim() || "The server returned an unreadable response.",
+    };
+  }
+}
+
+function getProductsFromResponse(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (payload && Array.isArray(payload.data)) return payload.data;
+  return [];
+}
+
 // LOAD PRODUCTS
 async function loadProducts() {
   const response = await fetch("../api/fetch_products.php?scope=mine");
-  const products = await response.json();
+  const payload = await readApiResponse(response);
+  const products = getProductsFromResponse(payload);
 
   grid.innerHTML = "";
+
+  if (!response.ok) {
+    grid.innerHTML = `
+            <div class="empty-state">
+                <h2>Could not load products</h2>
+                <p>${escapeHtml(payload.message || "Please try again.")}</p>
+            </div>
+        `;
+    return;
+  }
 
   if (products.length === 0) {
     grid.innerHTML = `
@@ -276,11 +306,10 @@ form.addEventListener("submit", async function (e) {
     body: formData,
   });
 
-  const result = await response.json().catch(() => ({
-    message: "The server returned an unreadable response.",
-  }));
+  const result = await readApiResponse(response);
 
-  alert(result.message || "Product request finished.");
+  const errors = Array.isArray(result.errors) ? `\n${result.errors.join("\n")}` : "";
+  alert(`${result.message || "Product request finished."}${errors}`);
 
   if (!response.ok) {
     return;

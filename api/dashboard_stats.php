@@ -5,8 +5,6 @@ include __DIR__ . '/../config/database.php';
 include __DIR__ . '/../includes/api_helpers.php';
 include __DIR__ . '/../includes/product_helpers.php';
 
-header('Content-Type: application/json');
-
 try {
     ensure_products_schema($linkConnect);
 } catch (RuntimeException $error) {
@@ -24,14 +22,30 @@ $stmt = $linkConnect->prepare(
     WHERE user_id = ?
     ORDER BY id DESC"
 );
+
+if (!$stmt) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not prepare dashboard query.',
+    ]);
+}
+
 $stmt->bind_param("i", $userId);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not load dashboard data.',
+    ]);
+}
+
 $result = $stmt->get_result();
 
 $products = [];
 $totalValue = 0;
 $categoryTotals = [];
 $monthlyTotals = [];
+$statusTotals = [];
 $latestDate = null;
 
 while ($row = $result->fetch_assoc()) {
@@ -43,6 +57,8 @@ while ($row = $result->fetch_assoc()) {
     $totalValue += $price;
     $categoryTotals[$category] = ($categoryTotals[$category] ?? 0) + 1;
     $monthlyTotals[$monthKey] = ($monthlyTotals[$monthKey] ?? 0) + 1;
+    $status = $row['status'] ?: 'active';
+    $statusTotals[$status] = ($statusTotals[$status] ?? 0) + 1;
 
     if ($createdAt && (!$latestDate || strtotime($createdAt) > strtotime($latestDate))) {
         $latestDate = $createdAt;
@@ -63,5 +79,6 @@ echo json_encode([
     ],
     'categories' => $categoryTotals,
     'monthly' => $monthlyTotals,
+    'statuses' => $statusTotals,
     'products' => $products,
 ]);

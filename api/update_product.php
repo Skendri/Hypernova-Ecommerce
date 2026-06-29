@@ -90,8 +90,22 @@ if (!$stmt->execute()) {
 
 if ($stmt->affected_rows < 1) {
     $ownershipCheck = $linkConnect->prepare('SELECT id FROM products WHERE id = ? AND user_id = ?');
+
+    if (!$ownershipCheck) {
+        send_json(500, [
+            'success' => false,
+            'message' => 'Could not verify product ownership.',
+        ]);
+    }
+
     $ownershipCheck->bind_param('ii', $productId, $userId);
-    $ownershipCheck->execute();
+    if (!$ownershipCheck->execute()) {
+        send_json(500, [
+            'success' => false,
+            'message' => 'Could not verify product ownership.',
+        ]);
+    }
+
     $result = $ownershipCheck->get_result();
 
     if (!$result->fetch_assoc()) {

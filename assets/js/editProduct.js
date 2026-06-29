@@ -72,6 +72,25 @@ function getDescriptionText(html) {
   return container.textContent.trim();
 }
 
+async function readApiResponse(response) {
+  const responseText = await response.text();
+
+  try {
+    return JSON.parse(responseText);
+  } catch (error) {
+    return {
+      success: false,
+      message: responseText.trim() || "The server returned an unreadable response.",
+    };
+  }
+}
+
+function getProductsFromResponse(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (payload && Array.isArray(payload.data)) return payload.data;
+  return [];
+}
+
 async function loadProduct() {
   if (!productId) {
     alert("Missing product id.");
@@ -80,8 +99,9 @@ async function loadProduct() {
   }
 
   const response = await fetch(`../api/fetch_products.php?id=${encodeURIComponent(productId)}`);
-  const products = await response.json();
-  const product = Array.isArray(products) ? products[0] : null;
+  const payload = await readApiResponse(response);
+  const products = getProductsFromResponse(payload);
+  const product = products[0] || null;
 
   if (!response.ok || !product || Number(product.is_owner) !== 1) {
     alert("Product was not found or you do not have permission to edit it.");
@@ -152,11 +172,10 @@ form.addEventListener("submit", async function (event) {
     method: "POST",
     body: formData,
   });
-  const result = await response.json().catch(() => ({
-    message: "The server returned an unreadable response.",
-  }));
+  const result = await readApiResponse(response);
 
-  alert(result.message || "Product request finished.");
+  const errors = Array.isArray(result.errors) ? `\n${result.errors.join("\n")}` : "";
+  alert(`${result.message || "Product request finished."}${errors}`);
 
   if (response.ok) {
     window.location.href = "dashboard.php";

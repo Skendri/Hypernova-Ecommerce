@@ -5,8 +5,6 @@ include __DIR__ . '/../config/database.php';
 include __DIR__ . '/../includes/api_helpers.php';
 include __DIR__ . '/../includes/product_helpers.php';
 
-header('Content-Type: application/json');
-
 try {
     ensure_products_schema($linkConnect);
 } catch (RuntimeException $error) {
@@ -30,8 +28,22 @@ $stmt = $linkConnect->prepare(
     "DELETE FROM products
     WHERE id = ? AND user_id = ?"
 );
+
+if (!$stmt) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not prepare product delete.',
+    ]);
+}
+
 $stmt->bind_param("ii", $productId, $userId);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not delete product.',
+    ]);
+}
 
 if ($stmt->affected_rows < 1) {
     send_json(404, [

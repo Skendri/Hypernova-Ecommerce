@@ -4,6 +4,21 @@ const PRODUCT_CATEGORIES = ['Electronics', 'Fashion', 'Gaming', 'Home', 'Sports'
 const PRODUCT_STATUSES = ['draft', 'active', 'sold', 'hidden'];
 const PRODUCT_MAX_IMAGES = 5;
 const PRODUCT_MAX_IMAGE_BYTES = 5242880;
+const PRODUCT_DESCRIPTION_ALLOWED_TAGS = [
+    'a',
+    'b',
+    'br',
+    'em',
+    'h2',
+    'h3',
+    'h4',
+    'i',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul',
+];
 
 function ensure_products_schema(mysqli $db): void
 {
@@ -59,12 +74,12 @@ function validate_product_input(bool $requireImages): array
     $status = trim_post_value('status') ?: 'active';
     $errors = [];
 
-    if ($title === '' || mb_strlen($title) > 120) {
+    if ($title === '' || product_text_length($title) > 120) {
         $errors[] = 'Product title is required and must be 120 characters or fewer.';
     }
 
     $descriptionText = trim(strip_tags($description));
-    if ($descriptionText === '' || mb_strlen($descriptionText) > 3000) {
+    if ($descriptionText === '' || product_text_length($descriptionText) > 3000) {
         $errors[] = 'Description is required and must be 3000 characters or fewer.';
     }
 
@@ -98,7 +113,7 @@ function validate_product_input(bool $requireImages): array
 
     return [
         'title' => $title,
-        'description' => $description,
+        'description' => sanitize_product_description($description),
         'price' => (float) $priceValue,
         'category' => $category,
         'phone' => $phone,
@@ -108,16 +123,13 @@ function validate_product_input(bool $requireImages): array
 
 function get_upload_image_count(): int
 {
-    if (!isset($_FILES['images']) || !is_array($_FILES['images']['name'])) {
-        return 0;
-    }
-
-    return count(array_filter($_FILES['images']['name'], static fn($name) => trim((string) $name) !== ''));
+    return count(get_upload_image_indexes());
 }
 
 function save_uploaded_product_images(): array
 {
-    $imageCount = get_upload_image_count();
+    $imageIndexes = get_upload_image_indexes();
+    $imageCount = count($imageIndexes);
 
     if ($imageCount === 0) {
         return [];
@@ -148,22 +160,30 @@ function save_uploaded_product_images(): array
     ];
     $fileInfo = new finfo(FILEINFO_MIME_TYPE);
 
-    for ($i = 0; $i < $imageCount; $i++) {
-        if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) {
+    foreach ($imageIndexes as $position => $fileIndex) {
+        if ($_FILES['images']['error'][$fileIndex] !== UPLOAD_ERR_OK) {
             send_json(422, [
                 'success' => false,
                 'message' => 'One of the images could not be uploaded.',
             ]);
         }
 
-        if ($_FILES['images']['size'][$i] > PRODUCT_MAX_IMAGE_BYTES) {
+        if ($_FILES['images']['size'][$fileIndex] < 1 || $_FILES['images']['size'][$fileIndex] > PRODUCT_MAX_IMAGE_BYTES) {
             send_json(422, [
                 'success' => false,
                 'message' => 'Each image must be 5MB or smaller.',
             ]);
         }
 
-        $tmpName = $_FILES['images']['tmp_name'][$i];
+        $tmpName = $_FILES['images']['tmp_name'][$fileIndex];
+
+        if (!is_uploaded_file($tmpName)) {
+            send_json(422, [
+                'success' => false,
+                'message' => 'One of the uploaded files is invalid.',
+            ]);
+        }
+
         $mimeType = $fileInfo->file($tmpName);
 
         if (!isset($allowedMimeTypes[$mimeType])) {
@@ -173,7 +193,7 @@ function save_uploaded_product_images(): array
             ]);
         }
 
-        $imageName = time() . '_' . $i . '_' . bin2hex(random_bytes(8)) . '.' . $allowedMimeTypes[$mimeType];
+        $imageName = time() . '_' . $position . '_' . bin2hex(random_bytes(8)) . '.' . $allowedMimeTypes[$mimeType];
         $targetPath = $uploadDir . '/' . $imageName;
 
         if (!move_uploaded_file($tmpName, $targetPath)) {
@@ -202,5 +222,129 @@ function decode_product_images(?string $imageJson): array
     }
 
     return [$imageJson];
+}
+
+function get_upload_image_indexes(): array
+{
+    if (!isset($_FILES['images']) || !is_array($_FILES['images']['name'])) {
+        return [];
+    }
+
+    $indexes = [];
+
+    foreach ($_FILES['images']['name'] as $index => $name) {
+        if (trim((string) $name) !== '') {
+            $indexes[] = $index;
+        }
+    }
+
+    return $indexes;
+}
+
+function product_text_length(string $value): int
+{
+    return function_exists('mb_strlen') ? mb_strlen($value) : strlen($value);
+}
+
+function sanitize_product_description(string $html): string
+{
+    $html = trim($html);
+
+    if ($html === '') {
+        return '';
+    }
+
+    if (!class_exists('DOMDocument')) {
+        return htmlspecialchars(strip_tags($html), ENT_QUOTES, 'UTF-8');
+    }
+
+    $document = new DOMDocument();
+    libxml_use_internal_errors(true);
+    $document->loadHTML(
+        '<!doctype html><html><body>' . $html . '</body></html>',
+        LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+    );
+    libxml_clear_errors();
+
+    $body = $document->getElementsByTagName('body')->item(0);
+
+    if (!$body) {
+        return '';
+    }
+
+    sanitize_product_dom_node($body);
+
+    $cleanHtml = '';
+
+    foreach ($body->childNodes as $child) {
+        $cleanHtml .= $document->saveHTML($child);
+    }
+
+    return trim($cleanHtml);
+}
+
+function sanitize_product_dom_node(DOMNode $node): void
+{
+    if (!$node->hasChildNodes()) {
+        return;
+    }
+
+    for ($index = $node->childNodes->length - 1; $index >= 0; $index--) {
+        $child = $node->childNodes->item($index);
+
+        if (!$child) {
+            continue;
+        }
+
+        if ($child instanceof DOMElement) {
+            $tagName = strtolower($child->tagName);
+
+            if (in_array($tagName, ['script', 'style'], true)) {
+                $node->removeChild($child);
+                continue;
+            }
+
+            if (!in_array($tagName, PRODUCT_DESCRIPTION_ALLOWED_TAGS, true)) {
+                sanitize_product_dom_node($child);
+
+                while ($child->firstChild) {
+                    $node->insertBefore($child->firstChild, $child);
+                }
+
+                $node->removeChild($child);
+                continue;
+            }
+
+            sanitize_product_element_attributes($child);
+        }
+
+        sanitize_product_dom_node($child);
+    }
+}
+
+function sanitize_product_element_attributes(DOMElement $element): void
+{
+    $href = strtolower($element->tagName) === 'a' ? $element->getAttribute('href') : '';
+
+    for ($index = $element->attributes->length - 1; $index >= 0; $index--) {
+        $attribute = $element->attributes->item($index);
+
+        if ($attribute instanceof DOMAttr) {
+            $element->removeAttribute($attribute->nodeName);
+        }
+    }
+
+    if (strtolower($element->tagName) !== 'a') {
+        return;
+    }
+
+    if (!preg_match('/^(https?:|mailto:|tel:)/i', $href)) {
+        $element->removeAttribute('href');
+        return;
+    }
+
+    $element->setAttribute('href', $href);
+    $element->setAttribute('target', '_blank');
+    $element->setAttribute('rel', 'noopener noreferrer');
 }
 

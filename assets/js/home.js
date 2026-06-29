@@ -204,7 +204,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       const response = await fetch("../api/fetch_products.php?limit=4");
-      const products = await response.json();
+      const payload = await readApiResponse(response);
+      const products = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload.data)
+          ? payload.data
+          : [];
+
+      if (!response.ok) {
+        throw new Error(payload.message || "Could not load uploaded products.");
+      }
 
       userProducts.innerHTML = "";
 
@@ -314,31 +323,9 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadBlogPosts() {
     if (!newsPost) return;
 
-    newsPost.innerHTML = `
-      <section class="container my-5">
-      <div class="bg-success position-absolute top-1 rounded animate__animated animate__delay-1s animate__backInLeft" style="width: 68%; height: 1%; left: 304px;"></div>
-        <div class="home-blog-heading animate__animated animate__delay-1s animate__backInLeft">
-          <div class="my-2">
-            <p class="home-blog-eyebrow">Latest posts</p>
-            <h3>News from Albania</h3>
-          </div>
-          <div class="home-blog-actions">
-            <a class="btn btn-success" href="allBlogPost.php">See all posts</a>
-          </div>
-        </div>
-        <div class="home-blog-grid" id="home-blog-grid">
-          <div class="home-blog-empty">Loading posts...</div>
-        </div>
-        <div class="home-blog-heading">
-          <div></div>
-          <div class="home-blog-actions">
-            <a class="btn btn-outline-success" href="pricing.php">Create post</a>
-          </div>
-        </div>
-      </section>
-    `;
-
     const blogGrid = document.getElementById("home-blog-grid");
+
+    if (!blogGrid) return;
 
     try {
       const response = await fetch(
