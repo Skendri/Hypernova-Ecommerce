@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (state.products.length) {
         elements.productRows.innerHTML = `
           <tr>
-            <td colspan="5" class="text-center text-muted py-4">No products match your search.</td>
+            <td colspan="6" class="text-center text-muted py-4">No products match your search.</td>
           </tr>
         `;
       }
@@ -178,17 +178,32 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </td>
           <td>${escapeHtml(product.category || "Uncategorized")}</td>
+          <td>${escapeHtml(product.status || "active")}</td>
           <td><strong>${money(product.price)}</strong></td>
           <td>${formatDate(product.created_at)}</td>
           <td class="text-end">
             <div class="action-buttons">
               <a class="btn btn-sm btn-outline-primary" href="productView.php?id=${product.id}">View</a>
+              <a class="btn btn-sm btn-outline-secondary" href="editProduct.php?id=${product.id}">Edit</a>
               <button class="btn btn-sm btn-outline-danger" type="button" data-delete-id="${product.id}">Delete</button>
             </div>
           </td>
         </tr>
       `;
     });
+  }
+
+  async function readApiResponse(response) {
+    const responseText = await response.text();
+
+    try {
+      return JSON.parse(responseText);
+    } catch (error) {
+      return {
+        success: false,
+        message: responseText.trim() || "The server returned an unreadable response.",
+      };
+    }
   }
 
   async function deleteProduct(productId) {
@@ -203,10 +218,10 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       body: formData,
     });
-    const result = await response.json();
+    const result = await readApiResponse(response);
 
     if (!response.ok) {
-      alert(result.error || "Could not delete product.");
+      alert(result.message || "Could not delete product.");
       return;
     }
 
@@ -215,10 +230,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadDashboard() {
     const response = await fetch("../api/dashboard_stats.php");
-    const data = await response.json();
+    const data = await readApiResponse(response);
 
     if (!response.ok) {
-      throw new Error(data.error || "Could not load dashboard.");
+      throw new Error(data.message || "Could not load dashboard.");
     }
 
     state.products = Array.isArray(data.products) ? data.products : [];
@@ -246,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error(error);
     elements.productRows.innerHTML = `
       <tr>
-        <td colspan="5" class="text-center text-muted py-4">Could not load dashboard data.</td>
+        <td colspan="6" class="text-center text-muted py-4">Could not load dashboard data.</td>
       </tr>
     `;
   });

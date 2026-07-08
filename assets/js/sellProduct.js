@@ -147,13 +147,42 @@ function createDescriptionPreview(description) {
   return preview.outerHTML;
 }
 
+async function readApiResponse(response) {
+  const responseText = await response.text();
+
+  try {
+    return JSON.parse(responseText);
+  } catch (error) {
+    return {
+      success: false,
+      message: responseText.trim() || "The server returned an unreadable response.",
+    };
+  }
+}
+
+function getProductsFromResponse(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (payload && Array.isArray(payload.data)) return payload.data;
+  return [];
+}
+
 // LOAD PRODUCTS
 async function loadProducts() {
   const response = await fetch("../api/fetch_products.php?scope=mine");
-
-  const products = await response.json();
+  const payload = await readApiResponse(response);
+  const products = getProductsFromResponse(payload);
 
   grid.innerHTML = "";
+
+  if (!response.ok) {
+    grid.innerHTML = `
+            <div class="empty-state">
+                <h2>Could not load products</h2>
+                <p>${escapeHtml(payload.message || "Please try again.")}</p>
+            </div>
+        `;
+    return;
+  }
 
   if (products.length === 0) {
     grid.innerHTML = `
@@ -174,6 +203,7 @@ async function loadProducts() {
     const productCategory = escapeHtml(product.category || "Product");
     const productPhone = escapeHtml(product.phone || "");
     const productCreatedAt = escapeHtml(product.created_at || "");
+    const productStatus = escapeHtml(product.status || "active");
     const thumbnails = productImages
       .slice(1, 5)
       .map(
@@ -212,6 +242,8 @@ async function loadProducts() {
                                 </span>
                             </div>
 
+                            <small class="d-block text-muted mb-2">Status: ${productStatus}</small>
+
                             <a class="product-title-link" href="${productUrl}">
                                 <h5 class="product-title">
                                     ${productTitle}
@@ -231,6 +263,10 @@ async function loadProducts() {
                             <small class="text-muted">
                                 Posted ${productCreatedAt}
                             </small>
+                            <div class="d-flex gap-2 mt-3">
+                              <a class="btn btn-sm btn-outline-primary" href="editProduct.php?id=${encodeURIComponent(product.id)}">Edit</a>
+                              <a class="btn btn-sm btn-outline-secondary" href="${productUrl}">View</a>
+                            </div>
                         </div>
 
                     </div>
@@ -270,9 +306,10 @@ form.addEventListener("submit", async function (e) {
     body: formData,
   });
 
-  const result = await response.text();
+  const result = await readApiResponse(response);
 
-  alert(result);
+  const errors = Array.isArray(result.errors) ? `\n${result.errors.join("\n")}` : "";
+  alert(`${result.message || "Product request finished."}${errors}`);
 
   if (!response.ok) {
     return;

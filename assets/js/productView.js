@@ -229,6 +229,40 @@ document.addEventListener("DOMContentLoaded", () => {
     renderThumbnails();
   }
 
+  function renderUnavailable(message) {
+    elements.page.classList.remove("is-skeleton");
+    setControlsDisabled(true);
+    elements.category.textContent = "Unavailable";
+    elements.title.textContent = "Product not available";
+    elements.price.textContent = "$0.00";
+    elements.oldPrice.textContent = "$0.00";
+    elements.description.textContent = message;
+    elements.longDescription.textContent = message;
+    elements.deliveryMessage.textContent = "This listing cannot be opened right now.";
+    elements.mainImage.src = "https://placehold.co/900x900?text=Product+Unavailable";
+    elements.mainImage.alt = "Product unavailable";
+    elements.thumbnailStrip.innerHTML = "";
+  }
+
+  async function readApiResponse(response) {
+    const responseText = await response.text();
+
+    try {
+      return JSON.parse(responseText);
+    } catch (error) {
+      return {
+        success: false,
+        message: responseText.trim() || "The server returned an unreadable response.",
+      };
+    }
+  }
+
+  function getProductsFromResponse(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.data)) return payload.data;
+    return [];
+  }
+
   function showToast(message) {
     const existingToast = document.querySelector(".toast-note");
 
@@ -255,19 +289,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const productId = new URLSearchParams(window.location.search).get("id");
 
     if (!productId) {
+      renderUnavailable("Missing product id.");
       return;
     }
 
     try {
-      const response = await fetch("../api/fetch_products.php");
-      const products = await response.json();
-      const product = products.find((item) => String(item.id) === String(productId));
+      const response = await fetch(`../api/fetch_products.php?id=${encodeURIComponent(productId)}`);
+      const payload = await readApiResponse(response);
+      const products = getProductsFromResponse(payload);
+      const product = products[0] || null;
+
+      if (!response.ok) {
+        throw new Error(payload.message || "Could not load product.");
+      }
 
       if (product) {
         renderProduct(product);
+      } else {
+        renderUnavailable("This product is hidden, sold, deleted, or does not exist.");
       }
     } catch (error) {
       console.error("Could not load product:", error);
+      renderUnavailable(error.message || "Could not load product.");
     }
   }
 

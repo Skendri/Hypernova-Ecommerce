@@ -91,6 +91,7 @@ $email = $_SESSION['email'] ?? 'Seller';
                             <tr>
                                 <th>Product</th>
                                 <th>Category</th>
+                                <th>Status</th>
                                 <th>Price</th>
                                 <th>Posted</th>
                                 <th class="text-end">Actions</th>

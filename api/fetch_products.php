@@ -3,33 +3,64 @@
 session_start();
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/../includes/api_helpers.php';
+include __DIR__ . '/../includes/product_helpers.php';
 
-header('Content-Type: application/json');
+try {
+    ensure_products_schema($linkConnect);
+} catch (RuntimeException $error) {
+    send_json(500, [
+        'success' => false,
+        'message' => $error->getMessage(),
+    ]);
+}
 
 $scope = $_GET['scope'] ?? 'all';
 $products = [];
+$productId = isset($_GET['id']) && ctype_digit((string) $_GET['id'])
+    ? (int) $_GET['id']
+    : 0;
 $category = trim($_GET['category'] ?? '');
 $minPrice = trim($_GET['min_price'] ?? '');
 $maxPrice = trim($_GET['max_price'] ?? '');
 $search = trim($_GET['q'] ?? '');
+$status = trim($_GET['status'] ?? '');
 $limit = isset($_GET['limit']) && ctype_digit((string) $_GET['limit'])
     ? min((int) $_GET['limit'], 100)
     : 0;
 $conditions = [];
 $params = [];
 $types = '';
+$currentUserId = current_user_id();
+
+if ($productId > 0) {
+    $conditions[] = 'products.id = ?';
+    $params[] = $productId;
+    $types .= 'i';
+
+    if ($currentUserId) {
+        $conditions[] = '(products.status = "active" OR products.user_id = ?)';
+        $params[] = $currentUserId;
+        $types .= 'i';
+    } else {
+        $conditions[] = 'products.status = "active"';
+    }
+} elseif ($scope !== 'mine') {
+    $conditions[] = 'products.status = "active"';
+}
 
 if ($scope === 'mine') {
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'Please log in to view your products.']);
-        exit();
-    }
+    $userId = require_user_id();
 
-    $userId = (int) $_SESSION['user_id'];
     $conditions[] = 'products.user_id = ?';
     $params[] = $userId;
     $types .= 'i';
+
+    if ($status !== '' && in_array($status, PRODUCT_STATUSES, true)) {
+        $conditions[] = 'products.status = ?';
+        $params[] = $status;
+        $types .= 's';
+    }
 }
 
 if ($category !== '') {
@@ -58,9 +89,13 @@ if ($search !== '') {
     $types .= 'ss';
 }
 
-$sql = "SELECT products.*, userdata.username AS owner_name
+$sql = "SELECT products.*, userdata.username AS owner_name,
+        CASE WHEN products.user_id = ? THEN 1 ELSE 0 END AS is_owner
     FROM products
     LEFT JOIN userdata ON products.user_id = userdata.id";
+$ownerCheckId = $currentUserId ?? 0;
+array_unshift($params, $ownerCheckId);
+$types = 'i' . $types;
 
 if (!empty($conditions)) {
     $sql .= ' WHERE ' . implode(' AND ', $conditions);
@@ -75,9 +110,10 @@ if ($limit > 0) {
 $stmt = $linkConnect->prepare($sql);
 
 if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Could not prepare products query.']);
-    exit();
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not prepare products query.',
+    ]);
 }
 
 if (!empty($params)) {
@@ -91,4 +127,7 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 
-echo json_encode($products);
+send_json(200, [
+    'success' => true,
+    'data' => $products,
+]);

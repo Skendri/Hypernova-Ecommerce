@@ -2,31 +2,50 @@
 session_start();
 
 include __DIR__ . '/../config/database.php';
+include __DIR__ . '/../includes/api_helpers.php';
+include __DIR__ . '/../includes/product_helpers.php';
 
-header('Content-Type: application/json');
-
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Please log in to view your dashboard.']);
-    exit();
+try {
+    ensure_products_schema($linkConnect);
+} catch (RuntimeException $error) {
+    send_json(500, [
+        'success' => false,
+        'message' => $error->getMessage(),
+    ]);
 }
 
-$userId = (int) $_SESSION['user_id'];
+$userId = require_user_id();
 
 $stmt = $linkConnect->prepare(
-    "SELECT id, title, description, price, category, image, phone, created_at
+    "SELECT id, title, description, price, category, image, phone, status, created_at, updated_at
     FROM products
     WHERE user_id = ?
     ORDER BY id DESC"
 );
+
+if (!$stmt) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not prepare dashboard query.',
+    ]);
+}
+
 $stmt->bind_param("i", $userId);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    send_json(500, [
+        'success' => false,
+        'message' => 'Could not load dashboard data.',
+    ]);
+}
+
 $result = $stmt->get_result();
 
 $products = [];
 $totalValue = 0;
 $categoryTotals = [];
 $monthlyTotals = [];
+$statusTotals = [];
 $latestDate = null;
 
 while ($row = $result->fetch_assoc()) {
@@ -38,6 +57,8 @@ while ($row = $result->fetch_assoc()) {
     $totalValue += $price;
     $categoryTotals[$category] = ($categoryTotals[$category] ?? 0) + 1;
     $monthlyTotals[$monthKey] = ($monthlyTotals[$monthKey] ?? 0) + 1;
+    $status = $row['status'] ?: 'active';
+    $statusTotals[$status] = ($statusTotals[$status] ?? 0) + 1;
 
     if ($createdAt && (!$latestDate || strtotime($createdAt) > strtotime($latestDate))) {
         $latestDate = $createdAt;
@@ -49,6 +70,7 @@ while ($row = $result->fetch_assoc()) {
 $averagePrice = count($products) ? $totalValue / count($products) : 0;
 
 echo json_encode([
+    'success' => true,
     'summary' => [
         'total_products' => count($products),
         'total_value' => round($totalValue, 2),
@@ -57,5 +79,6 @@ echo json_encode([
     ],
     'categories' => $categoryTotals,
     'monthly' => $monthlyTotals,
+    'statuses' => $statusTotals,
     'products' => $products,
 ]);
