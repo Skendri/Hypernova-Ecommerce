@@ -151,7 +151,11 @@ document.addEventListener("DOMContentLoaded", function () {
     titleLink.className = "uploaded-product-title-link";
     titleLink.href = productUrl;
     titleLink.appendChild(
-      createTextElement("h5", "uploaded-product-title", product.title || "Untitled"),
+      createTextElement(
+        "h5",
+        "uploaded-product-title",
+        product.title || "Untitled",
+      ),
     );
 
     body.appendChild(titleLink);
