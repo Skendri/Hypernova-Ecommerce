@@ -365,12 +365,42 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQuantity(state.quantity + 1);
   });
 
-  elements.addToCart.addEventListener("click", () => {
-    showToast(`${state.quantity} item added to cart.`);
-  });
+  function selectedOption(selector) {
+    const selected = document.querySelector(`${selector}.active`);
+    return selected ? (selected.textContent.trim() || selected.getAttribute("aria-label") || "") : "";
+  }
 
-  elements.buyNow.addEventListener("click", () => {
-    showToast("Ready for checkout.");
+  async function addCurrentProductToCart() {
+    if (!state.product || !state.product.id) {
+      showToast("This product is not available.");
+      return false;
+    }
+
+    const formData = new URLSearchParams({
+      action: "add",
+      product_id: state.product.id,
+      quantity: state.quantity,
+      size: selectedOption(".size-options button"),
+      color: selectedOption(".color-choice"),
+    });
+    const response = await fetch("../api/cart.php", { method: "POST", body: formData });
+    const payload = await readApiResponse(response);
+
+    if (!response.ok || !payload.success) {
+      showToast(payload.message || "Could not add this product to the cart.");
+      return false;
+    }
+
+    const cartCount = document.getElementById("cartCount");
+    if (cartCount) cartCount.textContent = payload.count;
+    showToast(`${state.quantity} item${state.quantity > 1 ? "s" : ""} added to cart.`);
+    return true;
+  }
+
+  elements.addToCart.addEventListener("click", () => { addCurrentProductToCart(); });
+
+  elements.buyNow.addEventListener("click", async () => {
+    if (await addCurrentProductToCart()) window.location.href = "cart.php";
   });
 
   loadProduct();

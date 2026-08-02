@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . "/../config/database.php";
+require_once __DIR__ . '/../includes/cart_helpers.php';
 
 $stmt = $linkConnect->prepare(
     "SELECT username FROM userdata WHERE id = ?"
@@ -49,6 +50,12 @@ $stmt->close();
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="productView.php">Product View</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link position-relative" href="cart.php" aria-label="Shopping cart">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <span class="badge rounded-pill text-bg-light text-primary" id="cartCount"><?php echo cart_item_count(); ?></span>
+                </a>
             </li>
         </ul>
 
