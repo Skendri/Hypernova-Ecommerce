@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     image.alt = product.title || "Product image";
     imageLink.appendChild(image);
 
+    // container parent for description at the card
     const body = document.createElement("div");
     body.className = "uploaded-product-body";
 

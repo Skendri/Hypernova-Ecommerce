@@ -88,7 +88,7 @@ body{
     position:relative;
 }
 
-.product-card::before{
+/* .product-card::before{
     content:"";
     position:absolute;
     inset:0;
@@ -105,7 +105,7 @@ body{
 
 .product-card:hover::before{
     opacity:1;
-}
+} */
 
 .product-card:hover{
     transform:translateY(-8px) scale(1.02);

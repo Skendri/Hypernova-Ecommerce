@@ -5,16 +5,23 @@ const previewContainer = document.getElementById("previewContainer");
 const descriptionTextarea = document.getElementById("editor");
 let descriptionEditor = null;
 
+// checks whether Only continue if CKEditor exists AND the textarea exists.
 if (window.ClassicEditor && descriptionTextarea) {
+  // This tells CKEditor: Take this textarea and turn it into a ClassicEditor.
   ClassicEditor.create(descriptionTextarea)
     .then((editor) => {
+      // Save the editor
       descriptionEditor = editor;
     })
     .catch((error) => console.error(error));
 }
 
 function normalizeImagePath(imagePath) {
-  if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+  if (
+    !imagePath ||
+    imagePath.startsWith("http") ||
+    imagePath.startsWith("data:")
+  ) {
     return imagePath;
   }
 
@@ -23,10 +30,11 @@ function normalizeImagePath(imagePath) {
     .replace(/^assets\/uploads\//, "../assets/uploads/");
 }
 
-// IMAGE PREVIEW
+// IMAGE PREVIEW before uploading them
 imageInput.addEventListener("change", function () {
   previewContainer.innerHTML = "";
 
+  // this refers to the file input element (example: user when upload the photo in FORM) Array.from() converts the FileList into a normal JavaScript array.
   const files = Array.from(this.files);
 
   if (files.length > 5) {
@@ -35,9 +43,12 @@ imageInput.addEventListener("change", function () {
     return;
   }
 
+  // This is used to preview images that a user has selected from a file input
   files.forEach((file) => {
+    // FileReader() is a browser API that allows JavaScript to read the contents of a file selected by the user.
     const reader = new FileReader();
 
+    // onload tells browser When you finish reading the file, run this function.
     reader.onload = function (e) {
       const img = document.createElement("img");
 
@@ -49,15 +60,21 @@ imageInput.addEventListener("change", function () {
 
     reader.readAsDataURL(file);
   });
+  // console.log(files); file contains users photos they choose to upload in web and to sell
 });
 
+// This function is taking the image value coming from your backend/database and making sure
+// your JavaScript always gets a clean array of image URLs that it can use to display product images.
 function getProductImages(imageValue) {
   if (!imageValue) return ["https://placehold.co/600x400?text=Product"];
 
   try {
+    // JSON.parse() converts the JSON string into a JavaScript value. Now JavaScript can work with it as an array.
     const parsedImages = JSON.parse(imageValue);
 
+    // Check if parsing produced an array
     if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+      // normalizeImagePath() function direction image value to the path we decide to go in repository
       return parsedImages.map(normalizeImagePath);
     }
   } catch (error) {
@@ -155,7 +172,8 @@ async function readApiResponse(response) {
   } catch (error) {
     return {
       success: false,
-      message: responseText.trim() || "The server returned an unreadable response.",
+      message:
+        responseText.trim() || "The server returned an unreadable response.",
     };
   }
 }
@@ -308,7 +326,9 @@ form.addEventListener("submit", async function (e) {
 
   const result = await readApiResponse(response);
 
-  const errors = Array.isArray(result.errors) ? `\n${result.errors.join("\n")}` : "";
+  const errors = Array.isArray(result.errors)
+    ? `\n${result.errors.join("\n")}`
+    : "";
   alert(`${result.message || "Product request finished."}${errors}`);
 
   if (!response.ok) {
