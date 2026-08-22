@@ -20,6 +20,23 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
+  // It is a custom function that created to convert the date coming from your news API into a nicer format for the user.
+  function formatWorldNewsDate(dateValue) {
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+      return dateValue;
+    }
+
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
   fetch("../api/api.php")
     .then((response) => response.json())
     .then((products) => {
@@ -38,28 +55,82 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching data:", error);
     });
 
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   function cardProduct(product) {
+    const title = escapeHtml(product.title || "Untitled article");
+    const description = escapeHtml(product.description || "");
+    const author = escapeHtml(product.author || "Unknown author");
+    const image = escapeHtml(product.urlToImage || "");
+    const url = escapeHtml(product.url || "#");
+    const source = escapeHtml(product.source?.name || "World News");
+
     return `
-                     <div class="col" id="${product.source.id}">
-                            <a class="p-3" href="${product.url}" target="_blank">
-                                <div class="card" style="width: 18rem;">
-                                    <img src="${product.urlToImage}" class="card-img-top" alt="">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.title}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                    </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">${product.author}</li>
-                                            <li class="list-group-item">${product.publishedAt}</li>
-                                            <li class="list-group-item">Example</li>
-                                        </ul>
-                                        <div class="card-body">
-                                            <a href="#" class="card-link">${product.content}</a>
-                                            <a href="#" class="card-link">${product.source.name}</a>
-                                        </div>
-                                </div>
-                            </a>
-                        </div>`;
+<div class="col">
+    <article class="news-card">
+
+        <a
+            href="${url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="news-card-link"
+            aria-label="Read ${title}"
+        >
+
+            <div class="news-image-wrapper">
+                <img
+                    src="${image}"
+                    class="news-card-image"
+                    alt="${title}"
+                    loading="lazy"
+                >
+
+                <span class="news-source-badge">
+                    ${source || "World News"}
+                </span>
+            </div>
+
+            <div class="news-card-body">
+
+                <div class="news-meta">
+                    <span>
+                        ${author || "Unknown author"}
+                    </span>
+
+                    <span>•</span>
+
+                    <span>
+                        ${formatWorldNewsDate(product.publishedAt)}
+                    </span>
+                </div>
+
+                <h3 class="news-card-title">
+                    ${title || "Untitled article"}
+                </h3>
+
+                <p class="news-card-description">
+                    ${description || "No description available."}
+                </p>
+
+                <span class="news-read-more">
+                    Read article
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </span>
+
+            </div>
+
+        </a>
+
+    </article>
+</div>
+                        `;
   }
 
   // 3. RENDER FILLIMI (8 produktet e para)
