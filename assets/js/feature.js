@@ -1,3 +1,44 @@
+// Interactive animated network background.
+if (window.particlesJS) {
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 200, density: { enable: true, value_area: 900 } },
+      color: { value: ["#ffffff", "#71b7ff", "#a993ff"] },
+      shape: { type: "circle" },
+      opacity: { value: 0.55, random: true },
+      size: { value: 3, random: true },
+      line_linked: {
+        enable: true,
+        distance: 145,
+        color: "#8ab8ff",
+        opacity: 0.38,
+        width: 1,
+      },
+      move: {
+        enable: true,
+        speed: 2.2,
+        direction: "none",
+        random: false,
+        straight: false,
+        out_mode: "out",
+        bounce: false,
+      },
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: { enable: true, mode: "repulse" },
+        onclick: { enable: true, mode: "repulse" },
+        resize: true,
+      },
+      modes: {
+        repulse: { distance: 130, duration: 0.45 },
+      },
+    },
+    retina_detect: true,
+  });
+}
+
 // news fetching from newsapi.org
 let allArticles = [];
 let startIndex = 30;

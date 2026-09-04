@@ -15,7 +15,7 @@ $dotenv->load();
 
 $apiKey = $_ENV['API_KEY'];
 
-$url = 'https://newsapi.org/v2/everything?q=apple&from=2026-07-07&to=2026-07-07&sortBy=popularity&apiKey=' . $apiKey;
+$url = 'https://newsapi.org/v2/everything?q=apple&from=2026-08-20&to=2026-08-20&sortBy=popularity&apiKey=' . $apiKey;
 $ch = curl_init($url);
 // $ch means cURL Handle. Think of cURL as PHP's version of JavaScript's fetch().
 

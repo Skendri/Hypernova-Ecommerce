@@ -108,21 +108,29 @@ document.addEventListener("DOMContentLoaded", function () {
     col.className =
       "col-lg-3 col-md-6 animate__animated animate__delay-1s animate__fadeInDown";
 
-    const card = document.createElement("div");
-    card.className = "uploaded-product-card h-100";
-
+    // this line is for links that when click send as at that prduct page to show
     const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
-    const imageLink = document.createElement("a");
-    imageLink.className = "uploaded-product-media-link";
-    imageLink.href = productUrl;
-    imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
+    const card = document.createElement("a");
+    card.className = "uploaded-product-card h-100";
+    card.href = productUrl;
+
+    // const divLink = document.createElement("a");
+    // divLink.className = "h-100 uploaded-product-link";
+    // divLink.href = productUrl;
+    // card.appendChild(divLink);
+
+    // const imageLink = document.createElement("a");
+    // imageLink.className = "uploaded-product-media-link";
+    // imageLink.href = productUrl;
+    // card.href = productUrl;
+    // imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
 
     const image = document.createElement("img");
     image.className = "uploaded-product-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
-    imageLink.appendChild(image);
+    // imageLink.appendChild(image);
 
     // container parent for description at the card
     const body = document.createElement("div");
@@ -160,13 +168,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     body.appendChild(titleLink);
-    body.appendChild(
-      createRichTextElement(
-        "div",
-        "uploaded-product-description",
-        product.description || "",
-      ),
-    );
+    // this logic here is description from CKeditor and is for card at home.php page
+    // body.appendChild(
+    //   createRichTextElement(
+    //     "div",
+    //     "uploaded-product-description",
+    //     product.description || "",
+    //   ),
+    // );
 
     body.appendChild(
       createTextElement(
@@ -196,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
 
-    card.appendChild(imageLink);
+    card.appendChild(image);
     card.appendChild(body);
 
     col.appendChild(card);

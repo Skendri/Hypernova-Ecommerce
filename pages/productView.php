@@ -17,6 +17,7 @@ session_start();
     <?php include '../components/navbar.php'; ?>
 
     <main class="product-page">
+        <a class="btn btn-outline-primary position-fixed" href="allProducts.php">Back home</a>
         <section class="product-shell" aria-live="polite">
             <div class="product-gallery reveal">
                 <div class="gallery-stage">

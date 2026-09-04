@@ -60,9 +60,9 @@ if (isset($_SESSION["user_id"])) {
             <a class="btn btn-primary" href="allProducts.php">See all products</a>
         </div>
         <div id="user-products" class="row g-4"></div>
-        <div class="home-products-heading">
+        <div class="home-products-heading animate__animated animate__delay-1s animate__backInLeft">
             <div></div>
-            <a class="btn btn-outline-primary" href="./sellProduct.php">create product</a>
+            <a class="btn btn-outline-primary text-white" href="./sellProduct.php">create product</a>
         </div>
     </div>
 
@@ -81,7 +81,7 @@ if (isset($_SESSION["user_id"])) {
         <div class="home-blog-grid" id="home-blog-grid">
             <div class="home-blog-empty">Loading posts...</div>
         </div>
-        <div class="home-blog-heading">
+        <div class="home-blog-heading animate__animated animate__delay-1s animate__backInLeft">
             <div></div>
             <div class="home-blog-actions">
                 <a class="btn btn-outline-success" href="pricing.php">Create post</a>

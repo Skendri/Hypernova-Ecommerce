@@ -1,0 +1,35 @@
+#particles-js {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(50, 108, 229, 0.22), transparent 38%),
+    radial-gradient(circle at 80% 80%, rgba(130, 54, 216, 0.2), transparent 42%),
+    #071226;
+}
+
+.feature-page {
+  min-height: 100vh;
+  background: #071226;
+}
+
+.feature-page > nav,
+.feature-page > .navbar,
+.feature-content {
+  position: relative;
+  z-index: 1;
+}
+
+.feature-content {
+  padding-bottom: 2rem;
+}
+
+.feature-content h3 {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.feature-content .card {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}

@@ -20,7 +20,7 @@ session_start();
     <?php include '../components/navbar.php'; ?>
 
     <div class="container text-center">
-        <div class="row wrapper row-cols-4">
+        <div class="row g-4 mt-4 mb-4 wrapper row-cols-4">
             <!-- all cards here -->
 
             <!-- all cards here -->

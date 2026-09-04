@@ -25,8 +25,24 @@ if (!$user) {
 $stmt->close();
 
 ?>
+<!-- css for navbar -->
+<style>
+    .glass-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
 
-<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        background: rgba(20, 30, 45, 0.65);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg glass-navbar" data-bs-theme="dark">
 
     <div class="container">
         <!-- Logo navbar -->

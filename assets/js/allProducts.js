@@ -102,19 +102,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
-    const card = document.createElement("article");
+    const card = document.createElement("a");
     card.className = "all-product-card h-100";
+    card.href = productUrl;
 
-    const imageLink = document.createElement("a");
-    imageLink.className = "all-product-link";
-    imageLink.href = productUrl;
-    imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
+    // const imageLink = document.createElement("a");
+    // imageLink.className = "all-product-link";
+    // imageLink.href = productUrl;
+    // imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
 
     const image = document.createElement("img");
     image.className = "all-product-img";
     image.src = getProductImage(product.image);
-    image.alt = product.title || "Product image";
-    imageLink.appendChild(image);
+    // image.alt = product.title || "Product image";
+    // imageLink.appendChild(image);
 
     const body = document.createElement("div");
     body.className = "all-product-body";
@@ -147,13 +148,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     body.appendChild(titleLink);
-    body.appendChild(
-      createRichTextElement(
-        "div",
-        "all-product-description",
-        product.description || "",
-      ),
-    );
+    // removing product description from card
+    // body.appendChild(
+    //   createRichTextElement(
+    //     "div",
+    //     "all-product-description",
+    //     product.description || "",
+    //   ),
+    // );
     body.appendChild(
       createTextElement(
         "small",
@@ -174,11 +176,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (product.created_at) {
       body.appendChild(
-        createTextElement("small", "text-muted", `Posted ${product.created_at}`),
+        createTextElement(
+          "small",
+          "text-muted",
+          `Posted ${product.created_at}`,
+        ),
       );
     }
 
-    card.appendChild(imageLink);
+    card.appendChild(image);
     card.appendChild(body);
     col.appendChild(card);
 
@@ -215,7 +221,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       return {
         success: false,
-        message: responseText.trim() || "The server returned an unreadable response.",
+        message:
+          responseText.trim() || "The server returned an unreadable response.",
       };
     }
   }

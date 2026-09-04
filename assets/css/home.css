@@ -4,18 +4,27 @@
 } */
 
 body {
-background: hsla(213, 62%, 45%, 1);
-
-background: linear-gradient(90deg, hsla(213, 62%, 45%, 1) 0%, hsla(203, 89%, 71%, 1) 50%, hsla(0, 0%, 96%, 1) 100%);
-
-background: -moz-linear-gradient(90deg, hsla(213, 62%, 45%, 1) 0%, hsla(203, 89%, 71%, 1) 50%, hsla(0, 0%, 96%, 1) 100%);
-
-background: -webkit-linear-gradient(90deg, hsla(213, 62%, 45%, 1) 0%, hsla(203, 89%, 71%, 1) 50%, hsla(0, 0%, 96%, 1) 100%);
-
-filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#2C6CBC", endColorstr="#71C3F7", GradientType=1 );
+  background: conic-gradient(
+    from 180deg,
+    #998237 0deg,
+    #906051 40deg,
+    #77466c 80deg,
+    #533788 120deg,
+    #2833a4 160deg,
+    #003bc1 200deg,
+    #004edc 240deg,
+    #006bf6 280deg,
+    #0090ff 320deg,
+    #00b9ff 360deg
+  );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
 }
 
 .uploaded-product-card {
+  display: block;
+  text-decoration: none;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -342,38 +351,6 @@ filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#2C6CBC", en
     grid-template-columns: 1fr;
   }
 }
-
-
-/* navbari */
-/* .navbar-nav{
-    margin-left: 4rem;
-}
-
-.container-fluid a{
-    margin-left: 4rem;
-}
-
-/* kontenti faqes */
-
-/* .main {
-  margin-top: 60px;
-}
-
-.products-grid {
-  display: grid;
-  margin: 0px 3%; */
-
-  /* - In CSS Grid, 1fr means a column will take up the
-       remaining space in the grid.
-     - If we write 1fr 1fr ... 1fr; 8 times, this will
-       divide the grid into 8 columns, each taking up an
-       equal amount of the space.
-     - repeat(8, 1fr); is a shortcut for repeating "1fr"
-       8 times (instead of typing out "1fr" 8 times).
-       repeat(...) is a special property that works with
-       display: grid; */
-  /* grid-template-columns: repeat(8, 1fr); */
-/* } */
 
 .apple-api-eyebrow {
   color: #ffc107;

@@ -4,15 +4,23 @@
     <div class="fundi-menu">
         <div class="fundi-rreshti">
             <h3>NA KONTAKTONI</h3>
-            <br>Mbeshtetja e klientit </br>
+            <br>Mbeshtetja e klientit
             <a href="#">Lexoni te gjitha pyetjet e shpeshta</a></p>
             <p>Na shkruani </br>
                 <a href="#">Formulari i kontaktit</a>
             </p>
             <div class="fundi-socials">
-                <p>ig</p>
-                <p>fcb</p>
-                <p>yt</p>
+                <a href="#" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a href="#" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a href="#" aria-label="YouTube">
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
             </div>
         </div>
         <div class="fundi-rreshti">
@@ -99,11 +107,11 @@
             <h3>Ne dergojme me</h3>
             <div class="dergojme">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/4qXgDEqtsdZ6n11yVxnJxA/b546fb7fc6cac564deac26acf5776210/logo-poste-italiane-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/4qXgDEqtsdZ6n11yVxnJxA/b546fb7fc6cac564deac26acf5776210/logo-poste-italiane-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/4qXgDEqtsdZ6n11yVxnJxA/b546fb7fc6cac564deac26acf5776210/logo-poste-italiane-bw.svg?q=80"
-                     alt="">
+                    alt="">
             </div>
         </div>
         <div>
@@ -111,30 +119,30 @@
 
             <div class="pagesa">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
                 <img src="https://cms-images.mmst.eu/hzxov1nxpus5/6qlKtuDBbGWoyIFtYqcNiC/3c854243d06ff997762ab77e7d1d8d77/logo-paypal-bw.svg?q=80"
-                     alt="">
+                    alt="">
             </div>
         </div>
     </div>
     <h3>Aplikacioni GlobeShops</h3>
     <div class="aplikacioni-GlobeShops">
         <img src="https://cms-images.mmst.eu/hzxov1nxpus5/Nke1b40tgIZ4cEd81r4SZ/184507693030fe65d6e02d313c972aeb/GoogleAppStoreEn.svg?q=80"
-             alt="">
+            alt="">
         <img src="https://cms-images.mmst.eu/hzxov1nxpus5/Nke1b40tgIZ4cEd81r4SZ/184507693030fe65d6e02d313c972aeb/GoogleAppStoreEn.svg?q=80"
-             alt="">
+            alt="">
         <img src="https://cms-images.mmst.eu/hzxov1nxpus5/Nke1b40tgIZ4cEd81r4SZ/184507693030fe65d6e02d313c972aeb/GoogleAppStoreEn.svg?q=80"
-             alt="">
+            alt="">
     </div>
 </section>
 <section class="fundiDy">
