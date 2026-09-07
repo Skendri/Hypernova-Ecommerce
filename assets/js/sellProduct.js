@@ -3,7 +3,35 @@ const grid = document.getElementById("productsGrid");
 const imageInput = document.getElementById("imageInput");
 const previewContainer = document.getElementById("previewContainer");
 const descriptionTextarea = document.getElementById("editor");
+const uploadZone = document.querySelector(".upload-zone");
+const selectedImageCount = document.getElementById("imageCount");
+const totalListings = document.getElementById("totalListings");
+const activeListings = document.getElementById("activeListings");
+const catalogValue = document.getElementById("catalogValue");
+const inventoryCount = document.getElementById("inventoryCount");
+const inventoryHeadingCount = document.getElementById("inventoryHeadingCount");
+const categoryFilters = document.querySelectorAll("[data-category-filter]");
+const studioTabs = document.querySelectorAll("[data-scroll-target]");
+const draftButton = document.querySelector("[data-draft-button]");
+const shopperPreviewImage = document.getElementById("shopperPreviewImage");
+const shopperPreviewTitle = document.getElementById("shopperPreviewTitle");
+const shopperPreviewCategory = document.getElementById("shopperPreviewCategory");
+const shopperPreviewPrice = document.getElementById("shopperPreviewPrice");
 let descriptionEditor = null;
+let selectedCategory = "All";
+let loadedProducts = [];
+let productsLoadError = false;
+
+function updateShopperPreview() {
+  if (shopperPreviewTitle) shopperPreviewTitle.textContent = form.elements.namedItem("title")?.value.trim() || "Your product title";
+  if (shopperPreviewCategory) shopperPreviewCategory.textContent = form.elements.namedItem("category")?.value || "Select a category";
+  if (shopperPreviewPrice) shopperPreviewPrice.textContent = `$${Number(form.elements.namedItem("price")?.value || 0).toFixed(2)}`;
+}
+
+["title", "category", "price"].forEach((fieldName) => {
+  form.elements.namedItem(fieldName)?.addEventListener("input", updateShopperPreview);
+  form.elements.namedItem(fieldName)?.addEventListener("change", updateShopperPreview);
+});
 
 // checks whether Only continue if CKEditor exists AND the textarea exists.
 if (window.ClassicEditor && descriptionTextarea) {
@@ -32,8 +60,6 @@ function normalizeImagePath(imagePath) {
 
 // IMAGE PREVIEW before uploading them
 imageInput.addEventListener("change", function () {
-  previewContainer.innerHTML = "";
-
   // this refers to the file input element (example: user when upload the photo in FORM) Array.from() converts the FileList into a normal JavaScript array.
   const files = Array.from(this.files);
 
@@ -41,6 +67,11 @@ imageInput.addEventListener("change", function () {
     alert("You can upload a maximum of 5 images.");
     this.value = "";
     return;
+  }
+
+  previewContainer.innerHTML = "";
+  if (selectedImageCount) {
+    selectedImageCount.textContent = `${files.length} / 5 slots filled`;
   }
 
   // This is used to preview images that a user has selected from a file input
@@ -56,12 +87,64 @@ imageInput.addEventListener("change", function () {
       img.alt = file.name;
 
       previewContainer.appendChild(img);
+      if (shopperPreviewImage && file === files[0]) shopperPreviewImage.src = e.target.result;
     };
 
     reader.readAsDataURL(file);
   });
   // console.log(files); file contains users photos they choose to upload in web and to sell
 });
+
+updateShopperPreview();
+
+if (uploadZone) {
+  ["dragenter", "dragover"].forEach((eventName) => {
+    uploadZone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      uploadZone.classList.add("is-dragging");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    uploadZone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      uploadZone.classList.remove("is-dragging");
+    });
+  });
+
+  uploadZone.addEventListener("drop", (event) => {
+    const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith("image/"));
+    if (!files.length) return;
+
+    const transfer = new DataTransfer();
+    files.slice(0, 5).forEach((file) => transfer.items.add(file));
+    imageInput.files = transfer.files;
+    imageInput.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+categoryFilters.forEach((filter) => {
+  filter.addEventListener("click", () => {
+    selectedCategory = filter.dataset.categoryFilter;
+    categoryFilters.forEach((item) => item.classList.toggle("is-active", item === filter));
+    renderLoadedProducts();
+  });
+});
+
+studioTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    document.getElementById(tab.dataset.scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    studioTabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+  });
+});
+
+if (draftButton) {
+  draftButton.addEventListener("click", () => {
+    const status = form.elements.namedItem("status");
+    status.value = "draft";
+    form.requestSubmit();
+  });
+}
 
 // This function is taking the image value coming from your backend/database and making sure
 // your JavaScript always gets a clean array of image URLs that it can use to display product images.
@@ -189,14 +272,32 @@ async function loadProducts() {
   const response = await fetch("../api/fetch_products.php?scope=mine");
   const payload = await readApiResponse(response);
   const products = getProductsFromResponse(payload);
+  loadedProducts = products;
+  productsLoadError = !response.ok;
+
+  const activeProductCount = products.filter((product) => (product.status || "active") === "active").length;
+  const totalCatalogValue = products.reduce((sum, product) => sum + Number(product.price || 0), 0);
+  if (totalListings) totalListings.textContent = products.length;
+  if (activeListings) activeListings.textContent = activeProductCount;
+  if (catalogValue) catalogValue.textContent = `$${totalCatalogValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  if (inventoryCount) inventoryCount.textContent = products.length;
+  if (inventoryHeadingCount) inventoryHeadingCount.textContent = products.length;
+
+  renderLoadedProducts();
+}
+
+function renderLoadedProducts() {
+  const products = selectedCategory === "All"
+    ? loadedProducts
+    : loadedProducts.filter((product) => product.category === selectedCategory);
 
   grid.innerHTML = "";
 
-  if (!response.ok) {
+  if (productsLoadError) {
     grid.innerHTML = `
             <div class="empty-state">
                 <h2>Could not load products</h2>
-                <p>${escapeHtml(payload.message || "Please try again.")}</p>
+                <p>Please try again.</p>
             </div>
         `;
     return;
@@ -206,7 +307,7 @@ async function loadProducts() {
     grid.innerHTML = `
             <div class="empty-state">
                 <h2>No products listed yet</h2>
-                <p>Start selling your first product</p>
+                <p>Start selling your first product.</p>
             </div>
         `;
 
