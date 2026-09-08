@@ -24,9 +24,10 @@ try {
 }
 
 $userId = (int) $_SESSION['user_id'];
-$title = trim($_POST['title'] ?? '');
-$excerpt = trim($_POST['excerpt'] ?? '');
-$content = trim($_POST['content'] ?? '');
+// strip_tags() makes user input to show in web page as a plain text not with HTML tags
+$title = trim(strip_tags($_POST['title'] ?? ''));
+$excerpt = trim(strip_tags($_POST['excerpt'] ?? ''));
+$content = trim(strip_tags($_POST['content'] ?? ''));
 $status = $_POST['status'] ?? 'published';
 $allowedStatuses = ['draft', 'published'];
 $coverImagePath = null;

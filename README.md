@@ -1,129 +1,157 @@
 # Hypernova Ecommerce
 
-Hypernova Ecommerce is a PHP-based web application that combines a simple marketplace, seller dashboard, blog publishing workflow, and news integration into one platform. The project is built for local development with XAMPP and uses MySQL for data storage.
+Hypernova Ecommerce is a PHP-powered e-commerce and content platform for showcasing products, publishing blog content, and delivering marketplace experiences with a modern responsive UI. The project combines a product marketplace, seller dashboard, blog publishing workflow, and a news API integration into a single web application suitable for local development with XAMPP.
 
-## What this project includes
+## Project Overview
 
-- User authentication with login, registration, and password reset
-- A seller-focused dashboard for managing products
-- Product publishing with image uploads and status controls
-- A blog publishing system for posts, drafts, and cover images
-- News integrations from external APIs
-- A responsive front end built with Bootstrap and custom CSS
+Hypernova Ecommerce is designed to support a lightweight online commerce workflow where sellers can manage product listings, publish content, and monitor business activity through a dashboard. The platform includes authentication, product management, blog post creation, image upload handling, and external news content integration.
 
-## Tech stack
+## Features
 
-- PHP
+- Secure user authentication with login, registration, account creation, and password reset flows
+- Seller-friendly dashboard for monitoring products, categories, pricing, and store activity
+- Product listing creation and editing with category, price, description, phone number, image upload, and product status fields
+- Blog publishing workflow for creating and managing posts with images and content status
+- Cart and product browsing experience across the storefront
+- News content integration using a public NewsAPI endpoint
+- Responsive styling using Bootstrap and custom CSS assets
+- PHPMailer-based email support for password recovery and notifications
+
+## Tech Stack
+
+- PHP 8+
 - MySQL / MariaDB
-- Bootstrap 5
-- PHPMailer
 - Composer
-- JavaScript for page interactions
+- PHPMailer
+- Dotenv environment configuration
+- Bootstrap 5
+- JavaScript for client-side UI interactions
 
-## Main project structure
+## Project Structure
 
-- auth/ – login, registration, password reset, and logout flows
-- api/ – backend endpoints for products, blogs, dashboard statistics, and news
-- pages/ – main pages such as home, dashboard, pricing, sell product, and product view
-- components/ – shared UI components like the navbar and footer
-- config/ – database connection and environment configuration
-- includes/ – helper functions for API responses, products, and validation
-- assets/ – CSS, JavaScript, and uploaded media files
-- database/ – SQL schema files
-- vendor/ – Composer dependencies
-
-## Features overview
-
-### User accounts
-
-Users can register, log in, and recover passwords through the authentication pages under the auth folder.
-
-### Marketplace
-
-Sellers can publish products with title, category, price, description, phone number, listing status, and multiple images.
-
-### Dashboard
-
-The dashboard gives sellers a quick overview of their listings, totals, pricing insights, and recent activity.
-
-### Blog system
-
-Users can publish blog posts with excerpts, content, status, and cover images.
-
-### News API integration
-
-The app fetches external news content from a public API and displays it on the home page.
+```text
+Hypernova-Ecommerce/
+├── api/                  # Backend endpoints for products, blogs, dashboard, cart and news
+├── assets/               # CSS, JavaScript, image and upload assets
+├── auth/                 # Login, signup, logout and password reset flows
+├── components/           # Shared UI sections such as navbar and footer
+├── config/               # Database and environment configuration
+├── database/             # Database import and schema files
+├── includes/              # Shared PHP helper logic and validation utilities
+├── pages/                # Main application pages
+├── vendor/               # Composer dependencies
+├── composer.json         # Composer dependency definition
+├── index.php             # Application entry point redirect
+└── README.md             # Project documentation
+```
 
 ## Requirements
 
-Before running the project locally, make sure you have:
+Before installing and running the application locally, make sure the following tools are available:
 
-- XAMPP or WAMP installed
-- PHP 8+ available
-- Composer installed
-- MySQL running
+- XAMPP or WAMP
+- PHP 8+
+- Composer
+- MySQL database server
+- A valid Gmail or SMTP-enabled account for mail delivery
+- A NewsAPI key for the news integration
 
-## Installation and setup
+## Local Installation
 
-1. Place the project inside your local web server directory, for example:
-   - XAMPP: C:\xampp\htdocs\Hypernova-Ecommerce
+1. Clone or copy the project into your local web server directory:
 
-2. Create your environment file.
-   - The application expects environment variables from the config folder.
-   - Create a file named config/.env and add your database and mail settings.
-   - You can use the example values from .env.example as a starting point.
+   ```text
+   C:\xampp\htdocs\Hypernova-Ecommerce
+   ```
 
-3. Create the database.
-   - Create a database named hypernova_ecommerce (or the name you define in your .env file).
-
-4. Import the SQL schema.
-   - The database/blog_posts.sql file contains the blog posts table structure.
-   - Product tables are also handled by the app during runtime, but importing the blog schema is recommended.
-
-5. Install Composer dependencies.
-   Run this in the project root:
+2. Install PHP dependencies with Composer:
 
    ```bash
    composer install
    ```
 
-6. Start Apache and MySQL from XAMPP.
+3. Create a local environment file from the sample configuration:
 
-7. Open the project in your browser:
+   ```text
+   config/.env
+   ```
+
+   Use values similar to:
+
+   ```env
+   DB_SERVER=localhost
+   DB_USER=root
+   DB_PASS=
+   DB_NAME=hypernova_ecommerce
+
+   SMTP_HOST=smtp.gmail.com
+   SMTP_USERNAME=your-email@gmail.com
+   SMTP_PASSWORD=your-app-password
+   SMTP_PORT=587
+
+   API_KEY=your-news-api-key
+   ```
+
+4. Create the database named `hypernova_ecommerce` or the name configured in your environment file.
+
+5. Import the SQL files available in `database/` when needed. The blog posts schema is available in `database/blog_posts.sql`.
+
+6. Start your Apache and MySQL services through XAMPP.
+
+7. Visit the project locally:
 
    ```text
    http://localhost/Hypernova-Ecommerce/
    ```
 
-## Environment variables
+## Environment Configuration
 
-A typical config/.env file should include values similar to the following:
+The project loads configuration values from PHP environment variables using `vlucas/phpdotenv`. Database access is configured in `config/database.php`, while mail delivery is configured in `mailer.php` through the PHPMailer flow.
 
-```env
-DB_SERVER=localhost
-DB_USER=root
-DB_PASS=
-DB_NAME=hypernova_ecommerce
-SMTP_HOST=smtp.gmail.com
-SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-SMTP_PORT=587
-API_KEY=your-news-api-key
-```
+For the project to run properly, the following environment variables should be available:
 
-## Running the app
+- `DB_SERVER`
+- `DB_USER`
+- `DB_PASS`
+- `DB_NAME`
+- `SMTP_HOST`
+- `SMTP_USERNAME`
+- `SMTP_PASSWORD`
+- `SMTP_PORT`
+- `API_KEY`
 
-- Visit the home page to browse the marketplace and news content.
-- Use the login and register pages in the auth folder for account access.
-- Use the sell product and pricing pages to publish products and blog posts.
+## Application Workflow
+
+1. Browse the storefront from the home page.
+2. Register or log in through the authentication pages in `auth/`.
+3. Create or update products from the seller/product management flow.
+4. Publish blog posts through the blog publishing workflow.
+5. Use the dashboard to review product and activity information.
+6. Use the cart and product view pages for the shopping experience.
+
+## API Endpoints
+
+The server exposes backend services through the `api/` folder:
+
+- `fetch_products.php` for retrieving product records
+- `save_product.php` and `update_product.php` for product lifecycle actions
+- `delete_product.php` for product deletion
+- `fetch_blog_posts.php` and `save_blog_post.php` for blog workflows
+- `dashboard_stats.php` for dashboard analytics
+- `newsApi.php` and `api.php` for external news content retrieval
 
 ## Notes
 
-- The app uses Bootstrap and custom CSS for styling.
-- Uploaded images are stored under the assets/uploads folder.
-- If you want the news integration to work properly, a valid API key is required.
-- The project is intended for local development and learning purposes.
+- Uploaded files and images are stored under `assets/uploads/`.
+- The project is primarily focused on local development and classroom or portfolio demonstration workflows.
+- News integration depends on a valid NewsAPI key being configured in the project environment.
+- SMTP credentials should be managed carefully and should not be committed into public repositories.
 
-## Summary
+## License
 
-This README was created to help you understand the purpose of the project, how it is organized, and how to set it up locally. It covers the main features, required tools, folder structure, environment setup, and basic usage steps.
+This project is intended for educational and development purposes. Update the license file or add a project-specific license before production use.
+
+## Contributing
+
+Contributions are welcome. If you want to improve the application, please create a feature branch, add or update tests where possible, and submit a pull request with a clear description of the changes.
+

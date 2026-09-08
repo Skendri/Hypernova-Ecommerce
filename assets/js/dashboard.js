@@ -30,8 +30,16 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#039;");
   }
 
+  function stripTags(value) {
+    return String(value ?? "").replace(/<[^>]*>/g, "");
+  }
+
   function normalizeImagePath(imagePath) {
-    if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+    if (
+      !imagePath ||
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("data:")
+    ) {
       return imagePath;
     }
 
@@ -87,7 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.categoryBars.innerHTML = "";
 
     if (!entries.length) {
-      elements.categoryBars.innerHTML = '<div class="text-muted">No category data yet.</div>';
+      elements.categoryBars.innerHTML =
+        '<div class="text-muted">No category data yet.</div>';
       return;
     }
 
@@ -117,7 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.monthChart.innerHTML = "";
 
     if (!entries.length) {
-      elements.monthChart.innerHTML = '<div class="text-muted">No monthly data yet.</div>';
+      elements.monthChart.innerHTML =
+        '<div class="text-muted">No monthly data yet.</div>';
       return;
     }
 
@@ -142,7 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return state.products.filter((product) => {
-      return [product.title, product.category, product.description, product.phone]
+      return [
+        product.title,
+        product.category,
+        product.description,
+        product.phone,
+      ]
         .join(" ")
         .toLowerCase()
         .includes(search);
@@ -152,7 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderProducts() {
     const products = getFilteredProducts();
     elements.productRows.innerHTML = "";
-    elements.emptyDashboard.style.display = state.products.length ? "none" : "block";
+    elements.emptyDashboard.style.display = state.products.length
+      ? "none"
+      : "block";
 
     if (!products.length) {
       if (state.products.length) {
@@ -165,20 +182,22 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // stripTags() is for user when they input some text in to page shown as a plain text, wihtout that function text displayed in web as an html tag
+
     products.forEach((product) => {
       elements.productRows.innerHTML += `
         <tr>
           <td>
             <div class="product-cell">
-              <img class="product-thumb" src="${escapeHtml(getProductImage(product.image))}" alt="${escapeHtml(product.title || "Product")}">
+              <img class="product-thumb" src="${escapeHtml(getProductImage(product.image))}" alt="${escapeHtml(stripTags(product.title || "Product"))}">
               <div>
-                <strong>${escapeHtml(product.title || "Untitled")}</strong>
-                <span>${escapeHtml(product.description || "")}</span>
+                <strong>${escapeHtml(stripTags(product.title || "Untitled"))}</strong>
+                <span>${escapeHtml(stripTags(product.description || ""))}</span>
               </div>
             </div>
           </td>
-          <td>${escapeHtml(product.category || "Uncategorized")}</td>
-          <td>${escapeHtml(product.status || "active")}</td>
+          <td>${escapeHtml(stripTags(product.category || "Uncategorized"))}</td>
+          <td>${escapeHtml(stripTags(product.status || "active"))}</td>
           <td><strong>${money(product.price)}</strong></td>
           <td>${formatDate(product.created_at)}</td>
           <td class="text-end">
@@ -201,7 +220,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       return {
         success: false,
-        message: responseText.trim() || "The server returned an unreadable response.",
+        message:
+          responseText.trim() || "The server returned an unreadable response.",
       };
     }
   }

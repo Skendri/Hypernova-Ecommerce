@@ -102,71 +102,72 @@ if ($postId) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $post ? e($post['title']) . ' | Hypernova' : 'Post not found | Hypernova'; ?></title>
     <link rel="stylesheet" href="../assets/css/fullPost-page.css">
 </head>
+
 <body>
 
-<main class="container">
-    <a class="back-link" href="allBlogPost.php">Back to all posts</a>
+    <main class="container">
+        <a class="back-link" href="allBlogPost.php">Back to all posts</a>
 
-    <?php if (!$post): ?>
-        <section class="empty-post">
-            <h1>Post not found</h1>
-            <p>This post may have been removed, unpublished, or opened with the wrong link.</p>
-        </section>
-    <?php else: ?>
-        <article class="featured-post">
-            <img
-                class="featured-image"
-                src="<?php echo e(normalizePostImage($post['cover_image'])); ?>"
-                alt="<?php echo e($post['title']); ?>"
-            >
-
-            <div class="featured-content">
-                <span class="date">
-                    <?php echo e(formatPostDate($post['created_at'])); ?>
-                    <span><?php echo (int) $post['view_count']; ?> views</span>
-                </span>
-
-                <h1><?php echo e($post['title']); ?></h1>
-
-                <p class="excerpt"><?php echo e($post['excerpt']); ?></p>
-                <p class="author">By <?php echo e($post['author_name']); ?></p>
-            </div>
-        </article>
-
-        <section class="post-content">
-            <?php echo nl2br(e($post['content'])); ?>
-        </section>
-
-        <?php if (count($relatedPosts) > 0): ?>
-            <section class="related-section">
-                <h2>Latest posts</h2>
-
-                <div class="blog-grid">
-                    <?php foreach ($relatedPosts as $relatedPost): ?>
-                        <a class="card-link" href="fullPost-page.php?id=<?php echo (int) $relatedPost['id']; ?>">
-                            <article class="card">
-                                <img
-                                    class="card-image"
-                                    src="<?php echo e(normalizePostImage($relatedPost['cover_image'])); ?>"
-                                    alt="<?php echo e($relatedPost['title']); ?>"
-                                >
-                                <span class="date"><?php echo e(formatPostDate($relatedPost['created_at'])); ?></span>
-                                <h3><?php echo e($relatedPost['title']); ?></h3>
-                                <p><?php echo e($relatedPost['excerpt']); ?></p>
-                            </article>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
+        <?php if (!$post): ?>
+            <section class="empty-post">
+                <h1>Post not found</h1>
+                <p>This post may have been removed, unpublished, or opened with the wrong link.</p>
             </section>
+        <?php else: ?>
+            <article class="featured-post">
+                <img
+                    class="featured-image"
+                    src="<?php echo e(normalizePostImage($post['cover_image'])); ?>"
+                    alt="<?php echo e($post['title']); ?>">
+
+                <div class="featured-content">
+                    <span class="date">
+                        <?php echo e(formatPostDate($post['created_at'])); ?>
+                        <span><?php echo (int) $post['view_count']; ?> views</span>
+                    </span>
+
+                    <h1><?php echo e($post['title']); ?></h1>
+
+                    <p class="excerpt"><?php echo e($post['excerpt']); ?></p>
+                    <p class="author">By <?php echo e($post['author_name']); ?></p>
+                </div>
+            </article>
+
+            <section class="post-content">
+                <?php echo nl2br(e(strip_tags($post['content']))); ?>
+            </section>
+
+            <?php if (count($relatedPosts) > 0): ?>
+                <section class="related-section">
+                    <h2>Latest posts</h2>
+
+                    <div class="blog-grid">
+                        <?php foreach ($relatedPosts as $relatedPost): ?>
+                            <a class="card-link" href="fullPost-page.php?id=<?php echo (int) $relatedPost['id']; ?>">
+                                <article class="card">
+                                    <img
+                                        class="card-image"
+                                        src="<?php echo e(normalizePostImage($relatedPost['cover_image'])); ?>"
+                                        alt="<?php echo e($relatedPost['title']); ?>">
+                                    <span class="date"><?php echo e(formatPostDate($relatedPost['created_at'])); ?></span>
+                                    <h3><?php echo e($relatedPost['title']); ?></h3>
+                                    <p><?php echo e($relatedPost['excerpt']); ?></p>
+                                </article>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
         <?php endif; ?>
-    <?php endif; ?>
-</main>
+    </main>
 
 </body>
+
 </html>
