@@ -104,15 +104,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function createUploadedProductCard(product) {
-    const col = document.createElement("div");
-    col.className =
-      "col-lg-3 col-md-6 animate__animated animate__delay-1s animate__fadeInDown";
-
-    // this line is for links that when click send as at that prduct page to show
     const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
     const card = document.createElement("a");
-    card.className = "uploaded-product-card h-100";
+    card.className = "product-card uploaded-product-card";
     card.href = productUrl;
 
     // const divLink = document.createElement("a");
@@ -127,18 +122,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
 
     const image = document.createElement("img");
-    image.className = "uploaded-product-img";
+    image.className = "uploaded-product-img product-image-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
     // imageLink.appendChild(image);
 
     // container parent for description at the card
     const body = document.createElement("div");
-    body.className = "uploaded-product-body";
+    body.className = "product-card-content uploaded-product-body";
 
     const meta = document.createElement("div");
-    meta.className =
-      "d-flex justify-content-between align-items-center gap-2 mb-3";
+    meta.className = "meta-row product-card-meta";
 
     meta.appendChild(
       createTextElement(
@@ -150,24 +144,19 @@ document.addEventListener("DOMContentLoaded", function () {
     meta.appendChild(
       createTextElement(
         "span",
-        "uploaded-price-badge",
-        `$${product.price || "0.00"}`,
+        "rating",
+        `★ ${product.rating || "4.9"}`,
       ),
     );
 
     body.appendChild(meta);
-    const titleLink = document.createElement("a");
-    titleLink.className = "uploaded-product-title-link";
-    titleLink.href = productUrl;
-    titleLink.appendChild(
+    body.appendChild(
       createTextElement(
-        "h5",
-        "uploaded-product-title",
+        "h3",
+        "product-card-title uploaded-product-title",
         product.title || "Untitled",
       ),
     );
-
-    body.appendChild(titleLink);
     // this logic here is description from CKeditor and is for card at home.php page
     // body.appendChild(
     //   createRichTextElement(
@@ -179,45 +168,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     body.appendChild(
       createTextElement(
-        "small",
-        "d-block text-muted mb-2",
-        `Seller: ${product.owner_name || "Unknown user"}`,
+        "p",
+        "product-card-description",
+        product.description || `Seller: ${product.owner_name || "Unknown user"}`,
       ),
     );
 
-    if (product.phone) {
-      body.appendChild(
-        createTextElement(
-          "small",
-          "d-block text-muted mb-2",
-          `Phone: ${product.phone}`,
-        ),
-      );
-    }
+    const priceRow = document.createElement("div");
+    priceRow.className = "price-row product-card-price-row";
+    priceRow.appendChild(
+      createTextElement("span", "price", `$${product.price || "0.00"}`),
+    );
+    priceRow.appendChild(
+      createTextElement("span", "add-btn", "+"),
+    );
+    body.appendChild(priceRow);
 
-    if (product.created_at) {
-      body.appendChild(
-        createTextElement(
-          "small",
-          "text-muted",
-          `Posted ${product.created_at}`,
-        ),
-      );
-    }
+    const imageFrame = document.createElement("div");
+    imageFrame.className = "product-image uploaded-product-media";
+    imageFrame.appendChild(image);
+    card.append(imageFrame, body);
 
-    card.appendChild(image);
-    card.appendChild(body);
-
-    col.appendChild(card);
-
-    return col;
+    return card;
   }
 
   async function loadUploadedProducts() {
     if (!userProducts) return;
 
     try {
-      const response = await fetch("../api/fetch_products.php?limit=4");
+      const response = await fetch("../api/fetch_products.php?limit=8");
       const payload = await readApiResponse(response);
       const products = Array.isArray(payload)
         ? payload
@@ -240,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      products.slice(0, 4).forEach((product) => {
+      products.slice(0, 8).forEach((product) => {
         userProducts.appendChild(createUploadedProductCard(product));
       });
     } catch (error) {
@@ -280,15 +259,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function createBlogPostCard(post) {
+  function createBlogPostCard(post, variant = "bottom") {
     const link = document.createElement("a");
-    link.className = "home-blog-link";
+    link.className = `home-blog-link story-${variant}`;
     link.href = `fullPost-page.php?id=${encodeURIComponent(post.id)}`;
     link.setAttribute("aria-label", `Read ${post.title || "blog post"}`);
 
     const card = document.createElement("article");
-    card.className =
-      "home-blog-card animate__animated animate__delay-1s animate__fadeInDown";
+    card.className = `home-blog-card bento-card bento-${variant}`;
 
     const image = document.createElement("img");
     image.className = "home-blog-img";
@@ -296,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
     image.alt = post.title || "Blog post cover";
 
     const body = document.createElement("div");
-    body.className = "home-blog-body";
+    body.className = "home-blog-body bento-card-body";
 
     const meta = document.createElement("div");
     meta.className = "home-blog-meta";
@@ -319,12 +297,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     body.appendChild(meta);
-    body.appendChild(
-      createTextElement("h4", "home-blog-title", post.title || "Untitled post"),
-    );
-    body.appendChild(
-      createTextElement("p", "home-blog-excerpt", post.excerpt || ""),
-    );
+    body.appendChild(createTextElement("h4", "home-blog-title", post.title || "Untitled post"));
+    body.appendChild(createTextElement("p", "home-blog-excerpt", post.excerpt || ""));
+
+    if (variant === "hero") {
+      const overlay = document.createElement("div");
+      overlay.className = "bento-hero-overlay";
+      overlay.appendChild(createTextElement("span", "bento-label", "Featured article"));
+      overlay.appendChild(createTextElement("h3", "bento-hero-title", post.title || "Untitled post"));
+      image.insertAdjacentElement("afterend", overlay);
+      card.classList.add("bento-image-card");
+      card.innerHTML = "";
+      card.appendChild(image);
+      card.appendChild(overlay);
+
+      const footer = document.createElement("div");
+      footer.className = "bento-hero-footer";
+      footer.appendChild(createTextElement("strong", "", post.author_name || "Unknown author"));
+      footer.appendChild(createTextElement("span", "", `${formatBlogDate(post.created_at) || "Recently published"} · Read essay →`));
+      card.appendChild(footer);
+      link.innerHTML = "";
+      link.appendChild(card);
+      return link;
+    }
+
+    if (variant === "side") {
+      card.innerHTML = "";
+      card.classList.add("bento-side-card");
+      card.appendChild(image);
+      card.appendChild(body);
+      link.innerHTML = "";
+      link.appendChild(card);
+      return link;
+    }
 
     card.appendChild(image);
     card.appendChild(body);
@@ -343,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       const response = await fetch(
-        "../api/fetch_blog_posts.php?scope=published&limit=4",
+        "../api/fetch_blog_posts.php?scope=published&limit=7",
         {
           credentials: "same-origin",
         },
@@ -362,9 +367,26 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      posts.slice(0, 4).forEach((post) => {
-        blogGrid.appendChild(createBlogPostCard(post));
-      });
+      const [hero, ...remainingPosts] = posts.slice(0, 7);
+      if (hero) {
+        blogGrid.appendChild(createBlogPostCard(hero, "hero"));
+      }
+
+      const sidePosts = remainingPosts.slice(0, 3);
+      if (sidePosts.length > 0) {
+        const sideColumn = document.createElement("div");
+        sideColumn.className = "bento-side-column";
+        sidePosts.forEach((post) => sideColumn.appendChild(createBlogPostCard(post, "side")));
+        blogGrid.appendChild(sideColumn);
+      }
+
+      const bottomPosts = remainingPosts.slice(3, 6);
+      if (bottomPosts.length > 0) {
+        const bottomRow = document.createElement("div");
+        bottomRow.className = "bento-bottom-row";
+        bottomPosts.forEach((post) => bottomRow.appendChild(createBlogPostCard(post)));
+        blogGrid.appendChild(bottomRow);
+      }
     } catch (error) {
       console.error("Error loading blog posts:", error);
       blogGrid.innerHTML = `<div class="home-blog-empty">${error.message}</div>`;
@@ -455,50 +477,81 @@ document.addEventListener("DOMContentLoaded", function () {
     return card;
   }
 
+  const worldFallbackArticles = [
+    ["The Verge", "It's Greg Brockman's OpenAI now", "OpenAI enters a new chapter as the technology industry watches closely.", "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80"],
+    ["Android Central", "Global smartphone sales hit a major slump", "The mobile market is shifting toward fewer, more considered upgrades.", "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"],
+    ["MacRumors", "Ceramic Apple Watch rumored to return", "A familiar material may be making a refined return to the wrist.", "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80"],
+    ["TechCrunch", "The quiet rise of smaller creative tools", "Independent makers are reshaping the hardware landscape one focused product at a time.", "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80"],
+  ].map(([source, title, description, image]) => ({ source: { name: source }, title, description, urlToImage: image, publishedAt: "2026-08-20" }));
+
+  const appleFallbackArticles = [
+    ["MacRumors", "Apple Watch Series 11 discounted by $100", "The latest wearable is seeing meaningful savings across several configurations.", "https://images.unsplash.com/photo-1551816230-ef5deaed4a2a?auto=format&fit=crop&w=900&q=80"],
+    ["9to5Mac", "A closer look at the next generation of Apple design", "Small refinements continue to define the most useful products in the lineup.", "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80"],
+    ["AppleInsider", "The studio desk gets a thoughtful refresh", "Better tools disappear into the workflow, leaving more room for the work itself.", "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"],
+    ["Cult of Mac", "What makes a great creative setup", "A balanced workspace is built around rhythm, focus, and a few excellent essentials.", "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=80"],
+  ].map(([source, title, description, image]) => ({ source: { name: source }, title, description, urlToImage: image, publishedAt: "2026-08-20" }));
+
+  function createMarqueeCard(article) {
+    const card = document.createElement("article");
+    card.className = "marquee-card";
+
+    const image = document.createElement("img");
+    image.src = article.urlToImage;
+    image.alt = article.title || "News image";
+
+    const body = document.createElement("div");
+    body.className = "marquee-card-body";
+    body.appendChild(createTextElement("span", "", article.source?.name || "News desk"));
+    body.appendChild(createTextElement("h3", "", article.title || "Untitled story"));
+    body.appendChild(createTextElement("p", "", article.description || ""));
+    body.appendChild(createTextElement("time", "", formatWorldNewsDate(article.publishedAt) || "Today"));
+
+    card.append(image, body);
+    return card;
+  }
+
+  function renderInfiniteCarousel(container, kicker, title, articles, link, linkLabel) {
+    container.innerHTML = "";
+
+    const heading = document.createElement("div");
+    heading.className = "carousel-heading";
+    const headingCopy = document.createElement("div");
+    headingCopy.appendChild(createTextElement("p", "", kicker));
+    headingCopy.appendChild(createTextElement("h2", "", title));
+    const headingLink = document.createElement("a");
+    headingLink.className = "text-link";
+    headingLink.href = link;
+    headingLink.textContent = `${linkLabel} →`;
+    heading.append(headingCopy, headingLink);
+
+    const frame = document.createElement("div");
+    frame.className = "marquee-frame";
+    const track = document.createElement("div");
+    track.className = "marquee-track";
+    const cards = articles.slice(0, 8);
+    [...cards, ...cards].forEach((article, index) => {
+      const card = createMarqueeCard(article);
+      if (index >= cards.length) card.setAttribute("aria-hidden", "true");
+      track.appendChild(card);
+    });
+    frame.appendChild(track);
+    container.append(heading, frame);
+  }
+
   async function loadWorldNewsPreview() {
     if (!apiAnotherPage) return;
-
-    apiAnotherPage.innerHTML = `
-      <div class="home-api-heading">
-        <div class="my-2">
-          <p class="home-api-eyebrow">World news</p>
-          <h3>News from World</h3>
-        </div>
-        <a class="btn" style="background-color: #b45309; border-color: #b45309; color: #fff;" href="worldNews.php">See all news</a>
-      </div>
-      <div class="home-api-grid" id="home-api-grid">
-        <div class="home-api-empty">Loading world news...</div>
-      </div>
-    `;
-
-    const apiGrid = document.getElementById("home-api-grid");
 
     try {
       const response = await fetch("../api/api.php");
       const data = await readApiResponse(response);
 
-      if (!response.ok) {
-        throw new Error(data.message || "Could not load world news.");
-      }
-
       const articles = Array.isArray(data.articles)
         ? data.articles.filter(isValidWorldNewsArticle)
         : [];
-
-      apiGrid.innerHTML = "";
-
-      if (articles.length === 0) {
-        apiGrid.innerHTML =
-          '<div class="home-api-empty">No world news articles available.</div>';
-        return;
-      }
-
-      articles.slice(0, 4).forEach((article) => {
-        apiGrid.appendChild(createWorldNewsPreviewCard(article));
-      });
+      renderInfiniteCarousel(apiAnotherPage, "Latest pulse & tech radar", "Curated technology dispatches & market briefs", articles.length ? articles : worldFallbackArticles, "worldNews.php", "Explore all feeds");
     } catch (error) {
       console.error("Error loading world news preview:", error);
-      apiGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
+      renderInfiniteCarousel(apiAnotherPage, "Latest pulse & tech radar", "Curated technology dispatches & market briefs", worldFallbackArticles, "worldNews.php", "Explore all feeds");
     }
   }
 
@@ -565,47 +618,17 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadAppleNewsPreview() {
     if (!appleApi) return;
 
-    appleApi.innerHTML = `
-      <div class="home-api-heading">
-        <div class="my-2">
-          <p class="apple-api-eyebrow">Apple news</p>
-          <h3>Latest news from Apple</h3>
-        </div>
-        <a class="btn btn-warning" href="../pages/feature.php">See all news</a>
-      </div>
-      <div class="home-api-grid" id="home-apple-api-grid">
-        <div class="home-api-empty">Loading Apple news...</div>
-      </div>
-    `;
-
-    const appleGrid = document.getElementById("home-apple-api-grid");
-
     try {
       const response = await fetch("../api/newsApi.php");
       const data = await readApiResponse(response);
 
-      if (!response.ok) {
-        throw new Error(data.message || "Could not load Apple news.");
-      }
-
       const articles = Array.isArray(data.articles)
         ? data.articles.filter(isValidAppleNewsArticle)
         : [];
-
-      appleGrid.innerHTML = "";
-
-      if (articles.length === 0) {
-        appleGrid.innerHTML =
-          '<div class="home-api-empty">No Apple news articles available.</div>';
-        return;
-      }
-
-      articles.slice(0, 4).forEach((article) => {
-        appleGrid.appendChild(createAppleNewsPreviewCard(article));
-      });
+      renderInfiniteCarousel(appleApi, "Apple intelligence", "The latest from the Apple orbit", articles.length ? articles : appleFallbackArticles, "feature.php", "See all news");
     } catch (error) {
       console.error("Error loading Apple news preview:", error);
-      appleGrid.innerHTML = `<div class="home-api-empty">${error.message}</div>`;
+      renderInfiniteCarousel(appleApi, "Apple intelligence", "The latest from the Apple orbit", appleFallbackArticles, "feature.php", "See all news");
     }
   }
   // fundi logjikes reklamimi i 4 lajmeve te para per APPLE api
