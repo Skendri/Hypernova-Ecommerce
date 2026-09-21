@@ -19,63 +19,43 @@ session_start();
     <?php include '../components/navbar.php'; ?>
 
     <main class="all-products-page">
-        <section class="all-products-hero">
-            <div class="container">
-                <p class="all-products-eyebrow">Hypernova Marketplace</p>
-                <div class="all-products-heading">
-                    <div>
-                        <h1>All seller products</h1>
-                        <p>Browse every product published by sellers and open any product to view details or buy.</p>
+        <form id="productFilters">
+            <div class="catalog-layout">
+                <aside class="catalog-sidebar" id="catalogSidebar">
+                    <section class="filter-panel category-panel">
+                        <div class="filter-panel-heading"><h2>Product Categories</h2><span id="productCount">All</span></div>
+                        <nav class="category-list" aria-label="Product categories">
+                            <button class="category-option is-active" type="button" data-category=""><span>All products</span><span>All</span></button>
+                            <button class="category-option" type="button" data-category="Electronics"><span>Electronics</span><span>--</span></button>
+                            <button class="category-option" type="button" data-category="Fashion"><span>Fashion</span><span>--</span></button>
+                            <button class="category-option" type="button" data-category="Gaming"><span>Gaming</span><span>--</span></button>
+                            <button class="category-option" type="button" data-category="Home"><span>Home</span><span>--</span></button>
+                            <button class="category-option" type="button" data-category="Sports"><span>Sports</span><span>--</span></button>
+                        </nav>
+                    </section>
+                    <section class="filter-panel">
+                        <div class="filter-panel-heading"><h2>Pricing</h2><span>$</span></div>
+                        <div class="price-inputs">
+                            <label>Min <input type="number" id="minPrice" name="min_price" min="0" step="0.01" placeholder="0"></label>
+                            <label>Max <input type="number" id="maxPrice" name="max_price" min="0" step="0.01" placeholder="500"></label>
+                        </div>
+                        <div class="price-rule"><span></span></div><div class="price-range-labels"><span>$0</span><span>$500+</span></div>
+                    </section>
+                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Item Size</h2></div><div class="size-options"><span>XS</span><span>S</span><span class="is-selected">M</span><span>L</span><span>XL</span><span>XXL</span></div></section>
+                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Color</h2></div><div class="color-options" aria-label="Available colors"><span class="color-swatch is-selected" style="--swatch:#ed562d"></span><span class="color-swatch" style="--swatch:#ef82a8"></span><span class="color-swatch" style="--swatch:#cf1d60"></span><span class="color-swatch" style="--swatch:#5b37a9"></span><span class="color-swatch" style="--swatch:#1d211f"></span><span class="color-swatch" style="--swatch:#008e83"></span><span class="color-swatch" style="--swatch:#9bd3a5"></span><span class="color-swatch" style="--swatch:#419de7"></span><span class="color-swatch" style="--swatch:#7952bd"></span><span class="color-swatch" style="--swatch:#f9cf28"></span></div></section>
+                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Brand</h2></div><div class="brand-options"><span>Nike</span><span>Adidas</span><span>Denim</span><span>Puma</span><span>Gucci</span></div></section>
+                </aside>
+                <section class="catalog-content">
+                    <div class="catalog-toolbar">
+                        <label class="catalog-search" for="productSearch"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="productSearch" name="q" placeholder="Search for products"></label>
+                        <div class="toolbar-actions"><button class="toolbar-button mobile-filter-button" id="toggleFilters" type="button"><i class="fa-solid fa-sliders"></i> Filter</button><button class="toolbar-button" type="submit"><span>Sort by</span><i class="fa-solid fa-chevron-down"></i></button></div>
                     </div>
-                    <a class="btn btn-outline-primary" href="home.php">Back home</a>
-                </div>
+                    <div class="catalog-heading"><div><p class="all-products-eyebrow">Hypernova Marketplace</p><h1>All seller products</h1></div><button class="clear-filters" id="clearFilters" type="button">Clear filters</button></div>
+                    <div id="all-products" class="product-grid" aria-live="polite"><div class="all-products-empty">Loading products...</div></div>
+                </section>
             </div>
-        </section>
-
-        <section class="container py-5">
-            <form class="all-products-filter mb-4" id="productFilters">
-                <div class="row g-3 align-items-end">
-                    <div class="col-lg-4 col-md-6">
-                        <label class="form-label" for="productSearch">Search products</label>
-                        <input type="search" class="form-control" id="productSearch" name="q"
-                            placeholder="Search title or description">
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <label class="form-label" for="productCategory">Category</label>
-                        <select class="form-select" id="productCategory" name="category">
-                            <option value="">All categories</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Fashion">Fashion</option>
-                            <option value="Gaming">Gaming</option>
-                            <option value="Home">Home</option>
-                            <option value="Sports">Sports</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-6">
-                        <label class="form-label" for="minPrice">Min price</label>
-                        <input type="number" class="form-control" id="minPrice" name="min_price" min="0" step="0.01"
-                            placeholder="0">
-                    </div>
-                    <div class="col-lg-2 col-md-6">
-                        <label class="form-label" for="maxPrice">Max price</label>
-                        <input type="number" class="form-control" id="maxPrice" name="max_price" min="0" step="0.01"
-                            placeholder="500">
-                    </div>
-                    <div class="col-lg-1 col-md-12 d-grid">
-                        <button class="btn btn-primary" type="submit">Filter</button>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end mt-3">
-                    <button class="btn btn-link px-0" id="clearFilters" type="button">Clear filters</button>
-                </div>
-            </form>
-
-            <div id="all-products" class="row g-4" aria-live="polite">
-                <div class="col-12">
-                    <div class="all-products-empty">Loading products...</div>
-                </div>
-            </div>
-        </section>
+            <select class="visually-hidden" id="productCategory" name="category" aria-label="Product category"><option value="">All categories</option><option value="Electronics">Electronics</option><option value="Fashion">Fashion</option><option value="Gaming">Gaming</option><option value="Home">Home</option><option value="Sports">Sports</option></select>
+        </form>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

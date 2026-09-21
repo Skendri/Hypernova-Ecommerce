@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const productsGrid = document.getElementById("all-products");
   const filtersForm = document.getElementById("productFilters");
   const clearFiltersButton = document.getElementById("clearFilters");
+  const categoryOptions = document.querySelectorAll(".category-option");
+  const categorySelect = document.getElementById("productCategory");
+  const toggleFiltersButton = document.getElementById("toggleFilters");
+  const catalogSidebar = document.getElementById("catalogSidebar");
 
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
@@ -98,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function createProductCard(product) {
     const col = document.createElement("div");
-    col.className = "col-xl-3 col-lg-4 col-md-6";
+    col.className = "product-grid-item";
 
     const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
@@ -106,85 +110,26 @@ document.addEventListener("DOMContentLoaded", function () {
     card.className = "all-product-card h-100";
     card.href = productUrl;
 
-    // const imageLink = document.createElement("a");
-    // imageLink.className = "all-product-link";
-    // imageLink.href = productUrl;
-    // imageLink.setAttribute("aria-label", `View ${product.title || "product"}`);
-
     const image = document.createElement("img");
     image.className = "all-product-img";
     image.src = getProductImage(product.image);
-    // image.alt = product.title || "Product image";
-    // imageLink.appendChild(image);
+    image.alt = product.title || "Product image";
+    const imageFrame = document.createElement("div");
+    imageFrame.className = "all-product-image-frame";
+    imageFrame.appendChild(image);
 
     const body = document.createElement("div");
     body.className = "all-product-body";
 
-    const meta = document.createElement("div");
-    meta.className =
-      "d-flex justify-content-between align-items-center gap-2 mb-3";
+    body.appendChild(createTextElement("span", "all-product-category", product.category || "Product"));
+    body.appendChild(createTextElement("h2", "all-product-title", product.title || "Untitled"));
+    const footer = document.createElement("div");
+    footer.className = "all-product-footer";
+    footer.appendChild(createTextElement("strong", "all-product-price", `$${product.price || "0.00"}`));
+    footer.appendChild(createTextElement("span", "all-product-add", "+"));
+    body.appendChild(footer);
 
-    meta.appendChild(
-      createTextElement(
-        "span",
-        "all-product-category",
-        product.category || "Product",
-      ),
-    );
-    meta.appendChild(
-      createTextElement(
-        "span",
-        "all-product-price",
-        `$${product.price || "0.00"}`,
-      ),
-    );
-
-    body.appendChild(meta);
-    const titleLink = document.createElement("a");
-    titleLink.className = "all-product-title-link";
-    titleLink.href = productUrl;
-    titleLink.appendChild(
-      createTextElement("h2", "all-product-title", product.title || "Untitled"),
-    );
-
-    body.appendChild(titleLink);
-    // removing product description from card
-    // body.appendChild(
-    //   createRichTextElement(
-    //     "div",
-    //     "all-product-description",
-    //     product.description || "",
-    //   ),
-    // );
-    body.appendChild(
-      createTextElement(
-        "small",
-        "d-block text-muted mb-2",
-        `Seller: ${product.owner_name || "Unknown user"}`,
-      ),
-    );
-
-    if (product.phone) {
-      body.appendChild(
-        createTextElement(
-          "small",
-          "d-block text-muted mb-2",
-          `Phone: ${product.phone}`,
-        ),
-      );
-    }
-
-    if (product.created_at) {
-      body.appendChild(
-        createTextElement(
-          "small",
-          "text-muted",
-          `Posted ${product.created_at}`,
-        ),
-      );
-    }
-
-    card.appendChild(image);
+    card.appendChild(imageFrame);
     card.appendChild(body);
     col.appendChild(card);
 
@@ -287,7 +232,27 @@ document.addEventListener("DOMContentLoaded", function () {
   if (clearFiltersButton && filtersForm) {
     clearFiltersButton.addEventListener("click", function () {
       filtersForm.reset();
+      categoryOptions.forEach((item) => item.classList.remove("is-active"));
+      const allCategoriesOption = document.querySelector(
+        '.category-option[data-category=""]',
+      );
+      if (allCategoriesOption) allCategoriesOption.classList.add("is-active");
       loadAllProducts();
+    });
+  }
+
+  categoryOptions.forEach((option) => {
+    option.addEventListener("click", function () {
+      categorySelect.value = option.dataset.category || "";
+      categoryOptions.forEach((item) => item.classList.remove("is-active"));
+      option.classList.add("is-active");
+      loadAllProducts();
+    });
+  });
+
+  if (toggleFiltersButton && catalogSidebar) {
+    toggleFiltersButton.addEventListener("click", function () {
+      catalogSidebar.classList.toggle("is-open");
     });
   }
 

@@ -2,19 +2,16 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(50, 108, 229, 0.22), transparent 38%),
-    radial-gradient(circle at 80% 80%, rgba(130, 54, 216, 0.2), transparent 42%),
-    #071226;
+  background: #f8fafc;
 }
 
 .feature-page {
   min-height: 100vh;
-  background: #071226;
+  /* background: white; */
 }
 
-.feature-page > nav,
-.feature-page > .navbar,
+.feature-page >
+.feature-page >
 .feature-content {
   position: relative;
   z-index: 1;
