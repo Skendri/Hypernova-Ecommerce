@@ -2,7 +2,7 @@
 if (window.particlesJS) {
   particlesJS("particles-js", {
     particles: {
-      number: { value: 200, density: { enable: true, value_area: 900 } },
+      number: { value: 100, density: { enable: true, value_area: 900 } },
       color: { value: ["#ffffff", "#71b7ff", "#a993ff"] },
       shape: { type: "circle" },
       opacity: { value: 0.55, random: true },
@@ -10,7 +10,7 @@ if (window.particlesJS) {
       line_linked: {
         enable: true,
         distance: 145,
-        color: "#8ab8ff",
+        color: "#040404",
         opacity: 0.38,
         width: 1,
       },

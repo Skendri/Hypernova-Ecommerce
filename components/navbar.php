@@ -28,79 +28,86 @@ $stmt->close();
 <!-- css for navbar -->
 <style>
     .glass-navbar {
+        width: 70%;
+        color: black;
+        background: rgba(255, 255, 255, 0);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(9.1px);
+        border: 1px solid rgba(255, 255, 255, 1);
+    }
+
+    .navbar-size {
+        display: flex;
+        justify-content: center;
         position: sticky;
-        top: 0;
+        top: 10px;
         z-index: 1000;
-
-        background: rgba(20, 30, 45, 0.65);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     }
 </style>
 
-<nav class="navbar navbar-expand-lg glass-navbar" data-bs-theme="dark">
-
-    <div class="container">
-        <!-- Logo navbar -->
-        <a class="navbar-brand" href="#">Navbar</a>
-        <!-- links navbar -->
-        <ul class="navbar-nav .d-md-flex">
-            <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="home.php">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="feature.php">Features</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="pricing.php">Pricing</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="sellProduct.php">sell products</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="productView.php">Product View</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link position-relative" href="cart.php" aria-label="Shopping cart">
-                    <i class="fa-solid fa-cart-shopping"></i> Cart
-                    <span class="badge rounded-pill text-bg-light text-primary" id="cartCount"><?php echo cart_item_count(); ?></span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- search form -->
-        <form class="d-flex" role="search">
-            <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button class="btn btn-outline-dark" type="submit" style="color: whitesmoke;">Search</button>
-        </form>
-
-        <!-- logout button -->
-        <div class="dropdown h-auto">
-            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown">
-
-                <i class="fa-regular fa-circle-user fa-2xl"></i>
-
-                <span>
-                    <?php echo htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?>
-                </span>
-
-            </a>
-
-            <ul class="dropdown-menu mt-2">
-                <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
-                <li><a class="dropdown-item" href="../pages/dashboard.php">Dashboard</a></li>
+<div class="navbar-size">
+    <nav class="glass-navbar navbar py-3 navbar-expand-lg">
+    
+        <div class="container">
+            <!-- Logo navbar -->
+            <a class="navbar-brand" href="#">Navbar</a>
+            <!-- links navbar -->
+            <ul class="navbar-nav .d-md-flex">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="home.php">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.php">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="feature.php">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="pricing.php">Pricing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="sellProduct.php">sell products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="productView.php">Product View</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link position-relative" href="cart.php" aria-label="Shopping cart">
+                        <i class="fa-solid fa-cart-shopping"></i> Cart
+                        <span class="badge rounded-pill text-bg-light text-primary" id="cartCount"><?php echo cart_item_count(); ?></span>
+                    </a>
+                </li>
             </ul>
+    
+            <!-- search form -->
+            <form class="d-flex" role="search">
+                <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                <button class="btn btn-outline-white" type="submit">Search</button>
+            </form>
+    
+            <!-- logout button -->
+            <div class="dropdown h-auto">
+                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown">
+    
+                    <i class="fa-regular fa-circle-user fa-2xl"></i>
+    
+                    <span>
+                        <?php echo htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?>
+                    </span>
+    
+                </a>
+    
+                <ul class="dropdown-menu mt-2">
+                    <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
+                    <li><a class="dropdown-item" href="../pages/dashboard.php">Dashboard</a></li>
+                </ul>
+            </div>
+    
         </div>
-
-    </div>
-</nav>
+    </nav>
+</div>
