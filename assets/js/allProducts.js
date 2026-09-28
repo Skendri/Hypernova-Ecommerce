@@ -107,27 +107,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const productUrl = `productView.php?id=${encodeURIComponent(product.id)}`;
 
     const card = document.createElement("a");
-    card.className = "all-product-card h-100";
+    card.className = "product-card uploaded-product-card";
     card.href = productUrl;
 
     const image = document.createElement("img");
-    image.className = "all-product-img";
+    image.className = "uploaded-product-img product-image-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
     const imageFrame = document.createElement("div");
-    imageFrame.className = "all-product-image-frame";
+    imageFrame.className = "product-image uploaded-product-media";
     imageFrame.appendChild(image);
 
     const body = document.createElement("div");
-    body.className = "all-product-body";
+    body.className = "product-card-content uploaded-product-body";
 
-    body.appendChild(createTextElement("span", "all-product-category", product.category || "Product"));
-    body.appendChild(createTextElement("h2", "all-product-title", product.title || "Untitled"));
-    const footer = document.createElement("div");
-    footer.className = "all-product-footer";
-    footer.appendChild(createTextElement("strong", "all-product-price", `$${product.price || "0.00"}`));
-    footer.appendChild(createTextElement("span", "all-product-add", "+"));
-    body.appendChild(footer);
+    const meta = document.createElement("div");
+    meta.className = "meta-row product-card-meta";
+    meta.appendChild(
+      createTextElement(
+        "span",
+        "uploaded-category-badge",
+        product.category || "Product",
+      ),
+    );
+    meta.appendChild(
+      createTextElement("span", "rating", `★ ${product.rating || "4.9"}`),
+    );
+    body.appendChild(meta);
+    body.appendChild(
+      createTextElement(
+        "h3",
+        "product-card-title uploaded-product-title",
+        product.title || "Untitled",
+      ),
+    );
+    body.appendChild(
+      createTextElement(
+        "p",
+        "product-card-description",
+        product.description || `Seller: ${product.owner_name || "Unknown user"}`,
+      ),
+    );
+
+    const priceRow = document.createElement("div");
+    priceRow.className = "price-row product-card-price-row";
+    priceRow.appendChild(
+      createTextElement("span", "price", `$${product.price || "0.00"}`),
+    );
+    priceRow.appendChild(createTextElement("span", "add-btn", "+"));
+    body.appendChild(priceRow);
 
     card.appendChild(imageFrame);
     card.appendChild(body);

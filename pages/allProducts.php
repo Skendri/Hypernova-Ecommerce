@@ -22,7 +22,7 @@ session_start();
         <form id="productFilters">
             <div class="catalog-layout">
                 <aside class="catalog-sidebar" id="catalogSidebar">
-                    <section class="filter-panel category-panel">
+                    <section class="filter-panel">
                         <div class="filter-panel-heading"><h2>Product Categories</h2><span id="productCount">All</span></div>
                         <nav class="category-list" aria-label="Product categories">
                             <button class="category-option is-active" type="button" data-category=""><span>All products</span><span>All</span></button>
@@ -41,9 +41,9 @@ session_start();
                         </div>
                         <div class="price-rule"><span></span></div><div class="price-range-labels"><span>$0</span><span>$500+</span></div>
                     </section>
-                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Item Size</h2></div><div class="size-options"><span>XS</span><span>S</span><span class="is-selected">M</span><span>L</span><span>XL</span><span>XXL</span></div></section>
-                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Color</h2></div><div class="color-options" aria-label="Available colors"><span class="color-swatch is-selected" style="--swatch:#ed562d"></span><span class="color-swatch" style="--swatch:#ef82a8"></span><span class="color-swatch" style="--swatch:#cf1d60"></span><span class="color-swatch" style="--swatch:#5b37a9"></span><span class="color-swatch" style="--swatch:#1d211f"></span><span class="color-swatch" style="--swatch:#008e83"></span><span class="color-swatch" style="--swatch:#9bd3a5"></span><span class="color-swatch" style="--swatch:#419de7"></span><span class="color-swatch" style="--swatch:#7952bd"></span><span class="color-swatch" style="--swatch:#f9cf28"></span></div></section>
-                    <section class="filter-panel visual-filter"><div class="filter-panel-heading"><h2>Brand</h2></div><div class="brand-options"><span>Nike</span><span>Adidas</span><span>Denim</span><span>Puma</span><span>Gucci</span></div></section>
+                    <section class="filter-panel"><div class="filter-panel-heading"><h2>Item Size</h2></div><div class="size-options"><span>XS</span><span>S</span><span class="is-selected">M</span><span>L</span><span>XL</span><span>XXL</span></div></section>
+                    <section class="filter-panel"><div class="filter-panel-heading"><h2>Color</h2></div><div class="color-options" aria-label="Available colors"><span class="color-swatch is-selected" style="--swatch:#ed562d"></span><span class="color-swatch" style="--swatch:#ef82a8"></span><span class="color-swatch" style="--swatch:#cf1d60"></span><span class="color-swatch" style="--swatch:#5b37a9"></span><span class="color-swatch" style="--swatch:#1d211f"></span><span class="color-swatch" style="--swatch:#008e83"></span><span class="color-swatch" style="--swatch:#9bd3a5"></span><span class="color-swatch" style="--swatch:#419de7"></span><span class="color-swatch" style="--swatch:#7952bd"></span><span class="color-swatch" style="--swatch:#f9cf28"></span></div></section>
+                    <section class="filter-panel"><div class="filter-panel-heading"><h2>Brand</h2></div><div class="brand-options"><span>Nike</span><span>Adidas</span><span>Denim</span><span>Puma</span><span>Gucci</span></div></section>
                 </aside>
                 <section class="catalog-content">
                     <div class="catalog-toolbar">
