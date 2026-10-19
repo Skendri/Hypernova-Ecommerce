@@ -127,7 +127,7 @@ if (!isset($_SESSION["user_id"])) {
                 <aside class="live-preview-column">
                     <div class="preview-heading"><span><i class="fa-solid fa-circle"></i> Live shopper preview</span><small>Updates dynamically</small></div>
                     <div class="shopper-preview">
-                        <div class="shopper-image-wrap"><img id="shopperPreviewImage" src="https://placehold.co/800x620/11131d/cbbeff?text=Your+Product" alt="Product preview"><span>LIVE LISTING</span></div>
+                        <div class="shopper-image-wrap"><img id="shopperPreviewImage" src="https://placehold.co/800x620/f1f2f8/6548c8?text=Your+Product" alt="Product preview"><span>LIVE LISTING</span></div>
                         <div class="shopper-copy"><span class="preview-category" id="shopperPreviewCategory">SELECT A CATEGORY</span><h3 id="shopperPreviewTitle">Your product title</h3><p id="shopperPreviewPrice">$0.00</p><div class="preview-meta"><span><i class="fa-solid fa-shield-halved"></i> Protected listing</span><span><i class="fa-solid fa-truck"></i> Ships worldwide</span></div></div>
                     </div>
                     <div class="preview-note"><i class="fa-regular fa-lightbulb"></i><span>Your listing preview helps buyers understand the product before they open the full detail page.</span></div>
