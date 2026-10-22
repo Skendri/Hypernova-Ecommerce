@@ -5,7 +5,7 @@
 vendor/
 
 # uploaded product images
-assets/uploads/
+# assets/uploads/
 
 # Composer files (optional)
 # composer.phar
