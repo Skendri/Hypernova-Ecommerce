@@ -89,6 +89,7 @@ if ($search !== '') {
     $types .= 'ss';
 }
 
+// this sql query here is to fetch name of user as owner_name and used in javascript to display users name when they deploy a product to sell or post to blog, and also to check if the current user is the owner of the product
 $sql = "SELECT products.*, userdata.username AS owner_name,
         CASE WHEN products.user_id = ? THEN 1 ELSE 0 END AS is_owner
     FROM products

@@ -142,11 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ),
     );
     meta.appendChild(
-      createTextElement(
-        "span",
-        "rating",
-        `★ ${product.rating || "4.9"}`,
-      ),
+      createTextElement("span", "rating", `★ ${product.rating || "4.9"}`),
     );
 
     body.appendChild(meta);
@@ -157,20 +153,16 @@ document.addEventListener("DOMContentLoaded", function () {
         product.title || "Untitled",
       ),
     );
-    // this logic here is description from CKeditor and is for card at home.php page
-    // body.appendChild(
-    //   createRichTextElement(
-    //     "div",
-    //     "uploaded-product-description",
-    //     product.description || "",
-    //   ),
-    // );
+
+    body.appendChild(
+      createTextElement("p", "product-card-description", product.description),
+    );
 
     body.appendChild(
       createTextElement(
         "p",
         "product-card-description",
-        product.description || `Seller: ${product.owner_name || "Unknown user"}`,
+        `Seller: ${product.owner_name || "Unknown user"}`,
       ),
     );
 
@@ -179,9 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
     priceRow.appendChild(
       createTextElement("span", "price", `$${product.price || "0.00"}`),
     );
-    priceRow.appendChild(
-      createTextElement("span", "add-btn", "+"),
-    );
+    priceRow.appendChild(createTextElement("span", "add-btn", "+"));
     body.appendChild(priceRow);
 
     const imageFrame = document.createElement("div");
@@ -297,14 +287,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     body.appendChild(meta);
-    body.appendChild(createTextElement("h4", "home-blog-title", post.title || "Untitled post"));
-    body.appendChild(createTextElement("p", "home-blog-excerpt", post.excerpt || ""));
+    body.appendChild(
+      createTextElement("h4", "home-blog-title", post.title || "Untitled post"),
+    );
+    body.appendChild(
+      createTextElement("p", "home-blog-excerpt", post.excerpt || ""),
+    );
 
     if (variant === "hero") {
       const overlay = document.createElement("div");
       overlay.className = "bento-hero-overlay";
-      overlay.appendChild(createTextElement("span", "bento-label", "Featured article"));
-      overlay.appendChild(createTextElement("h3", "bento-hero-title", post.title || "Untitled post"));
+      overlay.appendChild(
+        createTextElement("span", "bento-label", "Featured article"),
+      );
+      overlay.appendChild(
+        createTextElement(
+          "h3",
+          "bento-hero-title",
+          post.title || "Untitled post",
+        ),
+      );
       image.insertAdjacentElement("afterend", overlay);
       card.classList.add("bento-image-card");
       card.innerHTML = "";
@@ -313,8 +315,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const footer = document.createElement("div");
       footer.className = "bento-hero-footer";
-      footer.appendChild(createTextElement("strong", "", post.author_name || "Unknown author"));
-      footer.appendChild(createTextElement("span", "", `${formatBlogDate(post.created_at) || "Recently published"} · Read essay →`));
+      footer.appendChild(
+        createTextElement("strong", "", post.author_name || "Unknown author"),
+      );
+      footer.appendChild(
+        createTextElement(
+          "span",
+          "",
+          `${formatBlogDate(post.created_at) || "Recently published"} · Read essay →`,
+        ),
+      );
       card.appendChild(footer);
       link.innerHTML = "";
       link.appendChild(card);
@@ -376,7 +386,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (sidePosts.length > 0) {
         const sideColumn = document.createElement("div");
         sideColumn.className = "bento-side-column";
-        sidePosts.forEach((post) => sideColumn.appendChild(createBlogPostCard(post, "side")));
+        sidePosts.forEach((post) =>
+          sideColumn.appendChild(createBlogPostCard(post, "side")),
+        );
         blogGrid.appendChild(sideColumn);
       }
 
@@ -384,7 +396,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (bottomPosts.length > 0) {
         const bottomRow = document.createElement("div");
         bottomRow.className = "bento-bottom-row";
-        bottomPosts.forEach((post) => bottomRow.appendChild(createBlogPostCard(post)));
+        bottomPosts.forEach((post) =>
+          bottomRow.appendChild(createBlogPostCard(post)),
+        );
         blogGrid.appendChild(bottomRow);
       }
     } catch (error) {
@@ -478,18 +492,70 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const worldFallbackArticles = [
-    ["The Verge", "It's Greg Brockman's OpenAI now", "OpenAI enters a new chapter as the technology industry watches closely.", "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80"],
-    ["Android Central", "Global smartphone sales hit a major slump", "The mobile market is shifting toward fewer, more considered upgrades.", "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80"],
-    ["MacRumors", "Ceramic Apple Watch rumored to return", "A familiar material may be making a refined return to the wrist.", "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80"],
-    ["TechCrunch", "The quiet rise of smaller creative tools", "Independent makers are reshaping the hardware landscape one focused product at a time.", "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80"],
-  ].map(([source, title, description, image]) => ({ source: { name: source }, title, description, urlToImage: image, publishedAt: "2026-08-20" }));
+    [
+      "The Verge",
+      "It's Greg Brockman's OpenAI now",
+      "OpenAI enters a new chapter as the technology industry watches closely.",
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "Android Central",
+      "Global smartphone sales hit a major slump",
+      "The mobile market is shifting toward fewer, more considered upgrades.",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "MacRumors",
+      "Ceramic Apple Watch rumored to return",
+      "A familiar material may be making a refined return to the wrist.",
+      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "TechCrunch",
+      "The quiet rise of smaller creative tools",
+      "Independent makers are reshaping the hardware landscape one focused product at a time.",
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80",
+    ],
+  ].map(([source, title, description, image]) => ({
+    source: { name: source },
+    title,
+    description,
+    urlToImage: image,
+    publishedAt: "2026-08-20",
+  }));
 
   const appleFallbackArticles = [
-    ["MacRumors", "Apple Watch Series 11 discounted by $100", "The latest wearable is seeing meaningful savings across several configurations.", "https://images.unsplash.com/photo-1551816230-ef5deaed4a2a?auto=format&fit=crop&w=900&q=80"],
-    ["9to5Mac", "A closer look at the next generation of Apple design", "Small refinements continue to define the most useful products in the lineup.", "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80"],
-    ["AppleInsider", "The studio desk gets a thoughtful refresh", "Better tools disappear into the workflow, leaving more room for the work itself.", "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"],
-    ["Cult of Mac", "What makes a great creative setup", "A balanced workspace is built around rhythm, focus, and a few excellent essentials.", "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=80"],
-  ].map(([source, title, description, image]) => ({ source: { name: source }, title, description, urlToImage: image, publishedAt: "2026-08-20" }));
+    [
+      "MacRumors",
+      "Apple Watch Series 11 discounted by $100",
+      "The latest wearable is seeing meaningful savings across several configurations.",
+      "https://images.unsplash.com/photo-1551816230-ef5deaed4a2a?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "9to5Mac",
+      "A closer look at the next generation of Apple design",
+      "Small refinements continue to define the most useful products in the lineup.",
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "AppleInsider",
+      "The studio desk gets a thoughtful refresh",
+      "Better tools disappear into the workflow, leaving more room for the work itself.",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
+    ],
+    [
+      "Cult of Mac",
+      "What makes a great creative setup",
+      "A balanced workspace is built around rhythm, focus, and a few excellent essentials.",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=80",
+    ],
+  ].map(([source, title, description, image]) => ({
+    source: { name: source },
+    title,
+    description,
+    urlToImage: image,
+    publishedAt: "2026-08-20",
+  }));
 
   function createMarqueeCard(article) {
     const card = document.createElement("article");
@@ -501,16 +567,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const body = document.createElement("div");
     body.className = "marquee-card-body";
-    body.appendChild(createTextElement("span", "", article.source?.name || "News desk"));
-    body.appendChild(createTextElement("h3", "", article.title || "Untitled story"));
+    body.appendChild(
+      createTextElement("span", "", article.source?.name || "News desk"),
+    );
+    body.appendChild(
+      createTextElement("h3", "", article.title || "Untitled story"),
+    );
     body.appendChild(createTextElement("p", "", article.description || ""));
-    body.appendChild(createTextElement("time", "", formatWorldNewsDate(article.publishedAt) || "Today"));
+    body.appendChild(
+      createTextElement(
+        "time",
+        "",
+        formatWorldNewsDate(article.publishedAt) || "Today",
+      ),
+    );
 
     card.append(image, body);
     return card;
   }
 
-  function renderInfiniteCarousel(container, kicker, title, articles, link, linkLabel) {
+  function renderInfiniteCarousel(
+    container,
+    kicker,
+    title,
+    articles,
+    link,
+    linkLabel,
+  ) {
     container.innerHTML = "";
 
     const heading = document.createElement("div");
@@ -548,10 +631,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const articles = Array.isArray(data.articles)
         ? data.articles.filter(isValidWorldNewsArticle)
         : [];
-      renderInfiniteCarousel(apiAnotherPage, "Latest pulse & tech radar", "Curated technology dispatches & market briefs", articles.length ? articles : worldFallbackArticles, "worldNews.php", "Explore all feeds");
+      renderInfiniteCarousel(
+        apiAnotherPage,
+        "Latest pulse & tech radar",
+        "Curated technology dispatches & market briefs",
+        articles.length ? articles : worldFallbackArticles,
+        "worldNews.php",
+        "Explore all feeds",
+      );
     } catch (error) {
       console.error("Error loading world news preview:", error);
-      renderInfiniteCarousel(apiAnotherPage, "Latest pulse & tech radar", "Curated technology dispatches & market briefs", worldFallbackArticles, "worldNews.php", "Explore all feeds");
+      renderInfiniteCarousel(
+        apiAnotherPage,
+        "Latest pulse & tech radar",
+        "Curated technology dispatches & market briefs",
+        worldFallbackArticles,
+        "worldNews.php",
+        "Explore all feeds",
+      );
     }
   }
 
@@ -625,10 +722,24 @@ document.addEventListener("DOMContentLoaded", function () {
       const articles = Array.isArray(data.articles)
         ? data.articles.filter(isValidAppleNewsArticle)
         : [];
-      renderInfiniteCarousel(appleApi, "Apple intelligence", "The latest from the Apple orbit", articles.length ? articles : appleFallbackArticles, "feature.php", "See all news");
+      renderInfiniteCarousel(
+        appleApi,
+        "Apple intelligence",
+        "The latest from the Apple orbit",
+        articles.length ? articles : appleFallbackArticles,
+        "feature.php",
+        "See all news",
+      );
     } catch (error) {
       console.error("Error loading Apple news preview:", error);
-      renderInfiniteCarousel(appleApi, "Apple intelligence", "The latest from the Apple orbit", appleFallbackArticles, "feature.php", "See all news");
+      renderInfiniteCarousel(
+        appleApi,
+        "Apple intelligence",
+        "The latest from the Apple orbit",
+        appleFallbackArticles,
+        "feature.php",
+        "See all news",
+      );
     }
   }
   // fundi logjikes reklamimi i 4 lajmeve te para per APPLE api

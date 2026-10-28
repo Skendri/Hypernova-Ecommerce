@@ -49,7 +49,7 @@ $stmt->close();
 
 <div class="navbar-size">
     <nav class="glass-navbar navbar py-3 navbar-expand-lg">
-    
+
         <div class="container">
             <!-- Logo navbar -->
             <a class="navbar-brand" href="#">Navbar</a>
@@ -73,41 +73,45 @@ $stmt->close();
                 <li class="nav-item">
                     <a class="nav-link" href="productView.php">Product View</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="cart.php" aria-label="Shopping cart">
-                        <i class="fa-solid fa-cart-shopping"></i> Cart
-                        <span class="badge rounded-pill text-bg-light text-primary" id="cartCount"><?php echo cart_item_count(); ?></span>
-                    </a>
-                </li>
             </ul>
-    
+
             <!-- search form -->
             <form class="d-flex" role="search">
                 <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
                 <button class="btn btn-outline-white" type="submit">Search</button>
             </form>
-    
+
             <!-- logout button -->
             <div class="dropdown h-auto">
                 <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                     href="#"
                     role="button"
                     data-bs-toggle="dropdown">
-    
-                    <i class="fa-regular fa-circle-user fa-2xl"></i>
-    
+
+                    <div class="">
+                        <span class="position-relative badge rounded-pill text-bg-light text-primary" id="cartCount" style="bottom: 15px; left: 15px"><?php echo cart_item_count(); ?>
+                        </span>
+                        <i class="fa-regular fa-circle-user fa-2xl"></i>
+                    </div>
+
                     <span>
                         <?php echo htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8'); ?>
                     </span>
-    
+
                 </a>
-    
+
                 <ul class="dropdown-menu mt-2">
-                    <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
+                    <li class="nav-item">
+                        <a class="dropdown-item" href="cart.php" aria-label="Shopping cart">
+                            <i class="fa-solid fa-cart-shopping"></i> Cart
+                            <span class="badge rounded-pill text-bg-light text-primary" id="cartCount"><?php echo cart_item_count(); ?></span>
+                        </a>
+                    </li>
                     <li><a class="dropdown-item" href="../pages/dashboard.php">Dashboard</a></li>
+                    <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
                 </ul>
             </div>
-    
+
         </div>
     </nav>
 </div>
