@@ -16,15 +16,15 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
-    if (!$user) {
-        // removes all session variables before destroying the session
-        session_unset();
-        session_destroy();
-        header("Location: ../login.php");
-        exit();
-    }
+if (!$user) {
+    // removes all session variables before destroying the session
+    session_unset();
+    session_destroy();
+    header("Location: ../login.php");
+    exit();
+}
 
-    $stmt->close();
+$stmt->close();
 
 $email = $_SESSION['email'] ?? 'Seller';
 ?>

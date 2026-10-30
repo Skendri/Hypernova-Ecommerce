@@ -162,7 +162,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const section = document.createElement("section");
     section.className = "all-blog-section";
 
-    section.appendChild(createTextElement("h2", "all-blog-section-title", title));
+    section.appendChild(
+      createTextElement("h2", "all-blog-section-title", title),
+    );
 
     const grid = document.createElement("div");
     grid.className = "all-blog-grid";
@@ -223,14 +225,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .filter((post) => !latestPostIds.has(String(post.id)))
         .sort((firstPost, secondPost) => {
           const viewDifference =
-            Number(secondPost.view_count || 0) - Number(firstPost.view_count || 0);
+            Number(secondPost.view_count || 0) -
+            Number(firstPost.view_count || 0);
 
           if (viewDifference !== 0) {
             return viewDifference;
           }
 
           return (
-            new Date((secondPost.created_at || "").replace(" ", "T")).getTime() -
+            new Date(
+              (secondPost.created_at || "").replace(" ", "T"),
+            ).getTime() -
             new Date((firstPost.created_at || "").replace(" ", "T")).getTime()
           );
         })

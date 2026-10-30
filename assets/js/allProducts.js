@@ -145,7 +145,8 @@ document.addEventListener("DOMContentLoaded", function () {
       createTextElement(
         "p",
         "product-card-description",
-        product.description || `Seller: ${product.owner_name || "Unknown user"}`,
+        product.description ||
+          `Seller: ${product.owner_name || "Unknown user"}`,
       ),
     );
 

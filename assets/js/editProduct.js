@@ -22,7 +22,11 @@ if (window.ClassicEditor && descriptionTextarea) {
 }
 
 function normalizeImagePath(imagePath) {
-  if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+  if (
+    !imagePath ||
+    imagePath.startsWith("http") ||
+    imagePath.startsWith("data:")
+  ) {
     return imagePath;
   }
 
@@ -80,7 +84,8 @@ async function readApiResponse(response) {
   } catch (error) {
     return {
       success: false,
-      message: responseText.trim() || "The server returned an unreadable response.",
+      message:
+        responseText.trim() || "The server returned an unreadable response.",
     };
   }
 }
@@ -98,7 +103,9 @@ async function loadProduct() {
     return;
   }
 
-  const response = await fetch(`../api/fetch_products.php?id=${encodeURIComponent(productId)}`);
+  const response = await fetch(
+    `../api/fetch_products.php?id=${encodeURIComponent(productId)}`,
+  );
   const payload = await readApiResponse(response);
   const products = getProductsFromResponse(payload);
   const product = products[0] || null;
@@ -174,11 +181,12 @@ form.addEventListener("submit", async function (event) {
   });
   const result = await readApiResponse(response);
 
-  const errors = Array.isArray(result.errors) ? `\n${result.errors.join("\n")}` : "";
+  const errors = Array.isArray(result.errors)
+    ? `\n${result.errors.join("\n")}`
+    : "";
   alert(`${result.message || "Product request finished."}${errors}`);
 
   if (response.ok) {
     window.location.href = "dashboard.php";
   }
 });
-

@@ -15,7 +15,9 @@ const studioTabs = document.querySelectorAll("[data-scroll-target]");
 const draftButton = document.querySelector("[data-draft-button]");
 const shopperPreviewImage = document.getElementById("shopperPreviewImage");
 const shopperPreviewTitle = document.getElementById("shopperPreviewTitle");
-const shopperPreviewCategory = document.getElementById("shopperPreviewCategory");
+const shopperPreviewCategory = document.getElementById(
+  "shopperPreviewCategory",
+);
 const shopperPreviewPrice = document.getElementById("shopperPreviewPrice");
 let descriptionEditor = null;
 let selectedCategory = "All";
@@ -23,14 +25,23 @@ let loadedProducts = [];
 let productsLoadError = false;
 
 function updateShopperPreview() {
-  if (shopperPreviewTitle) shopperPreviewTitle.textContent = form.elements.namedItem("title")?.value.trim() || "Your product title";
-  if (shopperPreviewCategory) shopperPreviewCategory.textContent = form.elements.namedItem("category")?.value || "Select a category";
-  if (shopperPreviewPrice) shopperPreviewPrice.textContent = `$${Number(form.elements.namedItem("price")?.value || 0).toFixed(2)}`;
+  if (shopperPreviewTitle)
+    shopperPreviewTitle.textContent =
+      form.elements.namedItem("title")?.value.trim() || "Your product title";
+  if (shopperPreviewCategory)
+    shopperPreviewCategory.textContent =
+      form.elements.namedItem("category")?.value || "Select a category";
+  if (shopperPreviewPrice)
+    shopperPreviewPrice.textContent = `$${Number(form.elements.namedItem("price")?.value || 0).toFixed(2)}`;
 }
 
 ["title", "category", "price"].forEach((fieldName) => {
-  form.elements.namedItem(fieldName)?.addEventListener("input", updateShopperPreview);
-  form.elements.namedItem(fieldName)?.addEventListener("change", updateShopperPreview);
+  form.elements
+    .namedItem(fieldName)
+    ?.addEventListener("input", updateShopperPreview);
+  form.elements
+    .namedItem(fieldName)
+    ?.addEventListener("change", updateShopperPreview);
 });
 
 // checks whether Only continue if CKEditor exists AND the textarea exists.
@@ -87,7 +98,8 @@ imageInput.addEventListener("change", function () {
       img.alt = file.name;
 
       previewContainer.appendChild(img);
-      if (shopperPreviewImage && file === files[0]) shopperPreviewImage.src = e.target.result;
+      if (shopperPreviewImage && file === files[0])
+        shopperPreviewImage.src = e.target.result;
     };
 
     reader.readAsDataURL(file);
@@ -113,7 +125,9 @@ if (uploadZone) {
   });
 
   uploadZone.addEventListener("drop", (event) => {
-    const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith("image/"));
+    const files = Array.from(event.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
     if (!files.length) return;
 
     const transfer = new DataTransfer();
@@ -126,15 +140,21 @@ if (uploadZone) {
 categoryFilters.forEach((filter) => {
   filter.addEventListener("click", () => {
     selectedCategory = filter.dataset.categoryFilter;
-    categoryFilters.forEach((item) => item.classList.toggle("is-active", item === filter));
+    categoryFilters.forEach((item) =>
+      item.classList.toggle("is-active", item === filter),
+    );
     renderLoadedProducts();
   });
 });
 
 studioTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
-    document.getElementById(tab.dataset.scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    studioTabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+    document
+      .getElementById(tab.dataset.scrollTarget)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    studioTabs.forEach((item) =>
+      item.classList.toggle("is-active", item === tab),
+    );
   });
 });
 
@@ -275,21 +295,31 @@ async function loadProducts() {
   loadedProducts = products;
   productsLoadError = !response.ok;
 
-  const activeProductCount = products.filter((product) => (product.status || "active") === "active").length;
-  const totalCatalogValue = products.reduce((sum, product) => sum + Number(product.price || 0), 0);
+  const activeProductCount = products.filter(
+    (product) => (product.status || "active") === "active",
+  ).length;
+  const totalCatalogValue = products.reduce(
+    (sum, product) => sum + Number(product.price || 0),
+    0,
+  );
   if (totalListings) totalListings.textContent = products.length;
   if (activeListings) activeListings.textContent = activeProductCount;
-  if (catalogValue) catalogValue.textContent = `$${totalCatalogValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  if (catalogValue)
+    catalogValue.textContent = `$${totalCatalogValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
   if (inventoryCount) inventoryCount.textContent = products.length;
-  if (inventoryHeadingCount) inventoryHeadingCount.textContent = products.length;
+  if (inventoryHeadingCount)
+    inventoryHeadingCount.textContent = products.length;
 
   renderLoadedProducts();
 }
 
 function renderLoadedProducts() {
-  const products = selectedCategory === "All"
-    ? loadedProducts
-    : loadedProducts.filter((product) => product.category === selectedCategory);
+  const products =
+    selectedCategory === "All"
+      ? loadedProducts
+      : loadedProducts.filter(
+          (product) => product.category === selectedCategory,
+        );
 
   grid.innerHTML = "";
 

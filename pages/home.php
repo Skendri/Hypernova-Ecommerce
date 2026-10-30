@@ -85,10 +85,43 @@ if (isset($_SESSION["user_id"])) {
                 <p>Scale seamlessly from individual creative setups to global studio deployments.</p>
             </div>
             <div class="pricing-grid">
-                <article class="plan-card"><span class="plan-number">01</span><h3>Essentials</h3><p>For remote creators building their initial clean desk setup.</p><strong>$19 <small>/ month</small></strong><ul><li>Curated catalog access</li><li>1 year hardware warranty</li><li>Standard concierge support</li></ul><a href="pricing.php">Start free trial</a></article>
-                <article class="plan-card featured-plan"><span class="plan-badge">Most popular</span><span class="plan-number">02</span><h3>Professional</h3><p>For power creators, designers, and boutique freelancers.</p><strong>$49 <small>/ month</small></strong><ul><li>Priority equipment drops</li><li>3 year extended warranty</li><li>24/7 dedicated concierge</li><li>Annual hardware refresh</li></ul><a href="pricing.php">Select professional</a></article>
-                <article class="plan-card"><span class="plan-number">03</span><h3>Studio collective</h3><p>Tailored for creative agencies and collaborative studios.</p><strong>$129 <small>/ month</small></strong><ul><li>Multi-seat license</li><li>Custom room CAD modeling</li><li>Acoustic optimization audit</li></ul><a href="pricing.php">Contact sales</a></article>
-                <article class="plan-card"><span class="plan-number">04</span><h3>Custom enterprise</h3><p>Full architectural rollout and customized hardware fleet.</p><strong>Custom <small>/ billed annually</small></strong><ul><li>Bespoke finish materials</li><li>On-site acoustic installation</li><li>Dedicated account executive</li></ul><a href="pricing.php">Inquire fleet</a></article>
+                <article class="plan-card"><span class="plan-number">01</span>
+                    <h3>Essentials</h3>
+                    <p>For remote creators building their initial clean desk setup.</p><strong>$19 <small>/ month</small></strong>
+                    <ul>
+                        <li>Curated catalog access</li>
+                        <li>1 year hardware warranty</li>
+                        <li>Standard concierge support</li>
+                    </ul><a href="pricing.php">Start free trial</a>
+                </article>
+                <article class="plan-card featured-plan"><span class="plan-badge">Most popular</span><span class="plan-number">02</span>
+                    <h3>Professional</h3>
+                    <p>For power creators, designers, and boutique freelancers.</p><strong>$49 <small>/ month</small></strong>
+                    <ul>
+                        <li>Priority equipment drops</li>
+                        <li>3 year extended warranty</li>
+                        <li>24/7 dedicated concierge</li>
+                        <li>Annual hardware refresh</li>
+                    </ul><a href="pricing.php">Select professional</a>
+                </article>
+                <article class="plan-card"><span class="plan-number">03</span>
+                    <h3>Studio collective</h3>
+                    <p>Tailored for creative agencies and collaborative studios.</p><strong>$129 <small>/ month</small></strong>
+                    <ul>
+                        <li>Multi-seat license</li>
+                        <li>Custom room CAD modeling</li>
+                        <li>Acoustic optimization audit</li>
+                    </ul><a href="pricing.php">Contact sales</a>
+                </article>
+                <article class="plan-card"><span class="plan-number">04</span>
+                    <h3>Custom enterprise</h3>
+                    <p>Full architectural rollout and customized hardware fleet.</p><strong>Custom <small>/ billed annually</small></strong>
+                    <ul>
+                        <li>Bespoke finish materials</li>
+                        <li>On-site acoustic installation</li>
+                        <li>Dedicated account executive</li>
+                    </ul><a href="pricing.php">Inquire fleet</a>
+                </article>
             </div>
         </section>
 

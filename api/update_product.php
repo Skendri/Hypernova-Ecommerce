@@ -121,4 +121,3 @@ send_json(200, [
     'message' => 'Product updated successfully.',
     'product_id' => $productId,
 ]);
-

@@ -13,7 +13,7 @@ if ($method === 'GET') {
     $cart = cart_items();
 
     if ($cart) {
-        $ids = array_values(array_unique(array_map(static fn ($item) => (int) $item['product_id'], $cart)));
+        $ids = array_values(array_unique(array_map(static fn($item) => (int) $item['product_id'], $cart)));
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $types = str_repeat('i', count($ids));
         $stmt = $linkConnect->prepare("SELECT id, title, price, image, category FROM products WHERE status = 'active' AND id IN ($placeholders)");

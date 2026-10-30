@@ -57,7 +57,11 @@ if (!isset($_SESSION["user_id"])) {
             <section class="studio-workspace">
                 <div class="studio-form-column" id="publish-panel">
                     <div class="studio-card asset-card">
-                        <div class="card-heading"><div><i class="fa-regular fa-images"></i><h2>Digital assets &amp; gallery</h2></div><span id="imageCount">0 / 5 slots filled</span></div>
+                        <div class="card-heading">
+                            <div><i class="fa-regular fa-images"></i>
+                                <h2>Digital assets &amp; gallery</h2>
+                            </div><span id="imageCount">0 / 5 slots filled</span>
+                        </div>
                         <label class="upload-zone" for="imageInput">
                             <span class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
                             <strong>Drop up to 5 product images</strong>
@@ -67,75 +71,90 @@ if (!isset($_SESSION["user_id"])) {
                     </div>
 
                     <div class="studio-card form-card">
-                        <div class="card-heading"><div><i class="fa-solid fa-sliders"></i><h2>Listing parameters</h2></div><span class="secure-label"><i class="fa-solid fa-shield-halved"></i> Protected checkout</span></div>
-
-                    <form id="productForm" enctype="multipart/form-data">
-
-                        <div class="mb-3">
-                            <label class="form-label" for="productTitle">Product title</label>
-                            <input id="productTitle" type="text" class="form-control" name="title" placeholder="Name your product" required>
+                        <div class="card-heading">
+                            <div><i class="fa-solid fa-sliders"></i>
+                                <h2>Listing parameters</h2>
+                            </div><span class="secure-label"><i class="fa-solid fa-shield-halved"></i> Protected checkout</span>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="productCategory">Marketplace segment</label>
+                        <form id="productForm" enctype="multipart/form-data">
 
-                            <select id="productCategory" class="form-select" name="category" required>
-                                <option value="">Select category</option>
-                                <option>Electronics</option>
-                                <option>Fashion</option>
-                                <option>Gaming</option>
-                                <option>Home</option>
-                                <option>Sports</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="productPrice">List price</label>
-                            <div class="price-input"><span>$</span><input id="productPrice" type="number" step="0.01" class="form-control" name="price" placeholder="0.00" min="0" required></div>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="productTitle">Product title</label>
+                                <input id="productTitle" type="text" class="form-control" name="title" placeholder="Name your product" required>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="productStatus">Listing visibility state</label>
-                            <select id="productStatus" class="form-select" name="status" required>
-                                <option value="active">Active</option>
-                                <option value="draft">Draft</option>
-                                <option value="hidden">Hidden</option>
-                                <option value="sold">Sold</option>
-                            </select>
-                            <div class="form-text">Only active listings are visible to shoppers.</div>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="productCategory">Marketplace segment</label>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="productPhone">Verified courier dispatch line</label>
-                            <input id="productPhone" type="tel" class="form-control" name="phone" placeholder="Your contact number" required>
-                        </div>
+                                <select id="productCategory" class="form-select" name="category" required>
+                                    <option value="">Select category</option>
+                                    <option>Electronics</option>
+                                    <option>Fashion</option>
+                                    <option>Gaming</option>
+                                    <option>Home</option>
+                                    <option>Sports</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="productPrice">List price</label>
+                                <div class="price-input"><span>$</span><input id="productPrice" type="number" step="0.01" class="form-control" name="price" placeholder="0.00" min="0" required></div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="editor">Editorial specification &amp; narrative</label>
-                            <textarea class="form-control" id="editor" name="description" rows="5"></textarea>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="productStatus">Listing visibility state</label>
+                                <select id="productStatus" class="form-select" name="status" required>
+                                    <option value="active">Active</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="hidden">Hidden</option>
+                                    <option value="sold">Sold</option>
+                                </select>
+                                <div class="form-text">Only active listings are visible to shoppers.</div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="visually-hidden" for="imageInput">Product images</label>
-                            <input class="visually-hidden" type="file" name="images[]" id="imageInput" accept="image/*" multiple required>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="productPhone">Verified courier dispatch line</label>
+                                <input id="productPhone" type="tel" class="form-control" name="phone" placeholder="Your contact number" required>
+                            </div>
 
-                        <div class="form-actions"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-rocket"></i> Publish to marketplace</button><button class="draft-button" type="button" data-draft-button>Save draft</button></div>
+                            <div class="mb-3">
+                                <label class="form-label" for="editor">Editorial specification &amp; narrative</label>
+                                <textarea class="form-control" id="editor" name="description" rows="5"></textarea>
+                            </div>
 
-                    </form>
+                            <div class="mb-3">
+                                <label class="visually-hidden" for="imageInput">Product images</label>
+                                <input class="visually-hidden" type="file" name="images[]" id="imageInput" accept="image/*" multiple required>
+                            </div>
+
+                            <div class="form-actions"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-rocket"></i> Publish to marketplace</button><button class="draft-button" type="button" data-draft-button>Save draft</button></div>
+
+                        </form>
+                    </div>
                 </div>
-            </div>
                 <aside class="live-preview-column">
                     <div class="preview-heading"><span><i class="fa-solid fa-circle"></i> Live shopper preview</span><small>Updates dynamically</small></div>
                     <div class="shopper-preview">
                         <div class="shopper-image-wrap"><img id="shopperPreviewImage" src="https://placehold.co/800x620/f1f2f8/6548c8?text=Your+Product" alt="Product preview"><span>LIVE LISTING</span></div>
-                        <div class="shopper-copy"><span class="preview-category" id="shopperPreviewCategory">SELECT A CATEGORY</span><h3 id="shopperPreviewTitle">Your product title</h3><p id="shopperPreviewPrice">$0.00</p><div class="preview-meta"><span><i class="fa-solid fa-shield-halved"></i> Protected listing</span><span><i class="fa-solid fa-truck"></i> Ships worldwide</span></div></div>
+                        <div class="shopper-copy"><span class="preview-category" id="shopperPreviewCategory">SELECT A CATEGORY</span>
+                            <h3 id="shopperPreviewTitle">Your product title</h3>
+                            <p id="shopperPreviewPrice">$0.00</p>
+                            <div class="preview-meta"><span><i class="fa-solid fa-shield-halved"></i> Protected listing</span><span><i class="fa-solid fa-truck"></i> Ships worldwide</span></div>
+                        </div>
                     </div>
                     <div class="preview-note"><i class="fa-regular fa-lightbulb"></i><span>Your listing preview helps buyers understand the product before they open the full detail page.</span></div>
                 </aside>
             </section>
 
             <section class="inventory-section" id="inventory-panel">
-                <div class="inventory-heading"><div><div class="eyebrow"><span class="live-dot"></span> Live inventory</div><h2>Your products inventory</h2><p>Real-time valuation and listing lifecycle controls.</p></div><div class="inventory-count"><strong id="inventoryHeadingCount">0</strong> active cards</div></div>
+                <div class="inventory-heading">
+                    <div>
+                        <div class="eyebrow"><span class="live-dot"></span> Live inventory</div>
+                        <h2>Your products inventory</h2>
+                        <p>Real-time valuation and listing lifecycle controls.</p>
+                    </div>
+                    <div class="inventory-count"><strong id="inventoryHeadingCount">0</strong> active cards</div>
+                </div>
                 <div class="row g-4" id="productsGrid"></div>
             </section>
         </div>
