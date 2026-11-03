@@ -125,6 +125,8 @@ document.addEventListener("DOMContentLoaded", function () {
     image.className = "uploaded-product-img product-image-img";
     image.src = getProductImage(product.image);
     image.alt = product.title || "Product image";
+    image.loading = "lazy";
+    image.decoding = "async";
     // imageLink.appendChild(image);
 
     // container parent for description at the card
@@ -262,6 +264,8 @@ document.addEventListener("DOMContentLoaded", function () {
     image.className = "home-blog-img";
     image.src = getBlogImage(post.cover_image);
     image.alt = post.title || "Blog post cover";
+    image.loading = "lazy";
+    image.decoding = "async";
 
     const body = document.createElement("div");
     body.className = "home-blog-body bento-card-body";
@@ -461,6 +465,8 @@ document.addEventListener("DOMContentLoaded", function () {
     image.className = "home-api-img";
     image.src = article.urlToImage;
     image.alt = article.title || "World news image";
+    image.loading = "lazy";
+    image.decoding = "async";
 
     const body = document.createElement("div");
     body.className = "home-api-body";
@@ -564,6 +570,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const image = document.createElement("img");
     image.src = article.urlToImage;
     image.alt = article.title || "News image";
+    image.loading = "lazy";
+    image.decoding = "async";
 
     const body = document.createElement("div");
     body.className = "marquee-card-body";
@@ -682,6 +690,8 @@ document.addEventListener("DOMContentLoaded", function () {
     image.className = "home-api-img";
     image.src = article.urlToImage;
     image.alt = article.title || "Apple news image";
+    image.loading = "lazy";
+    image.decoding = "async";
 
     const body = document.createElement("div");
     body.className = "home-api-body";

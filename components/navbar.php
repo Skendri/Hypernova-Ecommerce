@@ -28,7 +28,7 @@ $stmt->close();
 <!-- css for navbar -->
 <style>
     .glass-navbar {
-        width: 70%;
+        width: min(94%, 1280px);
         color: black;
         background: rgba(255, 255, 255, 0);
         border-radius: 16px;
@@ -36,6 +36,7 @@ $stmt->close();
         backdrop-filter: blur(3px);
         -webkit-backdrop-filter: blur(9.1px);
         border: 1px solid rgba(255, 255, 255, 1);
+        overflow: visible;
     }
 
     .navbar-size {
@@ -45,16 +46,112 @@ $stmt->close();
         top: 10px;
         z-index: 1000;
     }
+
+    .glass-navbar .navbar-collapse {
+        align-items: center;
+        gap: 12px;
+    }
+
+    .glass-navbar .navbar-nav {
+        gap: 2px;
+    }
+
+    .glass-navbar .nav-link {
+        white-space: nowrap;
+    }
+
+    .glass-navbar form[role="search"] {
+        flex: 1 1 180px;
+        max-width: 260px;
+        margin-left: auto;
+        min-width: 160px;
+    }
+
+    .glass-navbar form[role="search"] input {
+        min-width: 0;
+    }
+
+    .glass-navbar .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+
+    @media (max-width: 1199.98px) {
+        .glass-navbar {
+            width: min(96%, 1280px);
+        }
+
+        .glass-navbar .container {
+            align-items: center;
+        }
+
+        .glass-navbar .navbar-collapse {
+            align-items: stretch;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .glass-navbar .navbar-nav {
+            width: 100%;
+        }
+
+        .glass-navbar .nav-link {
+            padding: 10px 12px;
+        }
+
+        .glass-navbar form[role="search"] {
+            max-width: none;
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .glass-navbar .dropdown {
+            margin-top: 8px;
+        }
+
+        .glass-navbar .dropdown-menu {
+            left: 0;
+            right: auto;
+            width: min(260px, 100%);
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .navbar-size {
+            top: 6px;
+        }
+
+        .glass-navbar {
+            width: calc(100% - 12px);
+            border-radius: 12px;
+        }
+
+        .glass-navbar .container {
+            padding-inline: 12px;
+        }
+
+        .glass-navbar form[role="search"] {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+    }
 </style>
 
 <div class="navbar-size">
-    <nav class="glass-navbar navbar py-3 navbar-expand-lg">
-
+    <nav class="glass-navbar navbar py-3 navbar-expand-xl">
         <div class="container">
             <!-- Logo navbar -->
-            <a class="navbar-brand" href="#">Navbar</a>
-            <!-- links navbar -->
-            <ul class="navbar-nav .d-md-flex">
+            <a class="navbar-brand" href="home.php">Hypernova</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <!-- links navbar -->
+                <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="home.php">Home</a>
                 </li>
@@ -73,16 +170,16 @@ $stmt->close();
                 <li class="nav-item">
                     <a class="nav-link" href="productView.php">Product View</a>
                 </li>
-            </ul>
+                </ul>
 
-            <!-- search form -->
-            <form class="d-flex" role="search">
-                <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                <button class="btn btn-outline-white" type="submit">Search</button>
-            </form>
+                <!-- search form -->
+                <form class="d-flex" role="search">
+                    <input name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                    <button class="btn btn-outline-dark" type="submit">Search</button>
+                </form>
 
-            <!-- logout button -->
-            <div class="dropdown h-auto">
+                <!-- account and cart menu -->
+                <div class="dropdown h-auto">
                 <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                     href="#"
                     role="button"
@@ -110,8 +207,8 @@ $stmt->close();
                     <li><a class="dropdown-item" href="../pages/dashboard.php">Dashboard</a></li>
                     <li><a class="dropdown-item" href="../auth/logout.php">Logout</a></li>
                 </ul>
+                </div>
             </div>
-
         </div>
     </nav>
 </div>
