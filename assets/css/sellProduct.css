@@ -442,6 +442,26 @@ body {
 .form-control::placeholder {
   color: #9297a8;
 }
+.field-error {
+  min-height: 18px;
+  margin-top: 5px;
+  color: #b42318;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.form-control.is-invalid,
+.form-select.is-invalid,
+.upload-zone.is-invalid {
+  border-color: #dc3545;
+}
+.upload-zone.is-invalid {
+  background: rgba(220, 53, 69, 0.05);
+}
+#productFormMessage {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+  font-size: 13px;
+}
 .form-select {
   background-color: #fff;
 }

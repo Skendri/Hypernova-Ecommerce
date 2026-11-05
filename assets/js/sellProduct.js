@@ -75,10 +75,13 @@ imageInput.addEventListener("change", function () {
   const files = Array.from(this.files);
 
   if (files.length > 5) {
-    alert("You can upload a maximum of 5 images.");
+    setFieldError(null, "productImagesError", "You can upload a maximum of 5 images.");
+    if (uploadZone) uploadZone.classList.add("is-invalid");
     this.value = "";
     return;
   }
+  setFieldError(null, "productImagesError", "");
+  if (uploadZone) uploadZone.classList.remove("is-invalid");
 
   previewContainer.innerHTML = "";
   if (selectedImageCount) {
@@ -428,18 +431,97 @@ function renderLoadedProducts() {
 }
 
 // FORM SUBMIT
+function setFieldError(control, errorElementId, message) {
+  const errorElement = document.getElementById(errorElementId);
+  if (errorElement) errorElement.textContent = message;
+  if (control) control.classList.toggle("is-invalid", Boolean(message));
+  if (control && message) control.setAttribute("aria-invalid", "true");
+  if (control && !message) control.removeAttribute("aria-invalid");
+}
+
+function clearProductFormErrors() {
+  form.querySelectorAll(".is-invalid").forEach((element) => {
+    element.classList.remove("is-invalid");
+    element.removeAttribute("aria-invalid");
+  });
+  form.querySelectorAll(".field-error").forEach((element) => {
+    element.textContent = "";
+  });
+
+  const formMessage = document.getElementById("productFormMessage");
+  formMessage.classList.add("d-none");
+  formMessage.classList.remove("alert-success");
+  formMessage.classList.add("alert-danger");
+  formMessage.textContent = "";
+}
+
+function showProductFormError(message, isSuccess = false) {
+  const formMessage = document.getElementById("productFormMessage");
+  formMessage.textContent = message;
+  formMessage.classList.remove("d-none");
+  formMessage.classList.toggle("alert-danger", !isSuccess);
+  formMessage.classList.toggle("alert-success", isSuccess);
+  formMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
+  clearProductFormErrors();
+
+  const errors = [];
+  const title = form.elements.namedItem("title");
+  const category = form.elements.namedItem("category");
+  const price = form.elements.namedItem("price");
+  const status = form.elements.namedItem("status");
+  const phone = form.elements.namedItem("phone");
+
+  if (!title.value.trim()) {
+    setFieldError(title, "productTitleError", "Please enter a product title.");
+    errors.push("Product title is required.");
+  }
+  if (!category.value) {
+    setFieldError(category, "productCategoryError", "Please choose a category.");
+    errors.push("Product category is required.");
+  }
+  if (!price.value || Number(price.value) < 0 || Number(price.value) > 1000000) {
+    setFieldError(price, "productPriceError", "Enter a price between 0 and 1,000,000.");
+    errors.push("Price is invalid.");
+  }
+  if (!status.value) {
+    setFieldError(status, "productStatusError", "Please choose a listing status.");
+    errors.push("Listing status is required.");
+  }
+  if (!/^[0-9+()\-\s]{6,30}$/.test(phone.value.trim())) {
+    setFieldError(phone, "productPhoneError", "Enter 6 to 30 phone-safe characters.");
+    errors.push("Phone number is invalid.");
+  }
 
   if (imageInput.files.length < 1 || imageInput.files.length > 5) {
-    alert("Please choose between 1 and 5 images.");
-    return;
+    setFieldError(null, "productImagesError", "Please choose between 1 and 5 product images.");
+    if (uploadZone) uploadZone.classList.add("is-invalid");
+    errors.push("Product images are required.");
+  } else {
+    const invalidImage = Array.from(imageInput.files).find((file) =>
+      !["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type) ||
+      file.size < 1 ||
+      file.size > 5242880
+    );
+    if (invalidImage) {
+      setFieldError(null, "productImagesError", "Use JPG, PNG, GIF, or WEBP images up to 5MB each.");
+      if (uploadZone) uploadZone.classList.add("is-invalid");
+      errors.push("One or more images are invalid.");
+    }
   }
 
   const descriptionHtml = getDescriptionHtml();
 
   if (!getDescriptionText(descriptionHtml)) {
-    alert("Please enter a product description.");
+    setFieldError(descriptionTextarea, "productDescriptionError", "Please enter a product description.");
+    errors.push("Product description is required.");
+  }
+
+  if (errors.length) {
+    showProductFormError(`Please fix the form: ${errors.join(" ")}`);
     return;
   }
 
@@ -457,12 +539,9 @@ form.addEventListener("submit", async function (e) {
 
   const result = await readApiResponse(response);
 
-  const errors = Array.isArray(result.errors)
-    ? `\n${result.errors.join("\n")}`
-    : "";
-  alert(`${result.message || "Product request finished."}${errors}`);
-
   if (!response.ok) {
+    const serverErrors = Array.isArray(result.errors) ? result.errors.join(" ") : "";
+    showProductFormError(`${result.message || "Product request failed."}${serverErrors ? ` ${serverErrors}` : ""}`);
     return;
   }
 
@@ -472,6 +551,8 @@ form.addEventListener("submit", async function (e) {
   }
 
   previewContainer.innerHTML = "";
+  if (selectedImageCount) selectedImageCount.textContent = "0 / 5 slots filled";
+  showProductFormError(result.message || "Product saved successfully.", true);
 
   loadProducts();
 });

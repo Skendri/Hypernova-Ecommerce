@@ -78,10 +78,12 @@ if (!isset($_SESSION["user_id"])) {
                         </div>
 
                         <form id="productForm" enctype="multipart/form-data">
+                            <div id="productFormMessage" class="alert alert-danger d-none" role="alert" aria-live="polite"></div>
 
                             <div class="mb-3">
                                 <label class="form-label" for="productTitle">Product title</label>
-                                <input id="productTitle" type="text" class="form-control" name="title" placeholder="Name your product" required>
+                                <input id="productTitle" type="text" class="form-control" name="title" placeholder="Name your product" maxlength="120" required>
+                                <div id="productTitleError" class="field-error"></div>
                             </div>
 
                             <div class="mb-3">
@@ -95,10 +97,12 @@ if (!isset($_SESSION["user_id"])) {
                                     <option>Home</option>
                                     <option>Sports</option>
                                 </select>
+                                <div id="productCategoryError" class="field-error"></div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="productPrice">List price</label>
-                                <div class="price-input"><span>$</span><input id="productPrice" type="number" step="0.01" class="form-control" name="price" placeholder="0.00" min="0" required></div>
+                                <div class="price-input"><span>$</span><input id="productPrice" type="number" step="0.01" class="form-control" name="price" placeholder="0.00" min="0" max="1000000" required></div>
+                                <div id="productPriceError" class="field-error"></div>
                             </div>
 
                             <div class="mb-3">
@@ -110,24 +114,32 @@ if (!isset($_SESSION["user_id"])) {
                                     <option value="sold">Sold</option>
                                 </select>
                                 <div class="form-text">Only active listings are visible to shoppers.</div>
+                                <div id="productStatusError" class="field-error"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label" for="productPhone">Verified courier dispatch line</label>
-                                <input id="productPhone" type="tel" class="form-control" name="phone" placeholder="Your contact number" required>
+                                <input id="productPhone" type="tel" class="form-control" name="phone" placeholder="Your contact number" pattern="[0-9+\(\)\-\s]{6,30}" title="Enter 6 to 30 characters using only numbers, spaces, +, -, and parentheses" required>
+                                <div id="productPhoneError" class="field-error"></div>
                             </div>
 
+                            <!-- CKeditor -->
                             <div class="mb-3">
                                 <label class="form-label" for="editor">Editorial specification &amp; narrative</label>
                                 <textarea class="form-control" id="editor" name="description" rows="5"></textarea>
+                                <div id="productDescriptionError" class="field-error"></div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="visually-hidden" for="imageInput">Product images</label>
                                 <input class="visually-hidden" type="file" name="images[]" id="imageInput" accept="image/*" multiple required>
+                                <div id="productImagesError" class="field-error"></div>
                             </div>
 
-                            <div class="form-actions"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-rocket"></i> Publish to marketplace</button><button class="draft-button" type="button" data-draft-button>Save draft</button></div>
+                            <div class="form-actions">
+                                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-rocket"></i> Publish to marketplace</button>
+                                <button class="draft-button" type="button" data-draft-button>Save draft</button>
+                            </div>
 
                         </form>
                     </div>
