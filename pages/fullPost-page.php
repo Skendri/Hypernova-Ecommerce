@@ -141,7 +141,16 @@ if ($postId) {
             </article>
 
             <section class="post-content">
-                <?php echo nl2br(e(strip_tags($post['content']))); ?>
+                <!-- encodings with regular spaces before displaying post content. HTML escaping remains in place. -->
+                <?php
+                $postContent = strip_tags($post['content']);
+                $postContent = str_ireplace(
+                    ['&nbsp;', '&#160;', '&#xA0;', "\u{00A0}"],
+                    ' ',
+                    $postContent
+                );
+                echo nl2br(e($postContent));
+                ?>
             </section>
 
             <?php if (count($relatedPosts) > 0): ?>
