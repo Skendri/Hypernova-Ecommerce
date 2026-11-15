@@ -20,6 +20,11 @@ if ($linkConnect->connect_error) {
     die("nuk u lidhe me databazen: " . $linkConnect->connect_error);
     echo "nuk u lidhe me databazen";
 }
+
+if (!$linkConnect->set_charset('utf8mb4')) {
+    die("Could not set database connection charset: " . $linkConnect->error);
+}
+
 // echo "ti je lidh me databazen";
 
 return $linkConnect;

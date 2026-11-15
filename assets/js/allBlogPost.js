@@ -60,11 +60,26 @@ document.addEventListener("DOMContentLoaded", function () {
     return template.innerHTML.trim();
   }
 
-  function createRichTextElement(tagName, className, html) {
-    const element = document.createElement(tagName);
-    element.className = className;
-    element.innerHTML = sanitizeBlogContent(html);
-    return element;
+  // This function creates a short text preview at cards limiting the preview to 40 words by default.
+  function createContentPreview(html, maxWords = 40) {
+    const template = document.createElement("template");
+    template.innerHTML = sanitizeBlogContent(html);
+    template.content
+      .querySelectorAll("br, blockquote, h2, h3, h4, li, p")
+      .forEach((element) => element.append(document.createTextNode(" ")));
+    const words = template.content.textContent
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .filter(Boolean);
+    const hasMoreWords = words.length > maxWords;
+    const preview = words.slice(0, maxWords).join(" ");
+
+    return createTextElement(
+      "p",
+      "all-blog-content",
+      `${preview}${hasMoreWords ? "…" : ""}`,
+    );
   }
 
   function normalizeImagePath(imagePath) {
@@ -145,10 +160,12 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     if (post.content) {
-      body.appendChild(
-        createRichTextElement("div", "all-blog-content", post.content),
-      );
+      body.appendChild(createContentPreview(post.content));
     }
+
+    body.appendChild(
+      createTextElement("span", "all-blog-read-more", "Read more"),
+    );
 
     article.appendChild(image);
     article.appendChild(body);

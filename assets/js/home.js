@@ -11,6 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
     return element;
   }
 
+  // this function is for description to displayed pure text without html tags showed in card
+  function getProductDescriptionText(html) {
+    const template = document.createElement("template");
+    template.innerHTML = html || "";
+    return template.content.textContent.trim();
+  }
+
   function sanitizeProductDescription(html) {
     const template = document.createElement("template");
     const allowedTags = new Set([
@@ -157,7 +164,11 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     body.appendChild(
-      createTextElement("p", "product-card-description", product.description),
+      createTextElement(
+        "p",
+        "product-card-description",
+        getProductDescriptionText(product.description),
+      ),
     );
 
     body.appendChild(

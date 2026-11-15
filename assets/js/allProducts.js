@@ -140,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     meta.appendChild(
       createTextElement("span", "rating", `★ ${product.rating || "4.9"}`),
     );
+
     body.appendChild(meta);
     body.appendChild(
       createTextElement(
@@ -154,6 +155,14 @@ document.addEventListener("DOMContentLoaded", function () {
         "product-card-description",
         getProductDescriptionText(product.description) ||
           `Seller: ${product.owner_name || "Unknown user"}`,
+      ),
+    );
+
+    body.appendChild(
+      createTextElement(
+        "p",
+        "product-card-sellerName",
+        `Seller: ${product.owner_name || "Unknown user"}`,
       ),
     );
 

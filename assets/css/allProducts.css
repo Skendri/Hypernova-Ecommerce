@@ -350,6 +350,17 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.product-card-sellerName {
+  color: #64748b;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  margin: 4px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .price-row {
   margin-top: 16px;
   padding-top: 12px;

@@ -261,7 +261,7 @@ function sanitize_product_description(string $html): string
     $document = new DOMDocument();
     libxml_use_internal_errors(true);
     $document->loadHTML(
-        '<!doctype html><html><body>' . $html . '</body></html>',
+        '<?xml encoding="UTF-8"><!doctype html><html><body>' . $html . '</body></html>',
         LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
     );
     libxml_clear_errors();
@@ -347,4 +347,3 @@ function sanitize_product_element_attributes(DOMElement $element): void
     $element->setAttribute('target', '_blank');
     $element->setAttribute('rel', 'noopener noreferrer');
 }
-
