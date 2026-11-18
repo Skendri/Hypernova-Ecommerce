@@ -3,60 +3,63 @@
 require_once __DIR__ . '/../config/database.php';
 session_start();
 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $message = "";
 $toastClass = "";
 // all this logic code here is about to check if user is register before and if write correct data
 
 // This if block ensures the code only runs when the user submits the login form.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // get users email and password from form on the login page
-    $email = trim($_POST['email']);
-    $password = $_POST['password'];
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $password = (string) ($_POST['password'] ?? '');
+    $csrfToken = (string) ($_POST['csrf_token'] ?? '');
 
     // These will later store values from MySQL.
     $userId = null;
     $hashedPassword = null;
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $message = "Invalid email format";
+    if (!hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        $message = 'Your session expired. Please refresh the page and try again.';
+        $toastClass = "bg-danger";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
+        $message = "Invalid email or password";
         $toastClass = "bg-danger";
     } else {
         // Prepare and execute
         $stmt = $linkConnect->prepare("SELECT id, password FROM userdata WHERE email = ?");
         if (!$stmt) {
-            die("Database error");
-        }
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-
-        // Check if email exists
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($userId, $hashedPassword);
-            // fetch the row and store the values in $userId and $hashedPassword
-            $stmt->fetch();
-
-            if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
-                $message = "Login successful";
-                $toastClass = "bg-success";
-                // This helps prevent Session Fixation attacks.
-                session_regenerate_id(true);
-                $_SESSION["user_id"] = $userId;
-                $_SESSION['email'] = $email;
-                // redirect to the dashboard or home page
-                header("Location: ../pages/home.php");
-                exit();
+            $message = "Login is temporarily unavailable. Please try again.";
+            $toastClass = "bg-danger";
+        } else {
+            $stmt->bind_param("s", $email);
+            if (!$stmt->execute() || !$stmt->store_result()) {
+                $message = "Login is temporarily unavailable. Please try again.";
+                $toastClass = "bg-danger";
+                $stmt->close();
             } else {
+
+                if ($stmt->num_rows > 0) {
+                    $stmt->bind_result($userId, $hashedPassword);
+                    $stmt->fetch();
+
+                    if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
+                        session_regenerate_id(true);
+                        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                        $_SESSION["user_id"] = $userId;
+                        $_SESSION['email'] = $email;
+                        header("Location: ../pages/home.php");
+                        exit();
+                    }
+                }
+
                 $message = "Invalid email or password";
                 $toastClass = "bg-danger";
+                $stmt->close();
             }
-        } else {
-            $message = "Invalid email or password";
-            $toastClass = "bg-danger";
         }
-
-        $stmt->close();
-        $linkConnect->close();
     }
 }
 ?>
@@ -129,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- this form have REQUEST_METHOD = POST -->
         <form action="" method="post" class="form-control form-custom mt-5 p-4"
             style="height: 600px; width:400px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row">
                 <i class="fa fa-user-circle-o fa-3x mt-1 mb-2"
                     style="text-align: center; color: green;"></i>
@@ -140,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fa fa-envelope"></i>
                     Email
                 </label>
-                <input type="text" name="email" id="email" class="form-control py-2" required>
+                <input type="email" name="email" id="email" class="form-control py-2" autocomplete="email" required>
             </div>
             <div class="col mb-3 mt-3">
                 <label for="password" class="py-2 fa-1x">
@@ -148,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Password
                 </label>
                 <input type="password" name="password" id="password"
-                    class="form-control" required>
+                    class="form-control" autocomplete="current-password" required>
             </div>
             <div class="flex row px-5 mb-5 mt-5">
                 <button type="submit" class="btn btn-success bg-success" style="font-weight: 600;">Login</button>

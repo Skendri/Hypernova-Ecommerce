@@ -1,10 +1,20 @@
 <?php
 
 include __DIR__ . '/../config/database.php';
-// var_dump($linkConnect);
-// die();
 
-$token = $_POST["token"];
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed.');
+}
+
+$token = (string) ($_POST['token'] ?? '');
+$password = (string) ($_POST['password'] ?? '');
+$confirmPassword = (string) ($_POST['confirm_password'] ?? '');
+
+if (!preg_match('/^[a-f0-9]{32}$/i', $token)) {
+    http_response_code(400);
+    exit('Invalid or expired password reset link.');
+}
 
 $token_hash = hash("sha256", $token);
 
@@ -12,6 +22,10 @@ $sql = "SELECT * FROM userdata
         WHERE reset_token_hash = ?";
 
 $stmt = $linkConnect->prepare($sql);
+if (!$stmt) {
+    http_response_code(500);
+    exit('Password reset is temporarily unavailable.');
+}
 
 $stmt->bind_param("s", $token_hash);
 
@@ -25,38 +39,43 @@ if ($user === null) {
     die("token not found");
 }
 
-if (strtotime($user["reset_token_expires_at"]) <= time()) {
-    die("token has expired");
+if (empty($user['reset_token_expires_at']) || strtotime($user['reset_token_expires_at']) <= time()) {
+    http_response_code(400);
+    exit('Invalid or expired password reset link.');
 }
 
-if (strlen($_POST["password"]) < 8) {
-    die("Password must be at least 8 characters");
+if (strlen($password) < 12 || !preg_match('/[a-z]/i', $password) || !preg_match('/[0-9]/', $password)) {
+    http_response_code(400);
+    exit('Password must be at least 12 characters and include a letter and a number.');
 }
 
-if (! preg_match("/[a-z]/i", $_POST["password"])) {
-    die("Password must contain at least one letter");
+if ($password !== $confirmPassword) {
+    http_response_code(400);
+    exit('Passwords must match.');
 }
 
-if (! preg_match("/[0-9]/", $_POST["password"])) {
-    die("Password must contain at least one number");
-}
-
-if ($_POST["password"] !== $_POST["confirm_password"]) {
-    die("Passwords must match");
-}
-
-$password_hash = password_hash($_POST["password"], PASSWORD_DEFAULT);
+$password_hash = password_hash($password, PASSWORD_DEFAULT);
+$now = date('Y-m-d H:i:s');
 
 $sql = "UPDATE userdata
         SET password = ?,
             reset_token_hash = NULL,
             reset_token_expires_at = NULL
-        WHERE id = ?";
+        WHERE id = ? AND reset_token_hash = ? AND reset_token_expires_at > ?";
 
 $stmt = $linkConnect->prepare($sql);
+if (!$stmt) {
+    http_response_code(500);
+    exit('Password reset is temporarily unavailable.');
+}
 
-$stmt->bind_param("ss", $password_hash, $user["id"]);
+$stmt->bind_param('siss', $password_hash, $user['id'], $token_hash, $now);
 
 $stmt->execute();
+
+if ($stmt->affected_rows !== 1) {
+    http_response_code(400);
+    exit('Invalid or expired password reset link.');
+}
 
 echo "Password updated. You can now login.";

@@ -28,7 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function normalizeImagePath(imagePath) {
-    if (!imagePath || imagePath.startsWith("http") || imagePath.startsWith("data:")) {
+    if (
+      !imagePath ||
+      imagePath.startsWith("http") ||
+      imagePath.startsWith("data:")
+    ) {
       return imagePath;
     }
 
@@ -140,8 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.title.textContent = "Product title loading";
     elements.price.textContent = "$000.00";
     elements.oldPrice.textContent = "$000.00";
+    // this code here is for product if php can't find description for this or user dosen't provide descritpion
     elements.description.textContent =
       "Product description loading while the item details are found.";
+    // this code is for description bottom where is displayed full description and is for user when they dosen't provide description when they create at first
     elements.longDescription.textContent =
       "More product information will appear here when a matching item exists.";
     elements.deliveryMessage.textContent = "Checking product availability.";
@@ -178,9 +184,11 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.mainImage.classList.remove("is-changing");
     }, 160);
 
-    document.querySelectorAll(".thumbnail-button").forEach((button, buttonIndex) => {
-      button.classList.toggle("active", buttonIndex === state.activeImage);
-    });
+    document
+      .querySelectorAll(".thumbnail-button")
+      .forEach((button, buttonIndex) => {
+        button.classList.toggle("active", buttonIndex === state.activeImage);
+      });
   }
 
   function renderThumbnails() {
@@ -217,7 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.title.textContent = product.title || "Untitled Product";
     elements.price.textContent = money(price);
     elements.oldPrice.textContent = money(oldPrice);
-    setRichDescription(elements.description, product.description, "");
+    // setRichDescription(elements.description, product.description, "");
     setRichDescription(
       elements.longDescription,
       product.description,
@@ -238,8 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.oldPrice.textContent = "$0.00";
     elements.description.textContent = message;
     elements.longDescription.textContent = message;
-    elements.deliveryMessage.textContent = "This listing cannot be opened right now.";
-    elements.mainImage.src = "https://placehold.co/900x900?text=Product+Unavailable";
+    elements.deliveryMessage.textContent =
+      "This listing cannot be opened right now.";
+    elements.mainImage.src =
+      "https://placehold.co/900x900?text=Product+Unavailable";
     elements.mainImage.alt = "Product unavailable";
     elements.thumbnailStrip.innerHTML = "";
   }
@@ -252,7 +262,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       return {
         success: false,
-        message: responseText.trim() || "The server returned an unreadable response.",
+        message:
+          responseText.trim() || "The server returned an unreadable response.",
       };
     }
   }
@@ -294,7 +305,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const response = await fetch(`../api/fetch_products.php?id=${encodeURIComponent(productId)}`);
+      const response = await fetch(
+        `../api/fetch_products.php?id=${encodeURIComponent(productId)}`,
+      );
       const payload = await readApiResponse(response);
       const products = getProductsFromResponse(payload);
       const product = products[0] || null;
@@ -306,7 +319,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (product) {
         renderProduct(product);
       } else {
-        renderUnavailable("This product is hidden, sold, deleted, or does not exist.");
+        renderUnavailable(
+          "This product is hidden, sold, deleted, or does not exist.",
+        );
       }
     } catch (error) {
       console.error("Could not load product:", error);
@@ -367,7 +382,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function selectedOption(selector) {
     const selected = document.querySelector(`${selector}.active`);
-    return selected ? (selected.textContent.trim() || selected.getAttribute("aria-label") || "") : "";
+    return selected
+      ? selected.textContent.trim() || selected.getAttribute("aria-label") || ""
+      : "";
   }
 
   async function addCurrentProductToCart() {
@@ -383,7 +400,10 @@ document.addEventListener("DOMContentLoaded", () => {
       size: selectedOption(".size-options button"),
       color: selectedOption(".color-choice"),
     });
-    const response = await fetch("../api/cart.php", { method: "POST", body: formData });
+    const response = await fetch("../api/cart.php", {
+      method: "POST",
+      body: formData,
+    });
     const payload = await readApiResponse(response);
 
     if (!response.ok || !payload.success) {
@@ -393,11 +413,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cartCount = document.getElementById("cartCount");
     if (cartCount) cartCount.textContent = payload.count;
-    showToast(`${state.quantity} item${state.quantity > 1 ? "s" : ""} added to cart.`);
+    showToast(
+      `${state.quantity} item${state.quantity > 1 ? "s" : ""} added to cart.`,
+    );
     return true;
   }
 
-  elements.addToCart.addEventListener("click", () => { addCurrentProductToCart(); });
+  elements.addToCart.addEventListener("click", () => {
+    addCurrentProductToCart();
+  });
 
   elements.buyNow.addEventListener("click", async () => {
     if (await addCurrentProductToCart()) window.location.href = "cart.php";

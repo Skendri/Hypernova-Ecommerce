@@ -1,42 +1,73 @@
 <?php
-include __DIR__ . '/../config/database.php';
+session_start();
+
+require_once __DIR__ . '/../config/database.php';
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $message = "";
 $toastClass = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $username = trim((string) ($_POST['username'] ?? ''));
+    $email = trim((string) ($_POST['email'] ?? ''));
+    $password = (string) ($_POST['password'] ?? '');
+    $csrfToken = (string) ($_POST['csrf_token'] ?? '');
 
-    // Check if email already exists without return email as a value, just check if it exists in the database
-    $checkEmailStmt =  $linkConnect->prepare("SELECT 1 FROM userdata WHERE email = ? LIMIT 1");
-    $checkEmailStmt->bind_param("s", $email);
-    $checkEmailStmt->execute();
-    $checkEmailStmt->store_result();
-
-    if ($checkEmailStmt->num_rows > 0) {
-        $message = "Email ID already exists";
-        $toastClass = "#007bff"; // Primary color
-    } else {
-        // Prepare and bind
-        $stmt = $linkConnect->prepare("INSERT INTO userdata (username, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $email, $hashedPassword);
-
-        if ($stmt->execute()) {
-            $message = "Account created successfully";
-            $toastClass = "#28a745"; // Success color
-        } else {
-            $message = "Error: " . $stmt->error;
-            $toastClass = "#dc3545"; // Danger color
-        }
-
-        $stmt->close();
+    if (!hash_equals($_SESSION['csrf_token'], $csrfToken)) {
+        $message = 'Your session expired. Please try again.';
+        $toastClass = '#dc3545';
+    } elseif ($username === '' || strlen($username) > 100) {
+        $message = 'Enter a username of 1 to 100 characters.';
+        $toastClass = '#dc3545';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
+        $message = 'Enter a valid email address.';
+        $toastClass = '#dc3545';
+    } elseif (strlen($password) < 12 || !preg_match('/[a-z]/i', $password) || !preg_match('/[0-9]/', $password)) {
+        $message = 'Password must be at least 12 characters and include a letter and a number.';
+        $toastClass = '#dc3545';
     }
 
-    $checkEmailStmt->close();
-    $linkConnect->close();
+    if ($message === '') {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // Check email existence without retrieving the stored address.
+        $checkEmailStmt = $linkConnect->prepare("SELECT 1 FROM userdata WHERE email = ? LIMIT 1");
+        if (!$checkEmailStmt) {
+            $message = 'Registration is temporarily unavailable. Please try again.';
+            $toastClass = '#dc3545';
+        } else {
+            $checkEmailStmt->bind_param("s", $email);
+            $checkEmailStmt->execute();
+            $checkEmailStmt->store_result();
+
+            if ($checkEmailStmt->num_rows > 0) {
+                $message = "Email ID already exists";
+                $toastClass = "#007bff";
+            } else {
+                $stmt = $linkConnect->prepare("INSERT INTO userdata (username, email, password) VALUES (?, ?, ?)");
+                if ($stmt) {
+                    $stmt->bind_param("sss", $username, $email, $hashedPassword);
+
+                    if ($stmt->execute()) {
+                        $message = "Account created successfully";
+                        $toastClass = "#28a745";
+                        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                    } else {
+                        $message = 'Registration failed. Please try again.';
+                        $toastClass = '#dc3545';
+                    }
+                    $stmt->close();
+                } else {
+                    $message = 'Registration is temporarily unavailable. Please try again.';
+                    $toastClass = '#dc3545';
+                }
+            }
+            $checkEmailStmt->close();
+        }
+    }
 }
 ?>
 
@@ -74,6 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             style="height:auto; width:380px;
             box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
             rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
             <div class="row text-center">
                 <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" style="color: green;"></i>
                 <h5 class="p-4" style="font-weight: 700;">Create Your Account</h5>
@@ -85,14 +117,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="mb-2 mt-2">
                 <label for="email"><i
                         class="fa fa-envelope"></i> Email</label>
-                <input type="text" name="email" id="email"
+                <input type="email" name="email" id="email" maxlength="254"
                     class="form-control" required>
             </div>
             <div class="mb-2 mt-2">
                 <label for="password"><i
                         class="fa fa-lock"></i> Password</label>
                 <input type="password" name="password" id="password"
-                    class="form-control" required>
+                    class="form-control" minlength="12" autocomplete="new-password" required>
+                <small class="form-text">Use at least 12 characters, including a letter and a number.</small>
             </div>
             <div class="mb-2 mt-3">
                 <button type="submit"
