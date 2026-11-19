@@ -47,13 +47,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message = "Email ID already exists";
                 $toastClass = "#007bff";
             } else {
-                $stmt = $linkConnect->prepare("INSERT INTO userdata (username, email, password) VALUES (?, ?, ?)");
+                $verificationToken = bin2hex(random_bytes(32));
+                $verificationTokenHash = hash('sha256', $verificationToken);
+                $verificationExpiresAt = date('Y-m-d H:i:s', time() + 86400);
+                $stmt = $linkConnect->prepare("INSERT INTO userdata (username, email, password, email_verified_at, email_verification_token_hash, email_verification_expires_at) VALUES (?, ?, ?, NULL, ?, ?)");
                 if ($stmt) {
-                    $stmt->bind_param("sss", $username, $email, $hashedPassword);
+                    $stmt->bind_param("sssss", $username, $email, $hashedPassword, $verificationTokenHash, $verificationExpiresAt);
 
                     if ($stmt->execute()) {
-                        $message = "Account created successfully";
-                        $toastClass = "#28a745";
+                        try {
+                            require_once __DIR__ . '/../mailer.php';
+                            $mail = getMailer();
+                            $mail->setFrom($_ENV['SMTP_FROM_EMAIL'] ?? $_ENV['SMTP_USERNAME']);
+                            $mail->addAddress($email, $username);
+                            $mail->Subject = 'Verify your Hypernova account';
+                            $verificationUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://')
+                                . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\')
+                                . '/verify-email.php?token=' . urlencode($verificationToken);
+                            $mail->Body = 'Please verify your email address by clicking <a href="'
+                                . htmlspecialchars($verificationUrl, ENT_QUOTES, 'UTF-8') . '">this link</a>. The link expires in 24 hours.';
+                            $mail->AltBody = "Verify your Hypernova account: $verificationUrl (link expires in 24 hours).";
+                            $mail->send();
+                            $message = 'Account created. Check your email for a verification link before logging in.';
+                            $toastClass = "#28a745";
+                        } catch (Throwable $e) {
+                            error_log('Verification email could not be sent: ' . $e->getMessage());
+                            $message = 'Your account was created, but the verification email could not be sent. Please contact support to request a new link.';
+                            $toastClass = '#dc3545';
+                        }
                         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     } else {
                         $message = 'Registration failed. Please try again.';

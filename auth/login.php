@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // These will later store values from MySQL.
     $userId = null;
     $hashedPassword = null;
+    $emailVerifiedAt = null;
 
     if (!hash_equals($_SESSION['csrf_token'], $csrfToken)) {
         $message = 'Your session expired. Please refresh the page and try again.';
@@ -28,8 +29,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "Invalid email or password";
         $toastClass = "bg-danger";
     } else {
-        // Prepare and execute
-        $stmt = $linkConnect->prepare("SELECT id, password FROM userdata WHERE email = ?");
+        // Use stable, non-reversible identifiers so the throttle table stores no raw IP or email.
+        $normalizedEmail = strtolower($email);
+        $limiterKeys = [
+            hash('sha256', 'email:' . $normalizedEmail),
+            hash('sha256', 'ip:' . (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown')),
+        ];
+        $blockedUntil = null;
+        $limitStmt = $linkConnect->prepare('SELECT MAX(locked_until) FROM login_rate_limits WHERE limiter_key IN (?, ?) AND locked_until > NOW()');
+        if (!$limitStmt) {
+            $message = 'Login is temporarily unavailable. Please try again.';
+            $toastClass = 'bg-danger';
+        } else {
+            $limitStmt->bind_param('ss', $limiterKeys[0], $limiterKeys[1]);
+            if (!$limitStmt->execute()) {
+                $message = 'Login is temporarily unavailable. Please try again.';
+                $toastClass = 'bg-danger';
+            } else {
+                $limitStmt->bind_result($blockedUntil);
+                $limitStmt->fetch();
+            }
+            $limitStmt->close();
+        }
+
+        if ($message === '' && $blockedUntil !== null) {
+            $message = 'Too many login attempts. Please try again in 15 minutes.';
+            $toastClass = 'bg-danger';
+        }
+
+        // Prepare and execute only when the account or source is not throttled.
+        $stmt = $message === '' ? $linkConnect->prepare("SELECT id, password, email_verified_at FROM userdata WHERE email = ?") : false;
+        if ($message === '') {
         if (!$stmt) {
             $message = "Login is temporarily unavailable. Please try again.";
             $toastClass = "bg-danger";
@@ -42,23 +72,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
 
                 if ($stmt->num_rows > 0) {
-                    $stmt->bind_result($userId, $hashedPassword);
+                    $stmt->bind_result($userId, $hashedPassword, $emailVerifiedAt);
                     $stmt->fetch();
 
                     if ($hashedPassword !== null && password_verify($password, $hashedPassword)) {
+                        if ($emailVerifiedAt === null) {
+                            $message = 'Please verify your email address using the link we sent before logging in.';
+                            $toastClass = 'bg-danger';
+                        } else {
+                        $clearStmt = $linkConnect->prepare('DELETE FROM login_rate_limits WHERE limiter_key IN (?, ?)');
+                        if ($clearStmt) {
+                            $clearStmt->bind_param('ss', $limiterKeys[0], $limiterKeys[1]);
+                            $clearStmt->execute();
+                            $clearStmt->close();
+                        }
                         session_regenerate_id(true);
                         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                         $_SESSION["user_id"] = $userId;
                         $_SESSION['email'] = $email;
                         header("Location: ../pages/home.php");
                         exit();
+                        }
                     }
                 }
 
-                $message = "Invalid email or password";
-                $toastClass = "bg-danger";
+                if ($message === '') {
+                    $recordStmt = $linkConnect->prepare(
+                        'INSERT INTO login_rate_limits (limiter_key, failures, window_started_at, locked_until)
+                         VALUES (?, 1, NOW(), NULL)
+                         ON DUPLICATE KEY UPDATE
+                           locked_until = IF(window_started_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE), NULL,
+                               IF(failures >= 4, DATE_ADD(NOW(), INTERVAL 15 MINUTE), locked_until)),
+                           failures = IF(window_started_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE), 1, failures + 1),
+                           window_started_at = IF(window_started_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE), NOW(), window_started_at)'
+                    );
+                    if ($recordStmt) {
+                        foreach ($limiterKeys as $limiterKey) {
+                            $recordStmt->bind_param('s', $limiterKey);
+                            $recordStmt->execute();
+                        }
+                        $recordStmt->close();
+                    }
+                    $message = "Invalid email or password";
+                    $toastClass = "bg-danger";
+                }
                 $stmt->close();
             }
+        }
         }
     }
 }

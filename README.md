@@ -96,6 +96,14 @@ Before installing and running the application locally, make sure the following t
 
 5. Import the SQL files available in `database/` when needed. The blog posts schema is available in `database/blog_posts.sql`.
 
+### Email verification
+
+Before using email verification, run `database/email_verification.sql` once against the configured database. It adds verification fields to the existing `userdata` table and keeps existing accounts active. New accounts receive a single-use verification link that expires after 24 hours; unverified accounts cannot log in. Configure the SMTP variables below and set `SMTP_FROM_EMAIL` to the sender address accepted by your mail provider.
+
+### Login rate limiting
+
+Run `database/login_rate_limits.sql` once to enable login throttling. Five invalid attempts within 15 minutes lock both the normalized email and the client IP for 15 minutes; a successful verified login clears both counters. The table stores hashes of these identifiers rather than raw email addresses or IPs.
+
 6. Start your Apache and MySQL services through XAMPP.
 
 7. Visit the project locally:
@@ -118,6 +126,7 @@ For the project to run properly, the following environment variables should be a
 - `SMTP_USERNAME`
 - `SMTP_PASSWORD`
 - `SMTP_PORT`
+- `SMTP_FROM_EMAIL`
 - `API_KEY`
 
 ## Application Workflow
