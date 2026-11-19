@@ -15,9 +15,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 if (!$user) {
-    // removes all session variables before destroying the session
-    session_unset();
-    session_destroy();
+    destroyAppSession();
     header("Location: ../login.php");
     exit();
 }

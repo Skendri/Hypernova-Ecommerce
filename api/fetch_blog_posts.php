@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 header('Content-Type: application/json');
 
@@ -71,3 +71,4 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo json_encode($posts);
+

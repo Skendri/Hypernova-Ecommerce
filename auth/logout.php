@@ -1,13 +1,7 @@
 <?php
-// Start the session
-session_start();
+require_once __DIR__ . '/../includes/session.php';
 
-// Unset all session variables
-$_SESSION = array();
+destroyAppSession();
 
-// Destroy the session
-session_destroy();
-
-// Redirect to the login page
-header("Location: login.php");
+header('Location: login.php');
 exit();

@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: ../auth/login.php");
@@ -28,7 +28,7 @@ if (!isset($_SESSION["user_id"])) {
         <div class="studio-container">
             <section class="studio-header">
                 <div>
-                    <div class="eyebrow"><span class="live-dot"></span> Atelier suite <span>•</span> Direct merchant protocol</div>
+                    <div class="eyebrow"><span class="live-dot"></span> Atelier suite <span>â€¢</span> Direct merchant protocol</div>
                     <h1 class="hero-title">Creator &amp; Seller<br>Studio</h1>
                     <p class="hero-subtitle">Manage your listings, mint trust with every detail, and reach high-intent buyers.</p>
                 </div>

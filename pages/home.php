@@ -1,7 +1,7 @@
 <?php
 
 require __DIR__ . "/../config/database.php";
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 if (isset($_SESSION["user_id"])) {
 
@@ -17,9 +17,7 @@ if (isset($_SESSION["user_id"])) {
     $user = $result->fetch_assoc();
 
     if (!$user) {
-        // removes all session variables before destroying the session
-        session_unset();
-        session_destroy();
+        destroyAppSession();
         header("Location: ../login.php");
         exit();
     }
@@ -140,3 +138,4 @@ if (isset($_SESSION["user_id"])) {
 </body>
 
 </html>
+

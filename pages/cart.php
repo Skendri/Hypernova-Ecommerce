@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php require_once __DIR__ . '/../includes/session.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,3 +31,5 @@
     <script src="../assets/js/cart.js"></script>
 </body>
 </html>
+
+

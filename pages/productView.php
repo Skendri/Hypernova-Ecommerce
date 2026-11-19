@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +41,7 @@ session_start();
 
                 <div class="rating-row">
                     <span class="rating-score">4.8</span>
-                    <span class="stars" aria-label="Rated 4.8 out of 5">★★★★★</span>
+                    <span class="stars" aria-label="Rated 4.8 out of 5">â˜…â˜…â˜…â˜…â˜…</span>
                     <a href="#reviews">Ratings & Reviews</a>
                     <span class="soft-divider"></span>
                     <span>223 views</span>

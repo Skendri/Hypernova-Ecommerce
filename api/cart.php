@@ -1,6 +1,6 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../includes/api_helpers.php';
@@ -76,3 +76,4 @@ if ($action === 'update' || $action === 'remove') {
 }
 
 send_json(422, ['success' => false, 'message' => 'Unknown cart action.']);
+

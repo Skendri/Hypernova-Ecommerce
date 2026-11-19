@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 header('Content-Type: application/json');
 
@@ -102,3 +102,4 @@ echo json_encode([
     'message' => $status === 'draft' ? 'Draft saved successfully.' : 'Blog post published successfully.',
     'post_id' => $stmt->insert_id
 ]);
+

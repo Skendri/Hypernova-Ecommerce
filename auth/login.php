@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/database.php';
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -228,10 +228,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="w-75 content form-custom h-100 mx-5" style="box-shadow:rgba(60, 64, 67, 0.5) 0px 4px 8px 0px,rgba(60, 64, 67, 0.3) 0px 8px 20px 4px;">
         <div class=" py-4 h-100 d-flex flex-column justify-content-between align-items-center ">
             <h1 class="text-success black-ops-one-regular fs-2">Welcom to HYPERNOVA Platform</h1>
-            <p class="text-white black-ops-one-regular" style="width: 90%;"> <b>A hypernova</b> është një shpërthim yjor jashtëzakonisht i fuqishëm dhe i shndritshëm,
-                që çliron 10 deri në 100 herë më shumë energji sesa një supernova standarde.
-                Zakonisht rezulton nga shembja katastrofike e bërthamës së yjeve masivë >30 masa diellore,
-                ato shpesh lënë pas vrima të zeza rrotulluese dhe lëshojnë shpërthime intensive rrezesh gama.
+            <p class="text-white black-ops-one-regular" style="width: 90%;"> <b>A hypernova</b> Ã«shtÃ« njÃ« shpÃ«rthim yjor jashtÃ«zakonisht i fuqishÃ«m dhe i shndritshÃ«m,
+                qÃ« Ã§liron 10 deri nÃ« 100 herÃ« mÃ« shumÃ« energji sesa njÃ« supernova standarde.
+                Zakonisht rezulton nga shembja katastrofike e bÃ«rthamÃ«s sÃ« yjeve masivÃ« >30 masa diellore,
+                ato shpesh lÃ«nÃ« pas vrima tÃ« zeza rrotulluese dhe lÃ«shojnÃ« shpÃ«rthime intensive rrezesh gama.
             </p>
         </div>
     </div>
@@ -248,3 +248,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
+

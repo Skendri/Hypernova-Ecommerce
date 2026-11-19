@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session.php';
 
 include __DIR__ . '/../config/database.php';
 include __DIR__ . '/../includes/api_helpers.php';
@@ -82,3 +82,4 @@ echo json_encode([
     'statuses' => $statusTotals,
     'products' => $products,
 ]);
+
