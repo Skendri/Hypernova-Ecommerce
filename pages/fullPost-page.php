@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/../includes/session.php';
 
 include __DIR__ . '/../config/database.php';
 include __DIR__ . '/../api/blog_post_schema.php';

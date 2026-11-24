@@ -1,5 +1,5 @@
 -- Run once against the application's database before deploying login throttling.
-CREATE TABLE login_rate_limits (
+CREATE TABLE IF NOT EXISTS login_rate_limits (
     limiter_key CHAR(64) NOT NULL,
     failures TINYINT UNSIGNED NOT NULL DEFAULT 0,
     window_started_at DATETIME NOT NULL,

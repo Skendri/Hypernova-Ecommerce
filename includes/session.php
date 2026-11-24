@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Start the application session with cookie protections applied before headers are sent.
  */
@@ -9,7 +10,7 @@ function appSessionCookieOptions(): array
         && strtolower((string) $_SERVER['HTTPS']) !== 'off';
 
     return [
-        'expires' => 0,
+        'lifetime' => 0,
         'path' => '/',
         'secure' => $isHttps,
         'httponly' => true,
@@ -31,6 +32,7 @@ function destroyAppSession(): void
 
     $_SESSION = [];
     $cookieOptions = appSessionCookieOptions();
+    unset($cookieOptions['lifetime']);
     $cookieOptions['expires'] = time() - 42000;
     setcookie(session_name(), '', $cookieOptions);
     session_destroy();
